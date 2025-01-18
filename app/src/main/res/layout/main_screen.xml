@@ -17,8 +17,9 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:text="Мои планы"
+    android:textColor="@color/black"
     android:fontFamily="@font/lineyka"
-    android:textSize="20dp"></TextView>
+    android:textSize="30dp"></TextView>
     </FrameLayout>
 
         <View
