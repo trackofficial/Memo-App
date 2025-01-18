@@ -19,7 +19,7 @@
     android:text="Мои планы"
     android:textColor="@color/black"
     android:fontFamily="@font/lineyka"
-    android:textSize="30dp"></TextView>
+    android:textSize="26dp"></TextView>
     </FrameLayout>
 
         <View
