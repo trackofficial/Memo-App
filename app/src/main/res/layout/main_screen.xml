@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/main_screen"
+    android:background="@color/background_color_light">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
+<TextView
+    android:layout_gravity="center_horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Мои планы"
+    android:fontFamily="@font/lineyka"
+    android:textSize="20dp"></TextView>
+    </FrameLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/form_for_navigation_bar"></View>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:gravity="center_vertical">
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"></Space>
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"></Space>
+
+        <ImageButton
+            android:layout_marginTop="2dp"
+            android:id="@+id/history_button"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/history_image_button"></ImageButton>
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"></Space>
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <ImageButton
+                android:id="@+id/main_buttom"
+                android:layout_marginBottom="8dp"
+                android:layout_width="160dp"
+                android:layout_height="50dp"
+                android:background="@drawable/form_for_main_button">
+            </ImageButton>
+            <LinearLayout
+                android:layout_marginBottom="3dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center">
+                <ImageView
+                    android:layout_marginBottom="3dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:background="@drawable/pencil_image_for_main_image">
+                </ImageView>
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"></Space>
+                <TextView
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/lineyka"
+                    android:textSize="17dp"
+                    android:textColor="@color/text_color_light"
+                    android:textAlignment="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Написать"></TextView>
+            </LinearLayout>
+
+
+        </FrameLayout>
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"></Space>
+
+        <ImageButton
+            android:layout_marginTop="2dp"
+            android:id="@+id/settings_button"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/settings_image_button"></ImageButton>
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"></Space>
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"></Space>
+
+    </LinearLayout>
+
+    </RelativeLayout>
+</LinearLayout>
