@@ -2,6 +2,7 @@
 <resources>
     <color name="button_main_color">#CCD3FF</color>
     <color name="background_color_light">#F8F9FF</color>
+    <color name="color_for_block">#EEEFFC</color>
     <color name="block_color_light">#6570B3</color>
     <color name="text_color_light">#202752</color>
     <color name="text_color_light_ver_2">#495185</color>
