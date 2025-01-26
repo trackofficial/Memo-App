@@ -2,7 +2,6 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
 }
-
 android {
     namespace = "com.example.memo_app"
     compileSdk = 35
