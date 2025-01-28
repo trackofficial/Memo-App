@@ -18,7 +18,7 @@ class HistoryActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.history_note)
 
-        linearLayoutHistory = findViewById(R.id.historynotescreen)
+        linearLayoutHistory = findViewById(R.id.linearLayoutNotes)
         noteDao = NoteDao(this)
 
         loadAllNotes()

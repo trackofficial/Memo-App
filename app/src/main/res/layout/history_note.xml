@@ -28,24 +28,26 @@
             </FrameLayout>
 
             <ScrollView
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
                 android:layout_height="0dp"
                 android:fadeScrollbars="false"
                 android:scrollbars="none"
                 android:layout_weight="1">
 
-                <LinearLayout
-                    android:id="@+id/linearLayoutNotes"
+            <LinearLayout
+                android:layout_marginTop="5dp"
+                android:id="@+id/linearLayoutNotes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <View
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:background="@color/color_for_block">
-
-                </LinearLayout>
-
+                    android:layout_height="180dp"></View>
+            </LinearLayout>
             </ScrollView>
-
         </LinearLayout>
 
 
