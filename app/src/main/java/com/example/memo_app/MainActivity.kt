@@ -2,9 +2,9 @@ package com.example.memo_app
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.util.Log
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
@@ -47,6 +47,12 @@ class MainActivity : ComponentActivity() {
             startActivity(Intent(this, HistoryActivity::class.java))
         }
 
+        // Проверка наличия удаленной заметки
+        val deletedNoteId = intent.getIntExtra("deletedNoteId", -1)
+        if (deletedNoteId != -1) {
+            moveNoteToHistory(deletedNoteId)
+        }
+
         loadNotes()
     }
 
@@ -56,31 +62,34 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun loadNotes() {
-        Log.d("MainActivity", "Loading notes from SQLite")
         linearLayoutNotes.removeAllViews()
         val notes = noteDao.getAllNotes()
-        Log.d("MainActivity", "Notes loaded: $notes")
         notes.forEach { note ->
             addNoteToLayout(note)
         }
     }
 
     private fun addNoteToLayout(note: Note) {
-        Log.d("MainActivity", "Adding note to layout: ${note.content}")
         val inflater = LayoutInflater.from(this)
         val noteView = inflater.inflate(R.layout.note_item, linearLayoutNotes, false) as ViewGroup
         val noteTextView = noteView.findViewById<TextView>(R.id.noteTextView)
-        val deleteButton = noteView.findViewById<Button>(R.id.deleteButton)
+        val editButton = noteView.findViewById<ImageButton>(R.id.deleteButton)
 
         noteTextView.text = note.content
-        deleteButton.setOnClickListener {
-            Log.d("MainActivity", "Deleting note: ${note.content}")
-            note.isDeleted = true
-            noteDao.update(note)
-            linearLayoutNotes.removeView(noteView)
+        editButton.setOnClickListener {
+            val intent = Intent(this, EditNoteActivity::class.java)
+            intent.putExtra("noteId", note.id)
+            startActivity(intent)
         }
 
         linearLayoutNotes.addView(noteView)
-        Log.d("MainActivity", "Note added to layout: $noteView")
+    }
+
+    private fun moveNoteToHistory(noteId: Int) {
+        val deletedNote = noteDao.getAllNotesIncludingDeleted().firstOrNull { it.id == noteId }
+        if (deletedNote != null) {
+            // Здесь можно добавить логику для перемещения заметки в историю
+            Log.d("MainActivity", "Note moved to history: $deletedNote")
+        }
     }
 }
