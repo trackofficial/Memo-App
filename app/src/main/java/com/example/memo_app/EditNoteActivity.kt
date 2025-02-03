@@ -24,6 +24,7 @@ class EditNoteActivity : ComponentActivity() {
         buttonSaveNote = findViewById(R.id.buttonSaveNote)
         noteDao = NoteDao(this)
 
+        // Логирование инициализации
         noteId = intent.getIntExtra("noteId", 0)
         Log.d("EditNoteActivity", "Initializing with noteId: $noteId")
 
@@ -39,12 +40,12 @@ class EditNoteActivity : ComponentActivity() {
         buttonDeleteNote.setOnClickListener {
             Log.d("EditNoteActivity", "Delete button clicked")
             if (note != null) {
-                noteDao.delete(note)
-                Log.d("EditNoteActivity", "Note deleted: $note")
+                note.isDeleted = true
+                noteDao.update(note)
+                Log.d("EditNoteActivity", "Note marked as deleted: $note")
 
-                // Переход на главный экран и добавление в историю
+                // Переход на главный экран
                 val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra("deletedNoteId", note.id)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
                 finish()

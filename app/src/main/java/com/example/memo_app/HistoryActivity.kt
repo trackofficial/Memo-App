@@ -30,23 +30,22 @@ class HistoryActivity : ComponentActivity() {
     }
 
     private fun loadAllNotes() {
-        Log.d("HistoryActivity", "Loading all notes from SQLite")
         linearLayoutHistory.removeAllViews()
         val allNotes = noteDao.getAllNotesIncludingDeleted()
-        Log.d("HistoryActivity", "All notes loaded: $allNotes")
+        Log.d("HistoryActivity", "Loading all notes including deleted: $allNotes")
         allNotes.forEach { note ->
             addNoteToHistoryLayout(note)
         }
     }
 
     private fun addNoteToHistoryLayout(note: Note) {
-        Log.d("HistoryActivity", "Adding note to history layout: ${note.content}")
         val inflater = LayoutInflater.from(this)
         val noteView = inflater.inflate(R.layout.note_item_h, linearLayoutHistory, false) as ViewGroup
         val noteTextView = noteView.findViewById<TextView>(R.id.noteTextView)
 
         noteTextView.text = note.content
+        Log.d("HistoryActivity", "Note added to history layout: ${note.content}")
+
         linearLayoutHistory.addView(noteView)
-        Log.d("HistoryActivity", "Note added to history layout: $noteView")
     }
 }
