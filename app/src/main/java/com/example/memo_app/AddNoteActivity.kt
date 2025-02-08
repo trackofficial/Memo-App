@@ -4,12 +4,13 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import androidx.activity.ComponentActivity
 
 class AddNoteActivity : ComponentActivity() {
 
     private lateinit var editTextNoteContent: EditText
-    private lateinit var buttonSaveNote: Button
+    private lateinit var buttonSaveNote: ImageButton
     private lateinit var noteDao: NoteDao
 
     override fun onCreate(savedInstanceState: Bundle?) {

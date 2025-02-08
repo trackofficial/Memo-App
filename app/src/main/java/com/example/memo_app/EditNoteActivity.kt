@@ -5,13 +5,14 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import androidx.activity.ComponentActivity
 
 class EditNoteActivity : ComponentActivity() {
 
     private lateinit var editTextNoteContent: EditText
-    private lateinit var buttonDeleteNote: Button
-    private lateinit var buttonSaveNote: Button
+    private lateinit var buttonDeleteNote: ImageButton
+    private lateinit var buttonSaveNote: ImageButton
     private lateinit var noteDao: NoteDao
     private var noteId: Int = 0
 

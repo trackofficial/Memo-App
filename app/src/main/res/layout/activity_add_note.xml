@@ -3,17 +3,58 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/addnote">
+    android:id="@+id/addnote"
+    android:paddingTop="16dp">
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/lineyka"
+        android:textSize="16dp"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/black"
+        android:text="Создайте заметку"/>
     <EditText
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@drawable/block_for_edit_text"
         android:id="@+id/editTextNote"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Введите заметку" />
+        android:hint="Введите заметку"
+        android:gravity="top|start"
+        android:layout_marginTop="100dp"
+        />
 
-    <Button
-        android:id="@+id/buttonSave"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Сохранить" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_gravity="bottom"
+            android:background="@drawable/form_for_navigation_bar">
+        </View>
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center"
+            android:layout_marginBottom="10dp">
+            <ImageButton
+                android:id="@+id/buttonSave"
+                android:layout_width="200dp"
+                android:layout_height="48dp"
+                android:background="@drawable/form_for_main_button"
+                android:layout_gravity="center" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Сохранить"
+                android:layout_gravity="center"
+                android:textSize="18dp"
+                android:fontFamily="@font/lineyka"
+                android:textColor="@color/text_color_light"></TextView>
+        </FrameLayout>
+
+    </FrameLayout>
 
 </LinearLayout>
