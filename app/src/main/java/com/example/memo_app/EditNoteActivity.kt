@@ -7,6 +7,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import androidx.activity.ComponentActivity
+import java.util.Date
 
 class EditNoteActivity : ComponentActivity() {
 
@@ -59,6 +60,7 @@ class EditNoteActivity : ComponentActivity() {
             Log.d("EditNoteActivity", "Updated content: $updatedContent")
             if (note != null && updatedContent.isNotEmpty()) {
                 note.content = updatedContent
+                note.creationDate = Date() // Обновляем текущую дату
                 noteDao.update(note)
                 Log.d("EditNoteActivity", "Note updated: $note")
 

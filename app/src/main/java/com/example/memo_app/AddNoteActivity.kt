@@ -6,6 +6,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import androidx.activity.ComponentActivity
+import java.util.Date
 
 class AddNoteActivity : ComponentActivity() {
 
@@ -24,7 +25,7 @@ class AddNoteActivity : ComponentActivity() {
         buttonSaveNote.setOnClickListener {
             val noteContent = editTextNoteContent.text.toString()
             if (noteContent.isNotEmpty()) {
-                val note = Note(content = noteContent)
+                val note = Note(content = noteContent, creationDate = Date())
                 noteDao.insert(note)
                 Log.d("AddNoteActivity", "Note added: $note")
                 finish()  // Закрыть активность и вернуться на главный экран

@@ -33,5 +33,5 @@
             android:name=".EditNoteActivity"
             android:exported="false" />
     </application>
-
+z
 </manifest>
