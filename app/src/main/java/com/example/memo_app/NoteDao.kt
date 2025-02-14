@@ -4,21 +4,15 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.util.Log
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 class NoteDao(context: Context) {
 
     private val dbHelper = DatabaseHelper(context)
-    private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
     fun insert(note: Note) {
         val db = dbHelper.writableDatabase
         val values = ContentValues().apply {
             put(DatabaseHelper.COLUMN_CONTENT, note.content)
-            val creationDateStr = dateFormat.format(note.creationDate)
-            put(DatabaseHelper.COLUMN_CREATION_DATE, creationDateStr)
             put(DatabaseHelper.COLUMN_IS_DELETED, note.isDeleted)
         }
         db.insert(DatabaseHelper.TABLE_NAME, null, values)
@@ -29,8 +23,6 @@ class NoteDao(context: Context) {
         val db = dbHelper.writableDatabase
         val values = ContentValues().apply {
             put(DatabaseHelper.COLUMN_CONTENT, note.content)
-            val creationDateStr = dateFormat.format(note.creationDate)
-            put(DatabaseHelper.COLUMN_CREATION_DATE, creationDateStr)
             put(DatabaseHelper.COLUMN_IS_DELETED, note.isDeleted)
         }
         db.update(DatabaseHelper.TABLE_NAME, values, "${DatabaseHelper.COLUMN_ID} = ?", arrayOf(note.id.toString()))
@@ -55,7 +47,7 @@ class NoteDao(context: Context) {
             arrayOf("0"),
             null,
             null,
-            "${DatabaseHelper.COLUMN_CREATION_DATE} ASC"
+            null
         )
 
         val notes = mutableListOf<Note>()
@@ -64,9 +56,7 @@ class NoteDao(context: Context) {
                 val id = getInt(getColumnIndexOrThrow(DatabaseHelper.COLUMN_ID))
                 val content = getString(getColumnIndexOrThrow(DatabaseHelper.COLUMN_CONTENT))
                 val isDeleted = getInt(getColumnIndexOrThrow(DatabaseHelper.COLUMN_IS_DELETED)) == 1
-                val creationDateStr = getString(getColumnIndexOrThrow(DatabaseHelper.COLUMN_CREATION_DATE))
-                val creationDate = dateFormat.parse(creationDateStr) ?: Date()
-                val note = Note(id, content, creationDate, isDeleted)
+                val note = Note(id, content, isDeleted)
                 notes.add(note)
                 Log.d("NoteDao", "Note loaded: $note")
             }
@@ -84,7 +74,7 @@ class NoteDao(context: Context) {
             null,
             null,
             null,
-            "${DatabaseHelper.COLUMN_CREATION_DATE} ASC"
+            null
         )
 
         val notes = mutableListOf<Note>()
@@ -93,9 +83,7 @@ class NoteDao(context: Context) {
                 val id = getInt(getColumnIndexOrThrow(DatabaseHelper.COLUMN_ID))
                 val content = getString(getColumnIndexOrThrow(DatabaseHelper.COLUMN_CONTENT))
                 val isDeleted = getInt(getColumnIndexOrThrow(DatabaseHelper.COLUMN_IS_DELETED)) == 1
-                val creationDateStr = getString(getColumnIndexOrThrow(DatabaseHelper.COLUMN_CREATION_DATE))
-                val creationDate = dateFormat.parse(creationDateStr) ?: Date()
-                val note = Note(id, content, creationDate, isDeleted)
+                val note = Note(id, content, isDeleted)
                 notes.add(note)
                 Log.d("NoteDao", "Note loaded: $note")
             }

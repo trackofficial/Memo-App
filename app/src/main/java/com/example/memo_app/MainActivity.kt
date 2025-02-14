@@ -13,8 +13,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class MainActivity : ComponentActivity() {
 
@@ -22,7 +20,6 @@ class MainActivity : ComponentActivity() {
     private lateinit var buttonAddNote: ImageButton
     private lateinit var buttonViewHistory: ImageButton
     private lateinit var noteDao: NoteDao
-    private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,24 +63,9 @@ class MainActivity : ComponentActivity() {
     private fun loadNotes() {
         linearLayoutNotes.removeAllViews()
         val notes = noteDao.getAllNotes()
-        var currentDate = ""
         notes.forEach { note ->
-            val noteDate = dateFormat.format(note.creationDate)
-            if (noteDate != currentDate) {
-                addDateHeaderToLayout(noteDate)
-                currentDate = noteDate
-            }
             addNoteToLayout(note)
         }
-    }
-
-    private fun addDateHeaderToLayout(date: String) {
-        val inflater = LayoutInflater.from(this)
-        val dateView = inflater.inflate(R.layout.date_header_item, linearLayoutNotes, false) as ViewGroup
-        val dateTextView = dateView.findViewById<TextView>(R.id.dateTextView)
-        dateTextView.text = date
-        linearLayoutNotes.addView(dateView)
-        Log.d("MainActivity", "Date header added: $date")
     }
 
     private fun addNoteToLayout(note: Note) {
@@ -100,7 +82,6 @@ class MainActivity : ComponentActivity() {
         }
 
         linearLayoutNotes.addView(noteView)
-        Log.d("MainActivity", "Note added: ${note.content}")
     }
 
     private fun moveNoteToHistory(noteId: Int) {
