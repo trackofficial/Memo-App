@@ -16,7 +16,7 @@ class EditNoteActivity : ComponentActivity() {
     private lateinit var editTextTime: EditText
     private lateinit var buttonDeleteNote: ImageButton
     private lateinit var buttonSaveNote: ImageButton
-    private lateinit var buttonSelectDate: Button
+    private lateinit var buttonSelectDate: ImageButton
     private lateinit var noteDao: NoteDao
     private var noteId: Int = 0
     private var selectedDate: String = ""
