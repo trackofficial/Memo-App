@@ -1,20 +1,24 @@
 package com.example.memo_app
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.util.Log
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.ComponentActivity
-import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import java.text.ParseException
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Locale
 
 class MainActivity : ComponentActivity() {
@@ -23,13 +27,23 @@ class MainActivity : ComponentActivity() {
     private lateinit var buttonAddNote: ImageButton
     private lateinit var buttonViewHistory: ImageButton
     private lateinit var noteDao: NoteDao
-    private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    private lateinit var notificationHelper: NotificationHelper
+    private val dateFormat = SimpleDateFormat("d MMM yyyy", Locale("ru"))
     private val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
     private val dateTimeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
 
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                // Разрешение предоставлено, настройка ежедневного уведомления
+                notificationHelper.scheduleDailyNotification()
+            } else {
+                Log.e("MainActivity", "Permission for notifications not granted")
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.main_screen)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_screen)) { v, insets ->
@@ -43,6 +57,7 @@ class MainActivity : ComponentActivity() {
         buttonViewHistory = findViewById(R.id.history_button)
 
         noteDao = NoteDao(this)
+        notificationHelper = NotificationHelper(this)
 
         buttonAddNote.setOnClickListener {
             startActivity(Intent(this, AddNoteActivity::class.java))
@@ -59,6 +74,14 @@ class MainActivity : ComponentActivity() {
         }
 
         loadNotes()
+
+        // Проверка и запрос разрешений для уведомлений
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        } else {
+            // Настройка ежедневного уведомления
+            notificationHelper.scheduleDailyNotification()
+        }
     }
 
     override fun onResume() {
@@ -70,19 +93,36 @@ class MainActivity : ComponentActivity() {
         linearLayoutNotes.removeAllViews()
         val notes = noteDao.getAllNotes()
         var currentDate = ""
+        val today = Calendar.getInstance()
+        val tomorrow = Calendar.getInstance().apply {
+            add(Calendar.DAY_OF_YEAR, 1)
+        }
         notes.forEach { note ->
             try {
                 val dateTime = dateTimeFormat.parse(note.dateTime)
                 val noteDate = dateFormat.format(dateTime)
-                if (noteDate != currentDate) {
-                    addDateHeaderToLayout(noteDate)
-                    currentDate = noteDate
+                val calNoteDate = Calendar.getInstance().apply {
+                    time = dateTime
+                }
+                val dateLabel = when {
+                    isSameDay(calNoteDate, today) -> "На Сегодня"
+                    isSameDay(calNoteDate, tomorrow) -> "На Завтра"
+                    else -> "На $noteDate"
+                }
+                if (dateLabel != currentDate) {
+                    addDateHeaderToLayout(dateLabel)
+                    currentDate = dateLabel
                 }
                 addNoteToLayout(note)
             } catch (e: ParseException) {
                 Log.e("MainActivity", "Error parsing date: ${note.dateTime}", e)
             }
         }
+    }
+
+    private fun isSameDay(cal1: Calendar, cal2: Calendar): Boolean {
+        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)
     }
 
     private fun addDateHeaderToLayout(date: String) {
@@ -100,6 +140,7 @@ class MainActivity : ComponentActivity() {
         val noteTextView = noteView.findViewById<TextView>(R.id.noteTextView)
         val timeTextView = noteView.findViewById<TextView>(R.id.timeTextView)
         val editButton = noteView.findViewById<ImageButton>(R.id.deleteButton)
+
         noteTextView.text = note.content
         try {
             val dateTime = dateTimeFormat.parse(note.dateTime)

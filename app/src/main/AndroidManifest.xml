@@ -32,6 +32,7 @@
         <activity
             android:name=".EditNoteActivity"
             android:exported="false" />
+        <receiver android:name=".NotificationReceiver" />
     </application>
-z
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 </manifest>

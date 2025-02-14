@@ -3,6 +3,8 @@ package com.example.memo_app
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
@@ -44,7 +46,7 @@ class EditNoteActivity : ComponentActivity() {
             val dateTimeParts = note.dateTime.split(" ")
             if (dateTimeParts.size == 2) {
                 selectedDate = dateTimeParts[0]
-                editTextTime.setText(dateTimeParts[1])
+                editTextTime.setText(dateTimeParts[1].replace(":", ""))
             }
         } else {
             Log.d("EditNoteActivity", "Note not found")
@@ -53,6 +55,21 @@ class EditNoteActivity : ComponentActivity() {
         buttonSelectDate.setOnClickListener {
             selectDate()
         }
+
+        editTextTime.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (s != null && s.length == 4) {
+                    val hour = s.substring(0, 2)
+                    val minute = s.substring(2, 4)
+                    editTextTime.setText("$hour:$minute")
+                    editTextTime.setSelection(editTextTime.text.length)
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
 
         buttonDeleteNote.setOnClickListener {
             Log.d("EditNoteActivity", "Delete button clicked")
@@ -80,8 +97,7 @@ class EditNoteActivity : ComponentActivity() {
                 note.dateTime = dateTime // Обновляем дату и время
                 noteDao.update(note)
                 Log.d("EditNoteActivity", "Note updated: $note")
-
-                // Переход на главный экран
+// Переход на главный экран
                 val intent = Intent(this, MainActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)

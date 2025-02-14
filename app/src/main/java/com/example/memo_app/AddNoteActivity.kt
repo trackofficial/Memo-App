@@ -2,6 +2,8 @@ package com.example.memo_app
 
 import android.app.DatePickerDialog
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
@@ -31,6 +33,21 @@ class AddNoteActivity : ComponentActivity() {
         buttonSelectDate.setOnClickListener {
             selectDate()
         }
+
+        editTextTime.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (s != null && s.length == 4) {
+                    val hour = s.substring(0, 2)
+                    val minute = s.substring(2, 4)
+                    editTextTime.setText("$hour:$minute")
+                    editTextTime.setSelection(editTextTime.text.length)
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
 
         buttonSaveNote.setOnClickListener {
             val noteContent = editTextNoteContent.text.toString()

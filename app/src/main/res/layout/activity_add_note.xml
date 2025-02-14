@@ -41,6 +41,7 @@
                     android:background="@drawable/block_for_edit_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:maxLength="5"
                     android:gravity="top|start"
                     android:layout_marginTop="10dp"/>
 
