@@ -106,9 +106,9 @@ class MainActivity : ComponentActivity() {
                     time = dateTime
                 }
                 val dateLabel = when {
-                    isSameDay(calNoteDate, today) -> "Сегодня"
-                    isSameDay(calNoteDate, tomorrow) -> "Завтра"
-                    else -> noteDate
+                    isSameDay(calNoteDate, today) -> "На Сегодня"
+                    isSameDay(calNoteDate, tomorrow) -> "На Завтра"
+                    else -> "На $noteDate"
                 }
                 if (dateLabel != currentDate) {
                     addDateHeaderToLayout(dateLabel)
