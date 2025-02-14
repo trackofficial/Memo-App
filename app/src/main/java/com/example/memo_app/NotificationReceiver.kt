@@ -25,7 +25,7 @@ class NotificationReceiver : BroadcastReceiver() {
         if (notes.isNotEmpty()) {
             val notificationHelper = NotificationHelper(context)
             notificationHelper.sendNotification(
-                "Планы на сегодня",
+                "Планы на сегодня!",
                 "У вас есть запланированные события на сегодня."
             )
         }
