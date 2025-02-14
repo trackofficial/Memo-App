@@ -34,7 +34,7 @@
                 />
             <EditText
                 android:id="@+id/editTextTime"
-                android:hint="Введите время (HH:mm)"
+                android:hint="Введите время"
                 android:inputType="time"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
@@ -55,7 +55,7 @@
                     android:id="@+id/buttonSelectDateTime"
                     android:layout_width="match_parent"
                     android:layout_height="36dp"
-                    android:background="@drawable/form_for_delete_button"
+                    android:background="@drawable/form_for_main_button"
                     android:layout_gravity="center" />
                 <TextView
                     android:layout_width="wrap_content"
@@ -108,11 +108,11 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Завершить"
+                android:text="Удалить"
                 android:layout_gravity="center"
                 android:textSize="14dp"
                 android:fontFamily="@font/lineyka"
-                android:textColor="@color/text_color_light"></TextView>
+                android:textColor="@color/white"></TextView>
         </FrameLayout>
 </LinearLayout>
     </FrameLayout>
