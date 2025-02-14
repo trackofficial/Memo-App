@@ -99,15 +99,16 @@ class MainActivity : ComponentActivity() {
         }
         notes.forEach { note ->
             try {
+                // Ожидаем, что формат даты и времени будет "yyyy-MM-dd HH:mm"
                 val dateTime = dateTimeFormat.parse(note.dateTime)
                 val noteDate = dateFormat.format(dateTime)
                 val calNoteDate = Calendar.getInstance().apply {
                     time = dateTime
                 }
                 val dateLabel = when {
-                    isSameDay(calNoteDate, today) -> "На Сегодня"
-                    isSameDay(calNoteDate, tomorrow) -> "На Завтра"
-                    else -> "На $noteDate"
+                    isSameDay(calNoteDate, today) -> "Сегодня"
+                    isSameDay(calNoteDate, tomorrow) -> "Завтра"
+                    else -> noteDate
                 }
                 if (dateLabel != currentDate) {
                     addDateHeaderToLayout(dateLabel)
@@ -149,6 +150,7 @@ class MainActivity : ComponentActivity() {
             Log.e("MainActivity", "Error parsing time: ${note.dateTime}", e)
         }
         editButton.setOnClickListener {
+            Log.d("MainActivity", "Edit button clicked for note: $note")
             val intent = Intent(this, EditNoteActivity::class.java)
             intent.putExtra("noteId", note.id)
             startActivity(intent)

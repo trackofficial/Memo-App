@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import androidx.activity.ComponentActivity
@@ -92,12 +91,20 @@ class EditNoteActivity : ComponentActivity() {
             val time = editTextTime.text.toString()
             Log.d("EditNoteActivity", "Updated content: $updatedContent")
             if (note != null && updatedContent.isNotEmpty() && selectedDate.isNotEmpty() && time.isNotEmpty()) {
-                val dateTime = "$selectedDate $time"
+                // Обработка времени в формате HH:mm
+                val timeFormatted = if (time.length == 4) {
+                    "${time.substring(0, 2)}:${time.substring(2, 4)}"
+                } else {
+                    time
+                }
+                val dateTime = "$selectedDate $timeFormatted"
                 note.content = updatedContent
-                note.dateTime = dateTime // Обновляем дату и время
+                note.dateTime = dateTime
+                note.isDeleted = false // Убедитесь, что заметка не помечена как удаленная
                 noteDao.update(note)
                 Log.d("EditNoteActivity", "Note updated: $note")
-// Переход на главный экран
+
+                // Переход на главный экран
                 val intent = Intent(this, MainActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
