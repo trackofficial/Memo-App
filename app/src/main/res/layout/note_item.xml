@@ -4,7 +4,7 @@ android:layout_width="match_parent"
 android:layout_height="wrap_content"
 android:orientation="vertical"
 android:padding="16dp"
-    android:layout_marginTop="5dp"
+    android:layout_marginTop="1dp"
     android:layout_marginRight="10dp"
     android:layout_marginLeft="10dp"
 android:background="@drawable/form_block_note">
@@ -49,11 +49,13 @@ android:background="@drawable/form_block_note">
         android:src="@drawable/clock_pin" />
     <TextView
         android:layout_marginRight="5dp"
+        android:paddingLeft="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:textSize="10dp"
+        android:textSize="18dp"
+        android:id="@+id/timeTextView"
         android:textColor="@color/black"
+        android:layout_marginTop="2dp"
         android:fontFamily="@font/lineyka"/>
 </LinearLayout>
 </LinearLayout>

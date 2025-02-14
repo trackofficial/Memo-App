@@ -13,6 +13,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class MainActivity : ComponentActivity() {
 
@@ -20,6 +23,9 @@ class MainActivity : ComponentActivity() {
     private lateinit var buttonAddNote: ImageButton
     private lateinit var buttonViewHistory: ImageButton
     private lateinit var noteDao: NoteDao
+    private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    private val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+    private val dateTimeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,18 +69,44 @@ class MainActivity : ComponentActivity() {
     private fun loadNotes() {
         linearLayoutNotes.removeAllViews()
         val notes = noteDao.getAllNotes()
+        var currentDate = ""
         notes.forEach { note ->
-            addNoteToLayout(note)
+            try {
+                val dateTime = dateTimeFormat.parse(note.dateTime)
+                val noteDate = dateFormat.format(dateTime)
+                if (noteDate != currentDate) {
+                    addDateHeaderToLayout(noteDate)
+                    currentDate = noteDate
+                }
+                addNoteToLayout(note)
+            } catch (e: ParseException) {
+                Log.e("MainActivity", "Error parsing date: ${note.dateTime}", e)
+            }
         }
+    }
+
+    private fun addDateHeaderToLayout(date: String) {
+        val inflater = LayoutInflater.from(this)
+        val dateView = inflater.inflate(R.layout.date_header_item, linearLayoutNotes, false) as ViewGroup
+        val dateTextView = dateView.findViewById<TextView>(R.id.dateTextView)
+        dateTextView.text = date
+        linearLayoutNotes.addView(dateView)
+        Log.d("MainActivity", "Date header added: $date")
     }
 
     private fun addNoteToLayout(note: Note) {
         val inflater = LayoutInflater.from(this)
         val noteView = inflater.inflate(R.layout.note_item, linearLayoutNotes, false) as ViewGroup
         val noteTextView = noteView.findViewById<TextView>(R.id.noteTextView)
+        val timeTextView = noteView.findViewById<TextView>(R.id.timeTextView)
         val editButton = noteView.findViewById<ImageButton>(R.id.deleteButton)
-
         noteTextView.text = note.content
+        try {
+            val dateTime = dateTimeFormat.parse(note.dateTime)
+            timeTextView.text = timeFormat.format(dateTime)
+        } catch (e: ParseException) {
+            Log.e("MainActivity", "Error parsing time: ${note.dateTime}", e)
+        }
         editButton.setOnClickListener {
             val intent = Intent(this, EditNoteActivity::class.java)
             intent.putExtra("noteId", note.id)
@@ -82,6 +114,7 @@ class MainActivity : ComponentActivity() {
         }
 
         linearLayoutNotes.addView(noteView)
+        Log.d("MainActivity", "Note added: ${note.content}")
     }
 
     private fun moveNoteToHistory(noteId: Int) {

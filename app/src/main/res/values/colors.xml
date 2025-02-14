@@ -11,4 +11,5 @@
     <color name="color_for_bottom_bar">#EBEDFF</color>
     <color name="white">#FFFFFFFF</color>
     <color name="color_for_splash_screen">#5E73FF</color>
+    <color name="color_red_for_button">#5E73FF</color>
 </resources>

@@ -17,16 +17,55 @@
         android:textColor="@color/black"
         android:text="Отредактируйте заметку"
         android:layout_marginTop="0dp"/>
-    <EditText
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:background="@drawable/block_for_edit_text"
-        android:id="@+id/editTextNoteContent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Введите заметку"
-        android:layout_marginTop="100dp"
-/>
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <EditText
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:background="@drawable/block_for_edit_text"
+                android:id="@+id/editTextNoteContent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Введите заметку"
+                android:gravity="top|start"
+                android:layout_marginTop="100dp"
+                />
+            <EditText
+                android:id="@+id/editTextTime"
+                android:hint="Введите время (HH:mm)"
+                android:inputType="time"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:background="@drawable/block_for_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top|start"
+                android:layout_marginTop="10dp"/>
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp">
+                <ImageButton
+                    android:id="@+id/buttonSelectDateTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="36dp"
+                    android:background="@drawable/form_for_delete_button"
+                    android:layout_gravity="center" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Выбирете дату"
+                    android:layout_gravity="center"
+                    android:textSize="14dp"
+                    android:fontFamily="@font/lineyka"
+                    android:textColor="@color/text_color_light"></TextView>
+            </FrameLayout>
+        </LinearLayout>
 
 <LinearLayout
     android:layout_width="wrap_content"
@@ -43,6 +82,7 @@
                 android:layout_height="36dp"
                 android:background="@drawable/form_for_main_button"
                 android:layout_gravity="center" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -62,7 +102,7 @@
                 android:id="@+id/buttonDeleteNote"
                 android:layout_width="120dp"
                 android:layout_height="36dp"
-                android:background="@drawable/form_for_main_button"
+                android:background="@drawable/form_for_delete_button"
                 android:layout_gravity="center" />
             <TextView
                 android:layout_width="wrap_content"

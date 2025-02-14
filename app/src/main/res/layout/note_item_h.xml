@@ -29,7 +29,7 @@
         android:paddingBottom="1dp" />
 
     <LinearLayout
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="4dp"
         android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
@@ -40,11 +40,13 @@
             android:layout_height="18dp"
             android:src="@drawable/clock_pin" />
         <TextView
+            android:layout_marginTop="2dp"
             android:layout_marginRight="5dp"
+            android:paddingLeft="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:textSize="10dp"
+            android:textSize="18dp"
+            android:id="@+id/timeTextView"
             android:textColor="@color/black"
             android:fontFamily="@font/lineyka"/>
 
