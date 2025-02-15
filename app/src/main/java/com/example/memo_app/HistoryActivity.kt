@@ -1,9 +1,9 @@
 package com.example.memo_app
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -57,6 +57,12 @@ class HistoryActivity : ComponentActivity() {
             Log.e("HistoryActivity", "Error parsing time: ${note.dateTime}", e)
         }
         Log.d("HistoryActivity", "Note added to history layout: ${note.content}")
+
+        noteView.setOnClickListener {
+            val intent = Intent(this, ViewNoteActivity::class.java)
+            intent.putExtra("noteId", note.id)
+            startActivity(intent)
+        }
 
         linearLayoutHistory.addView(noteView)
     }

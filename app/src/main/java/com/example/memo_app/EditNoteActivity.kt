@@ -14,6 +14,7 @@ import java.util.Calendar
 class EditNoteActivity : ComponentActivity() {
 
     private lateinit var editTextNoteContent: EditText
+    private lateinit var editTextDescription: EditText // Новое поле для описания
     private lateinit var editTextTime: EditText
     private lateinit var buttonDeleteNote: ImageButton
     private lateinit var buttonSaveNote: ImageButton
@@ -27,6 +28,7 @@ class EditNoteActivity : ComponentActivity() {
         setContentView(R.layout.activity_edit_note)
 
         editTextNoteContent = findViewById(R.id.editTextNoteContent)
+        editTextDescription = findViewById(R.id.editAddText) // Инициализация нового поля
         editTextTime = findViewById(R.id.editTextTime)
         buttonDeleteNote = findViewById(R.id.buttonDeleteNote)
         buttonSaveNote = findViewById(R.id.buttonSaveNote)
@@ -42,6 +44,7 @@ class EditNoteActivity : ComponentActivity() {
         if (note != null) {
             Log.d("EditNoteActivity", "Note loaded: $note")
             editTextNoteContent.setText(note.content)
+            editTextDescription.setText(note.description) // Заполнение поля описания
             val dateTimeParts = note.dateTime.split(" ")
             if (dateTimeParts.size == 2) {
                 selectedDate = dateTimeParts[0]
@@ -88,8 +91,9 @@ class EditNoteActivity : ComponentActivity() {
         buttonSaveNote.setOnClickListener {
             Log.d("EditNoteActivity", "Save button clicked")
             val updatedContent = editTextNoteContent.text.toString()
+            val updatedDescription = editTextDescription.text.toString() // Получение описания
             val time = editTextTime.text.toString()
-            Log.d("EditNoteActivity", "Updated content: $updatedContent")
+            Log.d("EditNoteActivity", "Updated content: $updatedContent, description: $updatedDescription")
             if (note != null && updatedContent.isNotEmpty() && selectedDate.isNotEmpty() && time.isNotEmpty()) {
                 // Обработка времени в формате HH:mm
                 val timeFormatted = if (time.length == 4) {
@@ -99,6 +103,7 @@ class EditNoteActivity : ComponentActivity() {
                 }
                 val dateTime = "$selectedDate $timeFormatted"
                 note.content = updatedContent
+                note.description = updatedDescription // Обновление описания
                 note.dateTime = dateTime
                 note.isDeleted = false // Убедитесь, что заметка не помечена как удаленная
                 noteDao.update(note)

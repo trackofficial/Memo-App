@@ -32,6 +32,9 @@
         <activity
             android:name=".EditNoteActivity"
             android:exported="false" />
+        <activity
+            android:name=".ViewNoteActivity"
+            android:exported="false" />
         <receiver android:name=".NotificationReceiver" />
     </application>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>

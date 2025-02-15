@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/lineyka"
+        android:layout_gravity="center_horizontal"
+        android:textSize="16dp"
+        android:textColor="@color/black"
+        android:text="Ваша заметка"
+        android:layout_marginTop="10dp"/>
+    <TextView
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@drawable/block_for_edit_text"
+        android:id="@+id/textViewNoteContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="top|start"
+        android:textSize="16dp"
+        android:textColor="@color/black"
+        android:layout_marginTop="100dp"
+        />
+    <TextView
+        android:id="@+id/textViewDateTime"
+        android:inputType="time"
+        android:textSize="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@drawable/block_for_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLength="100"
+        android:textColor="@color/black"
+        android:gravity="top|start"
+        android:layout_marginTop="10dp"/>
+    <TextView
+        android:id="@+id/textViewDescription"
+        android:textColor="@color/black"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:textSize="16dp"
+        android:background="@drawable/block_for_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLength="100"
+        android:gravity="top|start"
+        android:layout_marginTop="10dp"/>
+</LinearLayout>

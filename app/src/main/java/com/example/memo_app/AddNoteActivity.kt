@@ -1,11 +1,11 @@
 package com.example.memo_app
 
 import android.app.DatePickerDialog
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import androidx.activity.ComponentActivity
@@ -14,6 +14,7 @@ import java.util.Calendar
 class AddNoteActivity : ComponentActivity() {
 
     private lateinit var editTextNoteContent: EditText
+    private lateinit var editTextDescription: EditText // Новое поле для описания
     private lateinit var editTextTime: EditText
     private lateinit var buttonSaveNote: ImageButton
     private lateinit var buttonSelectDate: ImageButton
@@ -25,6 +26,7 @@ class AddNoteActivity : ComponentActivity() {
         setContentView(R.layout.activity_add_note)
 
         editTextNoteContent = findViewById(R.id.editTextNoteContent)
+        editTextDescription = findViewById(R.id.editAddText) // Инициализация нового поля
         editTextTime = findViewById(R.id.editTextTime)
         buttonSaveNote = findViewById(R.id.buttonSave)
         buttonSelectDate = findViewById(R.id.buttonSelectDateTime)
@@ -51,19 +53,44 @@ class AddNoteActivity : ComponentActivity() {
 
         buttonSaveNote.setOnClickListener {
             val noteContent = editTextNoteContent.text.toString()
+            val noteDescription = editTextDescription.text.toString() // Получение описания
             val time = editTextTime.text.toString()
+            Log.d("AddNoteActivity", "Note content: $noteContent, description: $noteDescription")
             if (noteContent.isNotEmpty() && selectedDate.isNotEmpty() && time.isNotEmpty()) {
-                val dateTime = "$selectedDate $time"
-                val note = Note(id = 0, content = noteContent, isDeleted = false, dateTime = dateTime)
+                // Обработка времени в формате HH:mm
+                val timeFormatted = if (time.length == 4) {
+                    "${time.substring(0, 2)}:${time.substring(2, 4)}"
+                } else {
+                    time
+                }
+                val dateTime = "$selectedDate $timeFormatted"
+                val note = Note(
+                    id = 0, // ID будет генерироваться автоматически
+                    content = noteContent,
+                    description = noteDescription, // Установка описания
+                    dateTime = dateTime
+                )
                 noteDao.insert(note)
                 Log.d("AddNoteActivity", "Note added: $note")
-                finish()  // Закрыть активность и вернуться на главный экран
+
+                // Переход на главный экран
+                val intent = Intent(this, MainActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+                finish()
             } else {
-                Log.d("AddNoteActivity", "Note content, date or time is empty")
+                if (noteContent.isEmpty()) {
+                    editTextNoteContent.error = "Текст не может быть пустым"
+                }
+                if (selectedDate.isEmpty()) {
+                    Log.d("AddNoteActivity", "Date is empty")
+                }
+                if (time.isEmpty()) {
+                    editTextTime.error = "Время не может быть пустым"
+                }
             }
         }
     }
-
     private fun selectDate() {
         val calendar = Calendar.getInstance()
         val datePickerDialog = DatePickerDialog(this, { _, year, month, dayOfMonth ->
