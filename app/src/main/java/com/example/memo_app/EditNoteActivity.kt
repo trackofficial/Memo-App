@@ -45,7 +45,9 @@ class EditNoteActivity : ComponentActivity() {
             Log.d("EditNoteActivity", "Note loaded: $note")
             editTextNoteContent.setText(note.content)
             editTextDescription.setText(note.description) // Заполнение поля описания
-            val dateTimeParts = note.dateTime.split(" ")
+
+            // Убедитесь, что note.dateTime не null перед разделением
+            val dateTimeParts = note.dateTime?.split(" ") ?: emptyList()
             if (dateTimeParts.size == 2) {
                 selectedDate = dateTimeParts[0]
                 editTextTime.setText(dateTimeParts[1].replace(":", ""))
@@ -91,17 +93,22 @@ class EditNoteActivity : ComponentActivity() {
         buttonSaveNote.setOnClickListener {
             Log.d("EditNoteActivity", "Save button clicked")
             val updatedContent = editTextNoteContent.text.toString()
-            val updatedDescription = editTextDescription.text.toString() // Получение описания
-            val time = editTextTime.text.toString()
-            Log.d("EditNoteActivity", "Updated content: $updatedContent, description: $updatedDescription")
-            if (note != null && updatedContent.isNotEmpty() && selectedDate.isNotEmpty() && time.isNotEmpty()) {
-                // Обработка времени в формате HH:mm
-                val timeFormatted = if (time.length == 4) {
-                    "${time.substring(0, 2)}:${time.substring(2, 4)}"
+            val updatedDescription = editTextDescription.text.toString().takeIf { it.isNotEmpty() } // Обработка описания
+            val time = editTextTime.text.toString().takeIf { it.isNotEmpty() }?.let {
+                if (it.length == 4) {
+                    "${it.substring(0, 2)}:${it.substring(2, 4)}"
                 } else {
-                    time
+                    it
                 }
-                val dateTime = "$selectedDate $timeFormatted"
+            } // Обработка времени
+            Log.d("EditNoteActivity", "Updated content: $updatedContent, description: $updatedDescription, time: $time")
+
+            if (note != null && updatedContent.isNotEmpty()) {
+                val dateTime = if (selectedDate.isNotEmpty() && time != null) {
+                    "$selectedDate $time"
+                } else {
+                    selectedDate.takeIf { it.isNotEmpty() }
+                }
                 note.content = updatedContent
                 note.description = updatedDescription // Обновление описания
                 note.dateTime = dateTime
@@ -121,13 +128,6 @@ class EditNoteActivity : ComponentActivity() {
                 if (updatedContent.isEmpty()) {
                     Log.d("EditNoteActivity", "Updated content is empty")
                     editTextNoteContent.error = "Текст не может быть пустым"
-                }
-                if (selectedDate.isEmpty()) {
-                    Log.d("EditNoteActivity", "Date is empty")
-                }
-                if (time.isEmpty()) {
-                    Log.d("EditNoteActivity", "Time is empty")
-                    editTextTime.error = "Время не может быть пустым"
                 }
             }
         }

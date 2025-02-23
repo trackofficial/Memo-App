@@ -33,11 +33,11 @@ class ViewNoteActivity : ComponentActivity() {
         if (note != null) {
             Log.d("ViewNoteActivity", "Note loaded: $note")
             textViewNoteContent.text = note.content
-            textViewDescription.text = note.description
+            textViewDescription.text = note.description ?: "-" // Устанавливаем дефолтное значение для описания
 
             // Парсинг и форматирование даты
-            val dateTime = dateTimeFormat.parse(note.dateTime)
-            val formattedDate = displayDateFormat.format(dateTime)
+            val dateTime = note.dateTime?.let { dateTimeFormat.parse(it) }
+            val formattedDate = dateTime?.let { displayDateFormat.format(it) } ?: "-"
             textViewDateTime.text = formattedDate
         } else {
             Log.d("ViewNoteActivity", "Note not found")

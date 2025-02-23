@@ -53,23 +53,31 @@ class AddNoteActivity : ComponentActivity() {
 
         buttonSaveNote.setOnClickListener {
             val noteContent = editTextNoteContent.text.toString()
-            val noteDescription = editTextDescription.text.toString() // Получение описания
-            val time = editTextTime.text.toString()
-            Log.d("AddNoteActivity", "Note content: $noteContent, description: $noteDescription")
-            if (noteContent.isNotEmpty() && selectedDate.isNotEmpty() && time.isNotEmpty()) {
-                // Обработка времени в формате HH:mm
-                val timeFormatted = if (time.length == 4) {
-                    "${time.substring(0, 2)}:${time.substring(2, 4)}"
+            val noteDescription = editTextDescription.text.toString().takeIf { it.isNotEmpty() } ?: "-" // Получение описания
+            val time = editTextTime.text.toString().takeIf { it.isNotEmpty() }?.let {
+                if (it.length == 4) {
+                    "${it.substring(0, 2)}:${it.substring(2, 4)}"
                 } else {
-                    time
+                    it
                 }
-                val dateTime = "$selectedDate $timeFormatted"
+            } ?: "-" // Обработка времени
+
+            Log.d("AddNoteActivity", "Note content: $noteContent, description: $noteDescription, time: $time")
+
+            if (noteContent.isNotEmpty()) {
+                val dateTime = if (selectedDate.isNotEmpty() && time != "-") {
+                    "$selectedDate $time"
+                } else {
+                    selectedDate.takeIf { it.isNotEmpty() } ?: "-"
+                }
+
                 val note = Note(
                     id = 0, // ID будет генерироваться автоматически
                     content = noteContent,
                     description = noteDescription, // Установка описания
-                    dateTime = dateTime
+                    dateTime = dateTime // Установка времени
                 )
+
                 noteDao.insert(note)
                 Log.d("AddNoteActivity", "Note added: $note")
 
@@ -81,12 +89,6 @@ class AddNoteActivity : ComponentActivity() {
             } else {
                 if (noteContent.isEmpty()) {
                     editTextNoteContent.error = "Текст не может быть пустым"
-                }
-                if (selectedDate.isEmpty()) {
-                    Log.d("AddNoteActivity", "Date is empty")
-                }
-                if (time.isEmpty()) {
-                    editTextTime.error = "Время не может быть пустым"
                 }
             }
         }

@@ -100,11 +100,12 @@ class MainActivity : ComponentActivity() {
         notes.forEach { note ->
             try {
                 // Ожидаем, что формат даты и времени будет "yyyy-MM-dd HH:mm"
-                val dateTime = dateTimeFormat.parse(note.dateTime)
-                val noteDate = dateFormat.format(dateTime)
+                val dateTime = note.dateTime?.let { dateTimeFormat.parse(it) } ?: null
+                val noteDate = dateTime?.let { dateFormat.format(it) } ?: "-"
                 val calNoteDate = Calendar.getInstance().apply {
-                    time = dateTime
+                    time = dateTime ?: Calendar.getInstance().time
                 }
+
                 val dateLabel = when {
                     isSameDay(calNoteDate, today) -> "На Сегодня"
                     isSameDay(calNoteDate, tomorrow) -> "На Завтра"
@@ -143,12 +144,13 @@ class MainActivity : ComponentActivity() {
         val editButton = noteView.findViewById<ImageButton>(R.id.deleteButton)
 
         noteTextView.text = note.content
-        try {
-            val dateTime = dateTimeFormat.parse(note.dateTime)
-            timeTextView.text = timeFormat.format(dateTime)
-        } catch (e: ParseException) {
-            Log.e("MainActivity", "Error parsing time: ${note.dateTime}", e)
-        }
+        timeTextView.text = note.dateTime ?: "-" // Устанавливаем значение времени по умолчанию
+
+        noteTextView.text = note.content
+        val dateTime = note.dateTime?.let { dateTimeFormat.parse(it) }
+        val formattedTime = dateTime?.let { timeFormat.format(it) } ?: "-"
+        timeTextView.text = formattedTime
+
         editButton.setOnClickListener {
             Log.d("MainActivity", "Edit button clicked for note: $note")
             val intent = Intent(this, EditNoteActivity::class.java)
