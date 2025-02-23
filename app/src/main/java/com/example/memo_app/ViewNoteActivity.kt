@@ -1,3 +1,4 @@
+
 package com.example.memo_app
 
 import android.os.Bundle
@@ -33,11 +34,11 @@ class ViewNoteActivity : ComponentActivity() {
         if (note != null) {
             Log.d("ViewNoteActivity", "Note loaded: $note")
             textViewNoteContent.text = note.content
-            textViewDescription.text = note.description ?: "-" // Устанавливаем дефолтное значение для описания
+            textViewDescription.text = note.description
 
             // Парсинг и форматирование даты
-            val dateTime = note.dateTime?.let { dateTimeFormat.parse(it) }
-            val formattedDate = dateTime?.let { displayDateFormat.format(it) } ?: "-"
+            val dateTime = dateTimeFormat.parse(note.dateTime)
+            val formattedDate = displayDateFormat.format(dateTime)
             textViewDateTime.text = formattedDate
         } else {
             Log.d("ViewNoteActivity", "Note not found")

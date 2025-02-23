@@ -1,3 +1,4 @@
+
 package com.example.memo_app
 
 import android.content.Intent
@@ -51,11 +52,10 @@ class HistoryActivity : ComponentActivity() {
 
         noteTextView.text = note.content
         try {
-            val dateTime = note.dateTime?.let { dateTimeFormat.parse(it) }
-            timeTextView.text = dateTime?.let { timeFormat.format(it) } ?: "-" // Обработка времени по умолчанию
+            val dateTime = dateTimeFormat.parse(note.dateTime)
+            timeTextView.text = timeFormat.format(dateTime)
         } catch (e: ParseException) {
             Log.e("HistoryActivity", "Error parsing time: ${note.dateTime}", e)
-            timeTextView.text = "-" // Устанавливаем дефолтное значение времени в случае ошибки
         }
         Log.d("HistoryActivity", "Note added to history layout: ${note.content}")
 
