@@ -47,7 +47,10 @@ android {
         }
     }
 }
-
+dependencies {
+    implementation(libs.androidx.core.ktx)
+    implementation("androidx.appcompat:appcompat:1.4.0")
+}
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

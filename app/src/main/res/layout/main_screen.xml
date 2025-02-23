@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/main_screen"
     android:background="@color/background_color_light">
-
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -23,10 +23,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:fontFamily="@font/lineyka"
+                android:fontFamily="@font/songer"
                 android:text="Мои планы"
                 android:textColor="@color/black"
-                android:textSize="25dp"></TextView>
+                android:textSize="23dp"></TextView>
         </FrameLayout>
 
         <ScrollView
@@ -52,106 +52,107 @@
 
     </LinearLayout>
 
-        <View
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="52dp"
+            android:layout_height="60dp"
             android:layout_alignParentBottom="true"
+            android:layout_marginLeft="16dp"
+            android:layout_marginBottom="15dp"
+            android:gravity="center"
+            android:layout_marginRight="16dp"
             android:background="@drawable/form_for_navigation_bar">
-        </View>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <Space
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_gravity="center"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"></Space>
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-            <Space
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"></Space>
 
-            <ImageButton
-                android:id="@+id/history_button"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginTop="2dp"
-                android:background="@drawable/history_image_button"></ImageButton>
-
-            <Space
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"></Space>
-
-            <FrameLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <ImageButton
-                    android:id="@+id/main_buttom"
-                    android:layout_width="160dp"
-                    android:layout_height="50dp"
-                    android:layout_marginBottom="8dp"
-                    android:background="@drawable/form_for_main_button"></ImageButton>
-
-                <LinearLayout
+                <Space
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="3dp">
+                    android:layout_weight="1"></Space>
 
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_marginBottom="3dp"
-                        android:background="@drawable/pencil_image_for_main_image"></ImageView>
+                <ImageButton
+                    android:id="@+id/history_button"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/history_button"></ImageButton>
 
-                    <Space
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"></Space>
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"></Space>
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageButton
+                        android:id="@+id/main_buttom"
+                        android:layout_width="140dp"
+                        android:layout_height="45dp"
+                        android:background="@drawable/form_for_main_button"></ImageButton>
+
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"></Space>
+                        android:layout_gravity="center">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:fontFamily="@font/lineyka"
-                        android:text="Написать"
-                        android:textAlignment="center"
-                        android:textColor="@color/text_color_light"
-                        android:textSize="17dp"></TextView>
-                </LinearLayout>
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_marginBottom="3dp"
+                            android:background="@drawable/pencil_image_for_main_image"></ImageView>
+
+                        <Space
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"></Space>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:fontFamily="@font/lineyka"
+                            android:text="Написать"
+                            android:textAlignment="center"
+                            android:textColor="@color/text_color_main_button"
+                            android:textSize="17dp"></TextView>
+                    </LinearLayout>
 
 
-            </FrameLayout>
+                </FrameLayout>
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"></Space>
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"></Space>
 
-            <Space
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"></Space>
+                <ImageButton
+                    android:id="@+id/settings_button"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/settings_button"></ImageButton>
 
-            <ImageButton
-                android:id="@+id/settings_button"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginTop="2dp"
-                android:background="@drawable/settings_image_button"></ImageButton>
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"></Space>
 
-            <Space
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"></Space>
 
-            <Space
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"></Space>
+            </LinearLayout>
+        </FrameLayout>
 
-        </LinearLayout>
 
     </RelativeLayout>
 </LinearLayout>
