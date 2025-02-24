@@ -1,4 +1,3 @@
-
 package com.example.memo_app
 
 import android.content.Intent
@@ -57,6 +56,10 @@ class HistoryActivity : ComponentActivity() {
         } catch (e: ParseException) {
             Log.e("HistoryActivity", "Error parsing time: ${note.dateTime}", e)
         }
+
+        // Установка фона для noteView
+        noteView.setBackgroundResource(note.backgroundColor)
+
         Log.d("HistoryActivity", "Note added to history layout: ${note.content}")
 
         noteView.setOnClickListener {

@@ -1,4 +1,3 @@
-
 package com.example.memo_app
 
 import android.Manifest
@@ -150,6 +149,10 @@ class MainActivity : ComponentActivity() {
         } catch (e: ParseException) {
             Log.e("MainActivity", "Error parsing time: ${note.dateTime}", e)
         }
+
+        // Установка фона для noteView
+        noteView.setBackgroundResource(note.backgroundColor)
+
         editButton.setOnClickListener {
             Log.d("MainActivity", "Edit button clicked for note: $note")
             val intent = Intent(this, EditNoteActivity::class.java)

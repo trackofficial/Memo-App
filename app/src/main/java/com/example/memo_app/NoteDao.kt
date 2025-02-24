@@ -1,10 +1,7 @@
-
 package com.example.memo_app
 
 import android.content.ContentValues
 import android.content.Context
-import android.database.sqlite.SQLiteDatabase
-import android.database.sqlite.SQLiteOpenHelper
 
 class NoteDao(context: Context) {
 
@@ -14,9 +11,10 @@ class NoteDao(context: Context) {
         val db = dbHelper.writableDatabase
         val values = ContentValues().apply {
             put(DatabaseHelper.COLUMN_CONTENT, note.content)
-            put(DatabaseHelper.COLUMN_DESCRIPTION, note.description) // Добавление описания
+            put(DatabaseHelper.COLUMN_DESCRIPTION, note.description)
             put(DatabaseHelper.COLUMN_DATETIME, note.dateTime)
             put(DatabaseHelper.COLUMN_IS_DELETED, note.isDeleted)
+            put(DatabaseHelper.COLUMN_BACKGROUND_COLOR, note.backgroundColor) // Добавление цвета фона
         }
         note.id = db.insert(DatabaseHelper.TABLE_NAME, null, values).toInt()
         db.close()
@@ -26,9 +24,10 @@ class NoteDao(context: Context) {
         val db = dbHelper.writableDatabase
         val values = ContentValues().apply {
             put(DatabaseHelper.COLUMN_CONTENT, note.content)
-            put(DatabaseHelper.COLUMN_DESCRIPTION, note.description) // Добавление описания
+            put(DatabaseHelper.COLUMN_DESCRIPTION, note.description)
             put(DatabaseHelper.COLUMN_DATETIME, note.dateTime)
             put(DatabaseHelper.COLUMN_IS_DELETED, note.isDeleted)
+            put(DatabaseHelper.COLUMN_BACKGROUND_COLOR, note.backgroundColor) // Добавление цвета фона
         }
         val selection = "${DatabaseHelper.COLUMN_ID} = ?"
         val selectionArgs = arrayOf(note.id.toString())
@@ -52,15 +51,17 @@ class NoteDao(context: Context) {
         while (cursor.moveToNext()) {
             val id = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_ID))
             val content = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CONTENT))
-            val description = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_DESCRIPTION)) // Получение описания
+            val description = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_DESCRIPTION))
             val dateTime = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_DATETIME))
             val isDeleted = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_IS_DELETED)) == 1
+            val backgroundColor = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_BACKGROUND_COLOR)) // Получение цвета фона
             val note = Note(
                 id = id,
                 content = content,
                 description = description,
                 dateTime = dateTime,
-                isDeleted = isDeleted
+                isDeleted = isDeleted,
+                backgroundColor = backgroundColor
             )
             notes.add(note)
         }
@@ -85,15 +86,17 @@ class NoteDao(context: Context) {
         while (cursor.moveToNext()) {
             val id = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_ID))
             val content = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CONTENT))
-            val description = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_DESCRIPTION)) // Получение описания
+            val description = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_DESCRIPTION))
             val dateTime = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_DATETIME))
             val isDeleted = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_IS_DELETED)) == 1
+            val backgroundColor = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_BACKGROUND_COLOR)) // Получение цвета фона
             val note = Note(
                 id = id,
                 content = content,
                 description = description,
                 dateTime = dateTime,
-                isDeleted = isDeleted
+                isDeleted = isDeleted,
+                backgroundColor = backgroundColor
             )
             notes.add(note)
         }
@@ -101,6 +104,7 @@ class NoteDao(context: Context) {
         db.close()
         return notes
     }
+
     fun delete(note: Note) {
         val db = dbHelper.writableDatabase
         val selection = "${DatabaseHelper.COLUMN_ID} = ?"

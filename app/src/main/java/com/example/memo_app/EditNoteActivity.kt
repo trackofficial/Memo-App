@@ -1,3 +1,4 @@
+
 package com.example.memo_app
 
 import android.app.DatePickerDialog
@@ -7,9 +8,14 @@ import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import androidx.activity.ComponentActivity
+import androidx.core.content.ContextCompat
 import java.util.Calendar
 
 class EditNoteActivity : ComponentActivity() {
@@ -23,6 +29,7 @@ class EditNoteActivity : ComponentActivity() {
     private lateinit var noteDao: NoteDao
     private var noteId: Int = 0
     private var selectedDate: String = ""
+    private var selectedBackgroundResource: Int = R.drawable.background_3 // Фон по умолчанию
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,8 +38,8 @@ class EditNoteActivity : ComponentActivity() {
         editTextNoteContent = findViewById(R.id.editTextNoteContent)
         editTextDescription = findViewById(R.id.editAddText) // Инициализация нового поля
         editTextTime = findViewById(R.id.editTextTime)
-        buttonDeleteNote = findViewById(R.id.buttonDeleteNote)
         buttonSaveNote = findViewById(R.id.buttonSaveNote)
+        buttonDeleteNote = findViewById(R.id.buttonDeleteNote)
         buttonSelectDate = findViewById(R.id.buttonSelectDateTime)
         noteDao = NoteDao(this)
 
@@ -50,6 +57,7 @@ class EditNoteActivity : ComponentActivity() {
             if (dateTimeParts.size == 2) {
                 selectedDate = dateTimeParts[0]
                 editTextTime.setText(dateTimeParts[1]) // Отображение времени с двоеточием
+                selectedBackgroundResource = note.backgroundColor // Установка ранее сохраненного фона
             }
         } else {
             Log.d("EditNoteActivity", "Note not found")
@@ -101,6 +109,29 @@ class EditNoteActivity : ComponentActivity() {
             override fun afterTextChanged(s: Editable?) {}
         })
 
+        // Кнопки изменения цвета
+        val buttonColor1: ImageButton = findViewById(R.id.buttonColor1)
+        val buttonColor2: ImageButton = findViewById(R.id.buttonColor2)
+        val buttonColor3: ImageButton = findViewById(R.id.buttonColor3)
+        val buttonColor4: ImageButton = findViewById(R.id.buttonColor4)
+
+        // Применение цвета к фону и кнопке
+        buttonColor1.setOnClickListener {
+            selectedBackgroundResource = R.drawable.background_1
+            updateNoteItemBackground(selectedBackgroundResource)
+        }
+        buttonColor2.setOnClickListener {
+            selectedBackgroundResource = R.drawable.background_2
+            updateNoteItemBackground(selectedBackgroundResource)
+        }
+        buttonColor3.setOnClickListener {
+            selectedBackgroundResource = R.drawable.background_3
+            updateNoteItemBackground(selectedBackgroundResource)
+        }
+        buttonColor4.setOnClickListener {
+            selectedBackgroundResource = R.drawable.background_4
+            updateNoteItemBackground(selectedBackgroundResource)
+        }
         buttonDeleteNote.setOnClickListener {
             Log.d("EditNoteActivity", "Delete button clicked")
             if (note != null) {
@@ -115,7 +146,6 @@ class EditNoteActivity : ComponentActivity() {
                 finish()
             }
         }
-
         buttonSaveNote.setOnClickListener {
             Log.d("EditNoteActivity", "Save button clicked")
             val updatedContent = editTextNoteContent.text.toString()
@@ -127,6 +157,7 @@ class EditNoteActivity : ComponentActivity() {
                 note.content = updatedContent
                 note.description = updatedDescription // Обновление описания
                 note.dateTime = dateTime
+                note.backgroundColor = selectedBackgroundResource // Обновление цвета фона
                 note.isDeleted = false // Убедитесь, что заметка не помечена как удаленная
                 noteDao.update(note)
                 Log.d("EditNoteActivity", "Note updated: $note")
@@ -154,7 +185,6 @@ class EditNoteActivity : ComponentActivity() {
             }
         }
     }
-
     private fun selectDate() {
         val calendar = Calendar.getInstance()
         val datePickerDialog = DatePickerDialog(this, { _, year, month, dayOfMonth ->
@@ -162,5 +192,14 @@ class EditNoteActivity : ComponentActivity() {
             Log.d("EditNoteActivity", "Selected date: $selectedDate")
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
         datePickerDialog.show()
+    }
+
+    private fun updateNoteItemBackground(backgroundResource: Int) {
+        val inflater = LayoutInflater.from(this)
+        val noteView = inflater.inflate(R.layout.note_item, null) as ViewGroup
+        val deleteButton: ImageButton = noteView.findViewById(R.id.deleteButton)
+
+        noteView.setBackgroundResource(backgroundResource)
+        deleteButton.setBackgroundResource(backgroundResource)
     }
 }

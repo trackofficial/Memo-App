@@ -1,4 +1,3 @@
-
 package com.example.memo_app
 
 import android.content.Context
@@ -26,6 +25,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         const val COLUMN_DESCRIPTION = "description" // Новый столбец для описания
         const val COLUMN_DATETIME = "dateTime"
         const val COLUMN_IS_DELETED = "isDeleted"
+        const val COLUMN_BACKGROUND_COLOR = "backgroundColor" // Новый столбец для цвета фона
 
         private const val SQL_CREATE_ENTRIES =
             "CREATE TABLE $TABLE_NAME (" +
@@ -33,7 +33,8 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                     "$COLUMN_CONTENT TEXT," +
                     "$COLUMN_DESCRIPTION TEXT," + // Создание нового столбца
                     "$COLUMN_DATETIME TEXT," +
-                    "$COLUMN_IS_DELETED INTEGER)"
+                    "$COLUMN_IS_DELETED INTEGER," +
+                    "$COLUMN_BACKGROUND_COLOR INTEGER)" // Создание нового столбца
 
         private const val SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS $TABLE_NAME"
     }

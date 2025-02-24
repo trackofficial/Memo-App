@@ -3,24 +3,24 @@
 android:layout_width="match_parent"
 android:layout_height="wrap_content"
 android:orientation="vertical"
-android:padding="16dp"
+android:padding="14dp"
     android:layout_marginTop="10dp"
     android:layout_marginRight="16dp"
     android:layout_marginLeft="16dp"
-android:background="@drawable/form_block_note">
+android:background="@drawable/background_1">
     <ImageButton
         android:id="@+id/deleteButton"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/form_block_note"/>
+        android:background="@drawable/back_none"/>
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 <!-- Декоративные элементы -->
 <ImageView
-    android:layout_width="13dp"
-    android:layout_height="13dp"
+    android:layout_width="16dp"
+    android:layout_height="16dp"
     android:src="@drawable/icon_pin"/>
 
 <TextView
@@ -29,10 +29,10 @@ android:background="@drawable/form_block_note">
     android:layout_height="wrap_content"
     android:layout_marginTop="2dp"
     android:paddingTop="1dp"
-    android:textSize="20dp"
+    android:textSize="21dp"
     android:layout_marginRight="5dp"
     android:layout_marginLeft="5dp"
-    android:textColor="@color/black"
+    android:textColor="@color/white"
     android:fontFamily="@font/lineyka"
     android:paddingBottom="1dp" />
 
@@ -44,17 +44,17 @@ android:background="@drawable/form_block_note">
     <ImageView
         android:layout_marginLeft="5dp"
         android:layout_marginTop="2dp"
-        android:layout_width="18dp"
-        android:layout_height="18dp"
+        android:layout_width="21dp"
+        android:layout_height="21dp"
         android:src="@drawable/clock_pin" />
     <TextView
         android:layout_marginRight="5dp"
-        android:paddingLeft="10dp"
+        android:paddingLeft="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="18dp"
         android:id="@+id/timeTextView"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:layout_marginTop="2dp"
         android:fontFamily="@font/lineyka"/>
 </LinearLayout>

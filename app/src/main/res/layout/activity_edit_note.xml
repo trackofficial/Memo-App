@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/songer"
         android:layout_gravity="center_horizontal"
-        android:textSize="16dp"
+        android:textSize="18dp"
         android:textColor="@color/black"
         android:text="Отредактируйте заметку"
         android:layout_marginTop="0dp"/>
@@ -30,7 +30,7 @@
                 android:layout_height="wrap_content"
                 android:hint="Введите заметку"
                 android:gravity="top|start"
-                android:layout_marginTop="100dp"
+                android:layout_marginTop="60dp"
                 />
             <EditText
                 android:id="@+id/editTextTime"
@@ -78,6 +78,136 @@
                     android:fontFamily="@font/lineyka"
                     android:textColor="@color/background_color_light"></TextView>
             </FrameLayout>
+            <!--Этот блок для смены фона-->
+            <LinearLayout
+                android:gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="14dp"
+                    android:text="Насколько важно это событие?"
+                    android:fontFamily="@font/songer"
+                    android:textColor="@color/text_color_main_button"></TextView>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="10dp">
+                    <LinearLayout
+                        android:background="@drawable/background_for_color_block"
+                        android:layout_width="match_parent"
+                        android:gravity="center_vertical"
+                        android:layout_height="50dp"
+                        android:orientation="horizontal">
+                        <View
+                            android:layout_marginRight="10dp"
+                            android:layout_marginLeft="10dp"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:background="@drawable/background_1_small"></View>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Очень важно"
+                            android:textColor="@color/text_color_for_other"
+                            android:fontFamily="@font/lineyka"
+                            android:textSize="20dp"></TextView>
+                    <ImageButton
+                        android:background="@drawable/back_none"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/buttonColor1"></ImageButton>
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:background="@drawable/background_for_color_block"
+                        android:layout_width="match_parent"
+                        android:layout_marginTop="5dp"
+                        android:gravity="center_vertical"
+                        android:layout_height="50dp"
+                        android:orientation="horizontal">
+                        <View
+                            android:layout_marginRight="10dp"
+                            android:layout_marginLeft="10dp"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:background="@drawable/background_2_small"></View>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Важно"
+                            android:textColor="@color/text_color_for_other"
+                            android:fontFamily="@font/lineyka"
+                            android:textSize="20dp"></TextView>
+                        <ImageButton
+                            android:background="@drawable/back_none"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:id="@+id/buttonColor2"></ImageButton>
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:background="@drawable/background_for_color_block"
+                        android:layout_width="match_parent"
+                        android:layout_marginTop="5dp"
+                        android:gravity="center_vertical"
+                        android:layout_height="50dp"
+                        android:orientation="horizontal">
+                        <View
+                            android:layout_marginRight="10dp"
+                            android:layout_marginLeft="10dp"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:background="@drawable/background_3_small"></View>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Не сильно"
+                            android:textColor="@color/text_color_for_other"
+                            android:fontFamily="@font/lineyka"
+                            android:textSize="20dp"></TextView>
+                        <ImageButton
+                            android:background="@drawable/back_none"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:id="@+id/buttonColor3"></ImageButton>
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:background="@drawable/background_for_color_block"
+                        android:layout_width="match_parent"
+                        android:layout_marginTop="5dp"
+                        android:gravity="center_vertical"
+                        android:layout_height="50dp"
+                        android:orientation="horizontal">
+                        <View
+                            android:layout_marginRight="10dp"
+                            android:layout_marginLeft="10dp"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:background="@drawable/background_4_small"></View>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Неважно"
+                            android:textColor="@color/text_color_for_other"
+                            android:fontFamily="@font/lineyka"
+                            android:textSize="20dp"></TextView>
+                        <ImageButton
+                            android:background="@drawable/back_none"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:id="@+id/buttonColor4"></ImageButton>
+
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
 
 <LinearLayout

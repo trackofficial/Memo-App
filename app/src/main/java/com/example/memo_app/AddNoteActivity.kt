@@ -6,6 +6,9 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import androidx.activity.ComponentActivity
@@ -14,19 +17,20 @@ import java.util.Calendar
 class AddNoteActivity : ComponentActivity() {
 
     private lateinit var editTextNoteContent: EditText
-    private lateinit var editTextDescription: EditText // Новое поле для описания
+    private lateinit var editTextDescription: EditText
     private lateinit var editTextTime: EditText
     private lateinit var buttonSaveNote: ImageButton
     private lateinit var buttonSelectDate: ImageButton
     private lateinit var noteDao: NoteDao
     private var selectedDate: String = ""
+    private var selectedBackgroundResource: Int = R.drawable.background_3
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_note)
 
         editTextNoteContent = findViewById(R.id.editTextNoteContent)
-        editTextDescription = findViewById(R.id.editAddText) // Инициализация нового поля
+        editTextDescription = findViewById(R.id.editAddText)
         editTextTime = findViewById(R.id.editTextTime)
         buttonSaveNote = findViewById(R.id.buttonSave)
         buttonSelectDate = findViewById(R.id.buttonSelectDateTime)
@@ -57,9 +61,33 @@ class AddNoteActivity : ComponentActivity() {
             override fun afterTextChanged(s: Editable?) {}
         })
 
+        // Кнопки изменения цвета
+        val buttonColor1: ImageButton = findViewById(R.id.buttonColor1)
+        val buttonColor2: ImageButton = findViewById(R.id.buttonColor2)
+        val buttonColor3: ImageButton = findViewById(R.id.buttonColor3)
+        val buttonColor4: ImageButton = findViewById(R.id.buttonColor4)
+
+        // Применение цвета к фону и кнопке
+        buttonColor1.setOnClickListener {
+            selectedBackgroundResource = R.drawable.background_1
+            updateNoteItemBackground(selectedBackgroundResource)
+        }
+        buttonColor2.setOnClickListener {
+            selectedBackgroundResource = R.drawable.background_2
+            updateNoteItemBackground(selectedBackgroundResource)
+        }
+        buttonColor3.setOnClickListener {
+            selectedBackgroundResource = R.drawable.background_3
+            updateNoteItemBackground(selectedBackgroundResource)
+        }
+        buttonColor4.setOnClickListener {
+            selectedBackgroundResource = R.drawable.background_4
+            updateNoteItemBackground(selectedBackgroundResource)
+        }
+
         buttonSaveNote.setOnClickListener {
             val noteContent = editTextNoteContent.text.toString()
-            val noteDescription = editTextDescription.text.toString() // Получение описания
+            val noteDescription = editTextDescription.text.toString()
             val time = editTextTime.text.toString()
             Log.d("AddNoteActivity", "Note content: $noteContent, description: $noteDescription")
             if (noteContent.isNotEmpty() && selectedDate.isNotEmpty() && time.isNotEmpty()) {
@@ -68,7 +96,8 @@ class AddNoteActivity : ComponentActivity() {
                     id = 0, // ID будет генерироваться автоматически
                     content = noteContent,
                     description = noteDescription, // Установка описания
-                    dateTime = dateTime
+                    dateTime = dateTime,
+                    backgroundColor = selectedBackgroundResource // Сохранение выбранного фона
                 )
                 noteDao.insert(note)
                 Log.d("AddNoteActivity", "Note added: $note")
@@ -91,6 +120,7 @@ class AddNoteActivity : ComponentActivity() {
             }
         }
     }
+
     private fun selectDate() {
         val calendar = Calendar.getInstance()
         val datePickerDialog = DatePickerDialog(this, { _, year, month, dayOfMonth ->
@@ -98,5 +128,14 @@ class AddNoteActivity : ComponentActivity() {
             Log.d("AddNoteActivity", "Selected date: $selectedDate")
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
         datePickerDialog.show()
+    }
+
+    private fun updateNoteItemBackground(backgroundResource: Int) {
+        val inflater = LayoutInflater.from(this)
+        val noteView = inflater.inflate(R.layout.note_item, null) as ViewGroup
+        val deleteButton: ImageButton = noteView.findViewById(R.id.deleteButton)
+
+        noteView.setBackgroundResource(backgroundResource)
+        deleteButton.setBackgroundResource(backgroundResource)
     }
 }

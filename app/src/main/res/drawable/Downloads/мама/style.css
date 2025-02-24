@@ -1,0 +1,286 @@
+@import url('https://fonts.googleapis.com/css2?family=Belanosima&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Belanosima&family=Raleway:wght@300;400&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Jost:wght@300&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Geologica&family=Montserrat:wght@600&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Geologica&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=PT+Sans+Caption:wght@700&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:wght@500&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500&family=Montserrat+Alternates:wght@500&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@600&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Alegreya+Sans+SC:wght@500&family=Manrope:wght@500&family=Montserrat+Alternates:wght@500&family=Montserrat:wght@600&family=Roboto&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Alegreya+Sans+SC:wght@500&family=Manrope:wght@500&family=Montserrat+Alternates:wght@500&family=Montserrat:wght@600&display=swap');
+body{
+    
+    background-color: #9209d1
+}
+.text{
+    color: white;
+    font-family: "Belanosima";
+    font-size: 50px;
+    margin-left: 100px;
+    padding-top: 10px;
+}   
+.header{
+    max-height: 50px;
+    float: right;
+}
+.key{
+    color: rgb(255, 255, 255);
+    font-family: "Raleway";
+    display: inline-block;
+    transition: all 0.1s;
+    margin-right:10px ;
+    font-size: 18px;
+    padding-top:10px;
+}
+.key:hover{
+border-bottom: 2px solid white;
+font-size: 20px;
+}
+.key:active{
+    border-bottom: 1px solid white;
+    font-size: 23px;
+    }
+    .main1{
+height: 500px;
+width: 100%;
+    }
+    .main2{
+        height: 600px;
+        width: 50%;
+        display: inline-block;
+            }
+.text2{
+    color: rgb(255, 255, 255);
+
+    font-family: "Alegreya Sans Sc", sans-serif;
+    font-size: 90px;
+    padding-top: 200px;
+text-align: center;
+}
+.rounds{
+height: 50px;
+width: 100%;
+}
+.round{
+    width: 210px;
+    height: 210px;
+    border-radius: 50%;
+    background-color: rgb(215, 215, 215);
+margin-left: 40px;
+transition: all 0.2s;
+color:rgb(215, 215, 215);
+text-align: center;
+justify-content: center;
+align-items: center;
+}
+.round:hover{
+color: black;
+width: 250px;
+height: 250px;
+border-radius: 100%;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5)
+}
+.name{
+    color: white;
+    font-family: "Geologica";
+    text-align: center;
+    padding-top: 0px;
+    font-size: 30px;
+}
+.cont{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    height: 250px;
+
+}
+.t1{
+font-family:"Poppins" ;
+text-align: center;
+}
+.backg{
+    height: 500px;
+    background-color: #ae49da;
+    width:100%;
+    box-shadow: 0 0 45px rgba(0, 0, 0, 0.5)
+}
+.backg1{
+    height: 250px;
+    background-color: #ae49da;
+    width:100%;
+margin-top: 50px;
+    text-align: left;
+    box-shadow: 0 0 45px rgba(0, 0, 0, 0.5)
+}
+.footer{
+    height: 150px;
+    width: 100%;
+    background-color: rgb(39, 39, 39);
+}
+.roundimg1{
+    width: 60px;
+    height: 60px;
+margin-top: 50px;
+
+}
+.roundimg2{
+    width: 60px;
+    height: 60px;
+    margin-top: 50px;
+}
+.roundimg3{
+    width: 60px;
+    height: 60px;
+    margin-top: 50px;
+}
+.name1{
+    font-family:"Montserrat" ;
+    font-size: 16px;
+    text-align: center;
+}
+.text3{
+    color: white;
+    text-align: left;
+    margin-left: 20px;
+    padding-top: 10px;
+    font-family:"Roboto"; 
+}
+.name2{
+    font-family:"Manrope" ;
+}
+.heart{
+    width: 200px;
+    display: inline-block;
+}
+.heart1{
+display: inline-block;
+float:right;
+}
+.firstglave{
+    width: 600px;
+    height: 250px;
+    text-align: left;
+    color: white;
+}
+.container{
+    max-width: 1200px;
+    margin: 0px auto;
+    padding: 0px 25px;
+}
+.roundlit{
+width: 190px;
+height: 190px;
+border-radius: 100%;
+background-color: rgb(202, 210, 225);
+margin-left: 20px;
+transition: 0.2s all;
+margin-top: 100px;
+color:rgb(202, 210, 225);
+text-align: center;
+justify-content: center;
+align-items: center;
+font-size: 1px;
+}
+.roundlit_child{
+    width: 70px;
+    padding-top: 50px;
+    transition: 0.2s all;
+}
+.roundlit:hover{
+    font-size: 15px;
+    color: black;
+    width: 210px;
+    height: 210px;
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.5)
+}
+.roundlit_child:hover{
+    padding-top: 30px;
+    width:80px;
+}
+.roundlit_child1{
+    width: 70px;
+    padding-top: 50px;
+    transition: 0.2s all;
+}
+.roundlit_child1:hover{
+    padding-top: 30px;
+    width:80px;
+}
+.round1{
+display: flex;
+flex-flow:wrap nowrap;
+align-items: center;
+align-content: center;
+justify-content: center;
+}
+
+@media screen and (max-width:1200px) {
+    .container{
+        max-width:970px;
+        }
+}
+@media screen and (max-width:992px) {
+    .container{
+    max-width:750px;
+    }
+}
+@media screen and (max-width:767px){
+    .round1{
+        display: block;
+        }
+        .roundlit{
+            width: 250px;
+            height: 250px;
+            border-radius: 100%;
+            background-color: rgb(202, 210, 225);
+            margin-left: 30px;
+            transition: 0.2s all;
+            margin-top: 50px;
+            }
+            .roundlit:hover{
+                margin-left: 15px;
+                width: 280px;
+                height: 280px;
+                align-self: center;
+                box-shadow: 0 0 25px rgba(255, 255, 255, 0.5)
+            }
+            .roundlit_child{
+                width: 70px;
+                padding-top: 20px;
+                transition: 0.2s all;
+            }
+            .roundlit_child:hover{
+                padding-top: 10px;
+                width:80px;
+            }
+            .roundlit_child1{
+                width: 70px;
+                padding-top: 80px;
+                transition: 0.2s all;
+            }
+            .roundlit_child1:hover{
+                padding-top: 70px;
+                width:80px;
+            }
+
+        }
