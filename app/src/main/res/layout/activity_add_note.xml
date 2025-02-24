@@ -92,23 +92,23 @@
             android:layout_marginRight="16dp"
             android:background="@drawable/form_for_navigation_bar">
             <FrameLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_gravity="center">
                 <ImageButton
+                    android:background="@drawable/form_for_other_button"
                     android:id="@+id/buttonSave"
-                    android:layout_width="200dp"
-                    android:layout_height="48dp"
-                    android:background="@drawable/form_for_main_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Сохранить"
                     android:layout_gravity="center"
-                    android:textSize="18dp"
+                    android:textSize="20dp"
                     android:fontFamily="@font/lineyka"
-                    android:textColor="@color/text_color_main_button"></TextView>
+                    android:textColor="@color/background_color_light"></TextView>
             </FrameLayout>
         </FrameLayout>
 

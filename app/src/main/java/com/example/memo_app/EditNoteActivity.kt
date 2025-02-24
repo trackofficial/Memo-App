@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
+import android.text.InputFilter
 import android.text.TextWatcher
 import android.util.Log
 import android.widget.EditText
@@ -48,7 +49,7 @@ class EditNoteActivity : ComponentActivity() {
             val dateTimeParts = note.dateTime.split(" ")
             if (dateTimeParts.size == 2) {
                 selectedDate = dateTimeParts[0]
-                editTextTime.setText(dateTimeParts[1].replace(":", ""))
+                editTextTime.setText(dateTimeParts[1]) // Отображение времени с двоеточием
             }
         } else {
             Log.d("EditNoteActivity", "Note not found")
@@ -56,6 +57,27 @@ class EditNoteActivity : ComponentActivity() {
 
         buttonSelectDate.setOnClickListener {
             selectDate()
+        }
+
+        // Установка фильтра на ввод для ограничения числа знаков
+        editTextTime.filters = arrayOf(InputFilter.LengthFilter(5))
+
+        editTextTime.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                // Проверка формата времени при потере фокуса
+                val timeText = editTextTime.text.toString().replace(":", "")
+                if (timeText.length == 4) {
+                    val hour = timeText.substring(0, 2).toIntOrNull()
+                    val minute = timeText.substring(2, 4).toIntOrNull()
+                    if (hour != null && minute != null && hour in 0..23 && minute in 0..59) {
+                        editTextTime.setText(String.format("%02d:%02d", hour, minute))
+                    } else {
+                        editTextTime.error = "Неверный формат времени"
+                    }
+                } else {
+                    editTextTime.error = "Неверный формат времени"
+                }
+            }
         }
 
         editTextTime.addTextChangedListener(object : TextWatcher {
@@ -93,6 +115,7 @@ class EditNoteActivity : ComponentActivity() {
                 finish()
             }
         }
+
         buttonSaveNote.setOnClickListener {
             Log.d("EditNoteActivity", "Save button clicked")
             val updatedContent = editTextNoteContent.text.toString()
