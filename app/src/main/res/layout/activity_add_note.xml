@@ -106,7 +106,7 @@
                     android:layout_height="wrap_content"
                     android:text="Сохранить"
                     android:layout_gravity="center"
-                    android:textSize="20dp"
+                    android:textSize="18dp"
                     android:fontFamily="@font/lineyka"
                     android:textColor="@color/background_color_light"></TextView>
             </FrameLayout>
