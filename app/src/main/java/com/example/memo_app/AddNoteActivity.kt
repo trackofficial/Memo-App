@@ -1,4 +1,3 @@
-
 package com.example.memo_app
 
 import android.app.DatePickerDialog
@@ -41,11 +40,17 @@ class AddNoteActivity : ComponentActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (s != null && s.length == 4) {
-                    val hour = s.substring(0, 2)
-                    val minute = s.substring(2, 4)
-                    editTextTime.setText("$hour:$minute")
-                    editTextTime.setSelection(editTextTime.text.length)
+                if (s != null && s.isNotEmpty()) {
+                    val cleanString = s.toString().replace(":", "")
+                    val formattedString = when (cleanString.length) {
+                        4 -> "${cleanString.substring(0, 2)}:${cleanString.substring(2, 4)}"
+                        3 -> "${cleanString.substring(0, 1)}:${cleanString.substring(1, 3)}"
+                        else -> cleanString
+                    }
+                    if (s.toString() != formattedString) {
+                        editTextTime.setText(formattedString)
+                        editTextTime.setSelection(formattedString.length)
+                    }
                 }
             }
 
@@ -58,13 +63,7 @@ class AddNoteActivity : ComponentActivity() {
             val time = editTextTime.text.toString()
             Log.d("AddNoteActivity", "Note content: $noteContent, description: $noteDescription")
             if (noteContent.isNotEmpty() && selectedDate.isNotEmpty() && time.isNotEmpty()) {
-                // Обработка времени в формате HH:mm
-                val timeFormatted = if (time.length == 4) {
-                    "${time.substring(0, 2)}:${time.substring(2, 4)}"
-                } else {
-                    time
-                }
-                val dateTime = "$selectedDate $timeFormatted"
+                val dateTime = "$selectedDate $time"
                 val note = Note(
                     id = 0, // ID будет генерироваться автоматически
                     content = noteContent,
