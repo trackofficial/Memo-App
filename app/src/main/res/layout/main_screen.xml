@@ -30,11 +30,11 @@
         </FrameLayout>
 
         <ScrollView
-            android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:fadeScrollbars="false"
             android:scrollbars="none"
+            android:paddingBottom="76dp"
             android:layout_weight="1">
 
             <LinearLayout
@@ -43,9 +43,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="180dp"></View>
             </LinearLayout>
 
         </ScrollView>

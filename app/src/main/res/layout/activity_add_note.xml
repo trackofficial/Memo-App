@@ -11,7 +11,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/lineyka"
+        android:fontFamily="@font/songer"
         android:textSize="16dp"
         android:layout_gravity="center_horizontal"
         android:textColor="@color/black"
@@ -63,12 +63,14 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp">
+
                 <ImageButton
                     android:id="@+id/buttonSelectDateTime"
                     android:layout_width="match_parent"
                     android:layout_height="36dp"
-                    android:background="@drawable/form_for_main_button"
-                    android:layout_gravity="center" />
+                    android:layout_gravity="center"
+                    android:background="@drawable/form_for_other_button" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -76,36 +78,40 @@
                     android:layout_gravity="center"
                     android:textSize="14dp"
                     android:fontFamily="@font/lineyka"
-                    android:textColor="@color/text_color_light"></TextView>
+                    android:textColor="@color/background_color_light"></TextView>
             </FrameLayout>
         </LinearLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_gravity="bottom"
-            android:background="@drawable/form_for_navigation_bar">
-        </View>
         <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center"
-            android:layout_marginBottom="10dp">
-            <ImageButton
-                android:id="@+id/buttonSave"
-                android:layout_width="200dp"
-                android:layout_height="48dp"
-                android:background="@drawable/form_for_main_button"
-                android:layout_gravity="center" />
-            <TextView
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_gravity="bottom"
+            android:layout_marginLeft="16dp"
+            android:layout_marginBottom="15dp"
+            android:gravity="center"
+            android:layout_marginRight="16dp"
+            android:background="@drawable/form_for_navigation_bar">
+            <FrameLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Сохранить"
-                android:layout_gravity="center"
-                android:textSize="18dp"
-                android:fontFamily="@font/lineyka"
-                android:textColor="@color/text_color_light"></TextView>
+                android:layout_gravity="center">
+                <ImageButton
+                    android:id="@+id/buttonSave"
+                    android:layout_width="200dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/form_for_main_button"
+                    android:layout_gravity="center" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Сохранить"
+                    android:layout_gravity="center"
+                    android:textSize="18dp"
+                    android:fontFamily="@font/lineyka"
+                    android:textColor="@color/text_color_main_button"></TextView>
+            </FrameLayout>
         </FrameLayout>
+
 
     </FrameLayout>
 

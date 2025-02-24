@@ -11,7 +11,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/lineyka"
+        android:fontFamily="@font/songer"
         android:layout_gravity="center_horizontal"
         android:textSize="16dp"
         android:textColor="@color/black"
@@ -67,7 +67,7 @@
                     android:id="@+id/buttonSelectDateTime"
                     android:layout_width="match_parent"
                     android:layout_height="36dp"
-                    android:background="@drawable/form_for_main_button"
+                    android:background="@drawable/form_for_other_button"
                     android:layout_gravity="center" />
                 <TextView
                     android:layout_width="wrap_content"
@@ -76,23 +76,34 @@
                     android:layout_gravity="center"
                     android:textSize="14dp"
                     android:fontFamily="@font/lineyka"
-                    android:textColor="@color/text_color_light"></TextView>
+                    android:textColor="@color/background_color_light"></TextView>
             </FrameLayout>
         </LinearLayout>
 
 <LinearLayout
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:layout_gravity="bottom|center">
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:layout_gravity="bottom"
+    android:layout_marginLeft="16dp"
+    android:layout_marginBottom="15dp"
+    android:background="@drawable/form_for_navigation_bar"
+    android:gravity="center"
+    android:layout_marginRight="16dp">
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"></Space>
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"></Space>
         <FrameLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp">
+            android:layout_height="wrap_content">
             <ImageButton
                 android:id="@+id/buttonSaveNote"
                 android:layout_width="120dp"
-                android:layout_height="36dp"
+                android:layout_height="40dp"
                 android:background="@drawable/form_for_main_button"
                 android:layout_gravity="center" />
 
@@ -103,18 +114,21 @@
                 android:layout_gravity="center"
                 android:textSize="14dp"
                 android:fontFamily="@font/lineyka"
-                android:textColor="@color/text_color_light"></TextView>
+                android:textColor="@color/text_color_main_button"></TextView>
         </FrameLayout>
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"></Space>
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="5dp">
+            android:layout_marginBottom="10dp">
             <ImageButton
                 android:id="@+id/buttonDeleteNote"
                 android:layout_width="120dp"
-                android:layout_height="36dp"
+                android:layout_height="40dp"
                 android:background="@drawable/form_for_delete_button"
                 android:layout_gravity="center" />
             <TextView
@@ -126,6 +140,14 @@
                 android:fontFamily="@font/lineyka"
                 android:textColor="@color/white"></TextView>
         </FrameLayout>
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"></Space>
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"></Space>
 </LinearLayout>
     </FrameLayout>
 </LinearLayout>
