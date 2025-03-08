@@ -1,54 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="14dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="1.5dp"
     android:layout_marginTop="10dp"
-    android:layout_marginRight="10dp"
-    android:layout_marginLeft="10dp"
-    android:background="@drawable/background_1">
-
-    <!-- Декоративные элементы -->
-    <ImageView
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:src="@drawable/icon_pin"/>
-
-    <TextView
-        android:id="@+id/noteTextView"
+    android:layout_marginRight="11dp"
+    android:layout_marginLeft="11dp"
+    android:background="@drawable/back_none">
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:paddingTop="1dp"
-        android:textSize="21dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginLeft="5dp"
-        android:textColor="@color/white"
-        android:fontFamily="@font/lineyka"
-        android:paddingBottom="1dp" />
-
-    <LinearLayout
-        android:layout_marginTop="4dp"
-        android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-        <ImageView
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="2dp"
-            android:layout_width="21dp"
-            android:layout_height="21dp"
-            android:src="@drawable/clock_pin" />
-        <TextView
-            android:layout_marginTop="2dp"
-            android:layout_marginRight="5dp"
-            android:paddingLeft="8dp"
+        android:layout_height="175dp">
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="18dp"
-            android:id="@+id/timeTextView"
-            android:textColor="@color/white"
-            android:fontFamily="@font/lineyka"/>
+            android:background="@drawable/for_image"
+            android:layout_height="wrap_content">
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="125dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="4dp">
+                <ImageView
+                    android:id="@+id/noteImageView"
+                    android:adjustViewBounds="false"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"/>
 
-    </LinearLayout>
-</LinearLayout>
+            </androidx.cardview.widget.CardView>
+        </FrameLayout>
+        <FrameLayout
+            android:layout_gravity="bottom"
+            android:layout_width="match_parent"
+            android:layout_height="76dp"
+            android:background="@drawable/dob_block_for_info_block">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="12dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/noteTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
+                    android:textSize="21dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:textColor="@color/black"
+                    android:fontFamily="@font/tilda_semibold"
+                    android:paddingBottom="1dp"/>
+
+                <LinearLayout
+                    android:layout_marginTop="1dp"
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginTop="2dp"
+                        android:layout_width="19dp"
+                        android:layout_height="19dp"
+                        android:src="@drawable/clock_pin"/>
+                    <TextView
+                        android:layout_marginRight="5dp"
+                        android:paddingLeft="8dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="19dp"
+                        android:layout_marginTop="1dp"
+                        android:id="@+id/timeTextView"
+                        android:textColor="@color/black"
+                        android:fontFamily="@font/tilda_medium"/>
+                </LinearLayout>
+            </LinearLayout>
+        </FrameLayout>
+
+    </FrameLayout>
+
+</FrameLayout>

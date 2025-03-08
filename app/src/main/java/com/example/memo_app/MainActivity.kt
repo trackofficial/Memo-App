@@ -2,6 +2,7 @@ package com.example.memo_app
 
 import android.Manifest
 import android.content.Intent
+import java.io.File
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
@@ -9,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.ComponentActivity
@@ -16,6 +18,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -35,7 +40,6 @@ class MainActivity : ComponentActivity() {
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
-                // Разрешение предоставлено, настройка ежедневного уведомления
                 notificationHelper.scheduleDailyNotification()
             } else {
                 Log.e("MainActivity", "Permission for notifications not granted")
@@ -67,7 +71,6 @@ class MainActivity : ComponentActivity() {
             startActivity(Intent(this, HistoryActivity::class.java))
         }
 
-        // Проверка наличия удаленной заметки
         val deletedNoteId = intent.getIntExtra("deletedNoteId", -1)
         if (deletedNoteId != -1) {
             moveNoteToHistory(deletedNoteId)
@@ -75,11 +78,9 @@ class MainActivity : ComponentActivity() {
 
         loadNotes()
 
-        // Проверка и запрос разрешений для уведомлений
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         } else {
-            // Настройка ежедневного уведомления
             notificationHelper.scheduleDailyNotification()
         }
     }
@@ -99,7 +100,6 @@ class MainActivity : ComponentActivity() {
         }
         notes.forEach { note ->
             try {
-                // Ожидаем, что формат даты и времени будет "yyyy-MM-dd HH:mm"
                 val dateTime = dateTimeFormat.parse(note.dateTime)
                 val noteDate = dateFormat.format(dateTime)
                 val calNoteDate = Calendar.getInstance().apply {
@@ -140,6 +140,7 @@ class MainActivity : ComponentActivity() {
         val noteView = inflater.inflate(R.layout.note_item, linearLayoutNotes, false) as ViewGroup
         val noteTextView = noteView.findViewById<TextView>(R.id.noteTextView)
         val timeTextView = noteView.findViewById<TextView>(R.id.timeTextView)
+        val noteImageView = noteView.findViewById<ImageView>(R.id.noteImageView) // Новый элемент для изображения
         val editButton = noteView.findViewById<ImageButton>(R.id.deleteButton)
 
         noteTextView.text = note.content
@@ -150,8 +151,16 @@ class MainActivity : ComponentActivity() {
             Log.e("MainActivity", "Error parsing time: ${note.dateTime}", e)
         }
 
-        // Установка фона для noteView
-        noteView.setBackgroundResource(note.backgroundColor)
+        // Установка изображения для noteView
+        if (note.imageUri != null) {
+            Glide.with(this)
+                .load(File(note.imageUri)) // Оборачиваем путь в File
+                .apply(RequestOptions.bitmapTransform(RoundedCorners(16)))
+                .into(noteImageView)
+            noteImageView.visibility = View.VISIBLE // Отображаем изображение
+        } else {
+            noteImageView.visibility = View.GONE // Скрываем ImageView, если изображения нет
+        }
 
         editButton.setOnClickListener {
             Log.d("MainActivity", "Edit button clicked for note: $note")

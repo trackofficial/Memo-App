@@ -14,7 +14,7 @@ class NoteDao(context: Context) {
             put(DatabaseHelper.COLUMN_DESCRIPTION, note.description)
             put(DatabaseHelper.COLUMN_DATETIME, note.dateTime)
             put(DatabaseHelper.COLUMN_IS_DELETED, note.isDeleted)
-            put(DatabaseHelper.COLUMN_BACKGROUND_COLOR, note.backgroundColor) // Добавление цвета фона
+            put(DatabaseHelper.COLUMN_IMAGE_URI, note.imageUri) // Добавление URI изображения
         }
         note.id = db.insert(DatabaseHelper.TABLE_NAME, null, values).toInt()
         db.close()
@@ -27,7 +27,7 @@ class NoteDao(context: Context) {
             put(DatabaseHelper.COLUMN_DESCRIPTION, note.description)
             put(DatabaseHelper.COLUMN_DATETIME, note.dateTime)
             put(DatabaseHelper.COLUMN_IS_DELETED, note.isDeleted)
-            put(DatabaseHelper.COLUMN_BACKGROUND_COLOR, note.backgroundColor) // Добавление цвета фона
+            put(DatabaseHelper.COLUMN_IMAGE_URI, note.imageUri) // Обновление URI изображения
         }
         val selection = "${DatabaseHelper.COLUMN_ID} = ?"
         val selectionArgs = arrayOf(note.id.toString())
@@ -54,14 +54,14 @@ class NoteDao(context: Context) {
             val description = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_DESCRIPTION))
             val dateTime = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_DATETIME))
             val isDeleted = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_IS_DELETED)) == 1
-            val backgroundColor = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_BACKGROUND_COLOR)) // Получение цвета фона
+            val imageUri = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_IMAGE_URI)) // Получение URI изображения
             val note = Note(
                 id = id,
                 content = content,
                 description = description,
                 dateTime = dateTime,
                 isDeleted = isDeleted,
-                backgroundColor = backgroundColor
+                imageUri = imageUri
             )
             notes.add(note)
         }
@@ -89,14 +89,14 @@ class NoteDao(context: Context) {
             val description = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_DESCRIPTION))
             val dateTime = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_DATETIME))
             val isDeleted = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_IS_DELETED)) == 1
-            val backgroundColor = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_BACKGROUND_COLOR)) // Получение цвета фона
+            val imageUri = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_IMAGE_URI)) // Получение URI изображения
             val note = Note(
                 id = id,
                 content = content,
                 description = description,
                 dateTime = dateTime,
                 isDeleted = isDeleted,
-                backgroundColor = backgroundColor
+                imageUri = imageUri
             )
             notes.add(note)
         }

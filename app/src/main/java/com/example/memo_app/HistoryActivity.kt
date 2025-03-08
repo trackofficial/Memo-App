@@ -3,11 +3,17 @@ package com.example.memo_app
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import java.io.File
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.ComponentActivity
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -48,6 +54,7 @@ class HistoryActivity : ComponentActivity() {
         val noteView = inflater.inflate(R.layout.note_item_h, linearLayoutHistory, false) as ViewGroup
         val noteTextView = noteView.findViewById<TextView>(R.id.noteTextView)
         val timeTextView = noteView.findViewById<TextView>(R.id.timeTextView)
+        val noteImageView = noteView.findViewById<ImageView>(R.id.noteImageView) // Новый элемент для изображения
 
         noteTextView.text = note.content
         try {
@@ -57,8 +64,16 @@ class HistoryActivity : ComponentActivity() {
             Log.e("HistoryActivity", "Error parsing time: ${note.dateTime}", e)
         }
 
-        // Установка фона для noteView
-        noteView.setBackgroundResource(note.backgroundColor)
+        // Установка изображения для noteView
+        if (note.imageUri != null) {
+            Glide.with(this)
+                .load(File(note.imageUri)) // Оборачиваем путь в File
+                .apply(RequestOptions.bitmapTransform(RoundedCorners(20)))
+                .into(noteImageView)
+            noteImageView.visibility = View.VISIBLE // Отображаем изображение
+        } else {
+            noteImageView.visibility = View.GONE // Скрываем ImageView, если изображения нет
+        }
 
         Log.d("HistoryActivity", "Note added to history layout: ${note.content}")
 

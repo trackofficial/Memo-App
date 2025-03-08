@@ -21,6 +21,7 @@
     <color name="background_color_light">#F8F9FF</color>
     <color name="text_color_main_button">#3270FF</color>
     <color name="text_color_for_other">#3F79FF</color>
+    <color name="text_color_for_border">#683F79FF</color>
 
     <!--Цвета для блоков-->
 
@@ -29,4 +30,10 @@
     <color name="color_for_back_3">#6399FF</color>
     <color name="color_for_back_4">#7CDF54</color>
     <color name="color_none">#007CDF54</color>
+
+    <!--Цвета для редизайна блока-->
+    <color name="color_block">#F5F6FF</color>
+    <color name="stroke_block">#4D44516C</color>
+    <color name="none">#00F5F6FF</color>
+
 </resources>

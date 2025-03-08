@@ -3,24 +3,40 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/addnote"
-    android:paddingTop="16dp">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/addnote">
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/songer"
-        android:textSize="18dp"
-        android:layout_gravity="center_horizontal"
-        android:textColor="@color/black"
-        android:text="Создайте заметку"/>
-
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:background="@drawable/for_image_add_edit"
+                    android:layout_height="wrap_content">
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/noteImageView"
+                        android:layout_width="match_parent"
+                        android:layout_height="160dp"
+                        android:scaleType="centerCrop"
+                        app:shapeAppearanceOverlay="@style/RoundedCornersOneSide" />
+                </FrameLayout>
+                <ImageButton
+                    android:layout_width="25dp"
+                    android:background="@drawable/export_image_pin"
+                    android:layout_height="25dp"
+                    android:layout_gravity="bottom|end"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:id="@+id/buttonSelectImage">
+                </ImageButton>
+
+            </FrameLayout>
     <EditText
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
@@ -30,7 +46,7 @@
         android:layout_height="wrap_content"
         android:hint="Введите заметку"
         android:gravity="top|start"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="20dp"
         />
                 <EditText
                     android:id="@+id/editTextTime"
@@ -80,135 +96,6 @@
                     android:fontFamily="@font/lineyka"
                     android:textColor="@color/background_color_light"></TextView>
             </FrameLayout>
-            <LinearLayout
-                android:gravity="center_horizontal"
-                android:layout_marginTop="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="16dp"
-                    android:text="Насколько важно это событие?"
-                    android:fontFamily="@font/songer"
-                    android:textColor="@color/text_color_main_button"></TextView>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginTop="10dp">
-                    <LinearLayout
-                        android:background="@drawable/background_for_color_block"
-                        android:layout_width="match_parent"
-                        android:gravity="center_vertical"
-                        android:layout_height="50dp"
-                        android:orientation="horizontal">
-                        <View
-                            android:layout_marginRight="10dp"
-                            android:layout_marginLeft="10dp"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:background="@drawable/background_1_small"></View>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Очень важно"
-                            android:textColor="@color/text_color_for_other"
-                            android:fontFamily="@font/lineyka"
-                            android:textSize="20dp"></TextView>
-                        <ImageButton
-                            android:background="@drawable/back_none"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:id="@+id/buttonColor1"></ImageButton>
-
-                    </LinearLayout>
-                    <LinearLayout
-                        android:background="@drawable/background_for_color_block"
-                        android:layout_width="match_parent"
-                        android:layout_marginTop="5dp"
-                        android:gravity="center_vertical"
-                        android:layout_height="50dp"
-                        android:orientation="horizontal">
-                        <View
-                            android:layout_marginRight="10dp"
-                            android:layout_marginLeft="10dp"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:background="@drawable/background_2_small"></View>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Важно"
-                            android:textColor="@color/text_color_for_other"
-                            android:fontFamily="@font/lineyka"
-                            android:textSize="20dp"></TextView>
-                        <ImageButton
-                            android:background="@drawable/back_none"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:id="@+id/buttonColor2"></ImageButton>
-
-                    </LinearLayout>
-                    <LinearLayout
-                        android:background="@drawable/background_for_color_block"
-                        android:layout_width="match_parent"
-                        android:layout_marginTop="5dp"
-                        android:gravity="center_vertical"
-                        android:layout_height="50dp"
-                        android:orientation="horizontal">
-                        <View
-                            android:layout_marginRight="10dp"
-                            android:layout_marginLeft="10dp"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:background="@drawable/background_3_small"></View>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Не сильно"
-                            android:textColor="@color/text_color_for_other"
-                            android:fontFamily="@font/lineyka"
-                            android:textSize="20dp"></TextView>
-                        <ImageButton
-                            android:background="@drawable/back_none"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:id="@+id/buttonColor3"></ImageButton>
-
-                    </LinearLayout>
-                    <LinearLayout
-                        android:background="@drawable/background_for_color_block"
-                        android:layout_width="match_parent"
-                        android:layout_marginTop="5dp"
-                        android:gravity="center_vertical"
-                        android:layout_height="50dp"
-                        android:orientation="horizontal">
-                        <View
-                            android:layout_marginRight="10dp"
-                            android:layout_marginLeft="10dp"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:background="@drawable/background_4_small"></View>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Неважно"
-                            android:textColor="@color/text_color_for_other"
-                            android:fontFamily="@font/lineyka"
-                            android:textSize="20dp"></TextView>
-                        <ImageButton
-                            android:background="@drawable/back_none"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:id="@+id/buttonColor4"></ImageButton>
-
-                    </LinearLayout>
-                </LinearLayout>
-            </LinearLayout>
         </LinearLayout>
 
         <FrameLayout

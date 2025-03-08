@@ -48,8 +48,13 @@ android {
     }
 }
 dependencies {
+    implementation("com.github.bumptech.glide:glide:4.12.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
     implementation(libs.androidx.core.ktx)
+    implementation("androidx.cardview:cardview:1.0.0")
     implementation("androidx.appcompat:appcompat:1.4.0")
+    implementation("com.google.android.material:material:1.4.0")
+
 }
 dependencies {
     implementation(libs.androidx.core.ktx)

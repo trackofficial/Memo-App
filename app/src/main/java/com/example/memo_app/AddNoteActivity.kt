@@ -1,17 +1,28 @@
 package com.example.memo_app
 
+import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import android.widget.Button
+import android.view.View
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.ImageView
 import androidx.activity.ComponentActivity
+import androidx.activity.result.contract.ActivityResultContracts
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 import java.util.Calendar
 
 class AddNoteActivity : ComponentActivity() {
@@ -21,9 +32,24 @@ class AddNoteActivity : ComponentActivity() {
     private lateinit var editTextTime: EditText
     private lateinit var buttonSaveNote: ImageButton
     private lateinit var buttonSelectDate: ImageButton
+    private lateinit var buttonSelectImage: ImageButton
+    private lateinit var imageViewNote: ImageView
     private lateinit var noteDao: NoteDao
     private var selectedDate: String = ""
-    private var selectedBackgroundResource: Int = R.drawable.background_3
+    private var imagePath: String? = null
+
+    private val selectImageLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                result.data?.data?.let { uri ->
+                    val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
+                    val file = saveImageToInternalStorage(bitmap)
+                    imagePath = file.absolutePath
+                    displayImageWithGlide(imagePath)
+                    Log.d("AddNoteActivity", "Image saved at: $imagePath")
+                }
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,57 +60,46 @@ class AddNoteActivity : ComponentActivity() {
         editTextTime = findViewById(R.id.editTextTime)
         buttonSaveNote = findViewById(R.id.buttonSave)
         buttonSelectDate = findViewById(R.id.buttonSelectDateTime)
+        buttonSelectImage = findViewById(R.id.buttonSelectImage)
+        imageViewNote = findViewById(R.id.noteImageView)
         noteDao = NoteDao(this)
 
         buttonSelectDate.setOnClickListener {
             selectDate()
         }
 
+        buttonSelectImage.setOnClickListener {
+            val intent = Intent(Intent.ACTION_PICK)
+            intent.type = "image/*"
+            selectImageLauncher.launch(intent)
+        }
+
         editTextTime.addTextChangedListener(object : TextWatcher {
+            private var isUpdating: Boolean = false
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (s != null && s.isNotEmpty()) {
-                    val cleanString = s.toString().replace(":", "")
+                if (isUpdating) return
+
+                s?.let {
+                    val cleanString = it.toString().replace(":", "")
                     val formattedString = when (cleanString.length) {
-                        4 -> "${cleanString.substring(0, 2)}:${cleanString.substring(2, 4)}"
-                        3 -> "${cleanString.substring(0, 1)}:${cleanString.substring(1, 3)}"
+                        1, 2 -> cleanString
+                        3, 4 -> "${cleanString.substring(0, cleanString.length - 2)}:${cleanString.substring(cleanString.length - 2)}"
                         else -> cleanString
                     }
-                    if (s.toString() != formattedString) {
+                    if (it.toString() != formattedString) {
+                        isUpdating = true
                         editTextTime.setText(formattedString)
                         editTextTime.setSelection(formattedString.length)
+                        isUpdating = false
                     }
                 }
             }
 
             override fun afterTextChanged(s: Editable?) {}
         })
-
-        // Кнопки изменения цвета
-        val buttonColor1: ImageButton = findViewById(R.id.buttonColor1)
-        val buttonColor2: ImageButton = findViewById(R.id.buttonColor2)
-        val buttonColor3: ImageButton = findViewById(R.id.buttonColor3)
-        val buttonColor4: ImageButton = findViewById(R.id.buttonColor4)
-
-        // Применение цвета к фону и кнопке
-        buttonColor1.setOnClickListener {
-            selectedBackgroundResource = R.drawable.background_1
-            updateNoteItemBackground(selectedBackgroundResource)
-        }
-        buttonColor2.setOnClickListener {
-            selectedBackgroundResource = R.drawable.background_2
-            updateNoteItemBackground(selectedBackgroundResource)
-        }
-        buttonColor3.setOnClickListener {
-            selectedBackgroundResource = R.drawable.background_3
-            updateNoteItemBackground(selectedBackgroundResource)
-        }
-        buttonColor4.setOnClickListener {
-            selectedBackgroundResource = R.drawable.background_4
-            updateNoteItemBackground(selectedBackgroundResource)
-        }
-
         buttonSaveNote.setOnClickListener {
             val noteContent = editTextNoteContent.text.toString()
             val noteDescription = editTextDescription.text.toString()
@@ -95,9 +110,9 @@ class AddNoteActivity : ComponentActivity() {
                 val note = Note(
                     id = 0, // ID будет генерироваться автоматически
                     content = noteContent,
-                    description = noteDescription, // Установка описания
+                    description = noteDescription,
                     dateTime = dateTime,
-                    backgroundColor = selectedBackgroundResource // Сохранение выбранного фона
+                    imageUri = imagePath // Сохранение пути к изображению
                 )
                 noteDao.insert(note)
                 Log.d("AddNoteActivity", "Note added: $note")
@@ -121,6 +136,30 @@ class AddNoteActivity : ComponentActivity() {
         }
     }
 
+    private fun displayImageWithGlide(imagePath: String?) {
+        imagePath?.let {
+            Glide.with(this)
+                .load(File(it)) // Оборачиваем путь в File
+                .apply(RequestOptions.bitmapTransform(RoundedCorners(20)))
+                .into(imageViewNote)
+            imageViewNote.visibility = View.VISIBLE // Отображаем изображение
+        }
+    }
+
+    private fun saveImageToInternalStorage(bitmap: Bitmap): File {
+        val filename = "${System.currentTimeMillis()}.jpg"
+        val file = File(filesDir, filename)
+        try {
+            val fos = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+            fos.flush()
+            fos.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return file
+    }
+
     private fun selectDate() {
         val calendar = Calendar.getInstance()
         val datePickerDialog = DatePickerDialog(this, { _, year, month, dayOfMonth ->
@@ -128,14 +167,5 @@ class AddNoteActivity : ComponentActivity() {
             Log.d("AddNoteActivity", "Selected date: $selectedDate")
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
         datePickerDialog.show()
-    }
-
-    private fun updateNoteItemBackground(backgroundResource: Int) {
-        val inflater = LayoutInflater.from(this)
-        val noteView = inflater.inflate(R.layout.note_item, null) as ViewGroup
-        val deleteButton: ImageButton = noteView.findViewById(R.id.deleteButton)
-
-        noteView.setBackgroundResource(backgroundResource)
-        deleteButton.setBackgroundResource(backgroundResource)
     }
 }

@@ -16,25 +16,25 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
     }
 
     companion object {
-        const val DATABASE_VERSION = 2
+        const val DATABASE_VERSION = 3
         const val DATABASE_NAME = "MemoApp.db"
 
         const val TABLE_NAME = "notes"
         const val COLUMN_ID = "id"
         const val COLUMN_CONTENT = "content"
-        const val COLUMN_DESCRIPTION = "description" // Новый столбец для описания
+        const val COLUMN_DESCRIPTION = "description"
         const val COLUMN_DATETIME = "dateTime"
         const val COLUMN_IS_DELETED = "isDeleted"
-        const val COLUMN_BACKGROUND_COLOR = "backgroundColor" // Новый столбец для цвета фона
+        const val COLUMN_IMAGE_URI = "imageUri" // Новый столбец для URI изображения
 
         private const val SQL_CREATE_ENTRIES =
             "CREATE TABLE $TABLE_NAME (" +
                     "$COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "$COLUMN_CONTENT TEXT," +
-                    "$COLUMN_DESCRIPTION TEXT," + // Создание нового столбца
+                    "$COLUMN_DESCRIPTION TEXT," +
                     "$COLUMN_DATETIME TEXT," +
                     "$COLUMN_IS_DELETED INTEGER," +
-                    "$COLUMN_BACKGROUND_COLOR INTEGER)" // Создание нового столбца
+                    "$COLUMN_IMAGE_URI TEXT)" // Создание нового столбца
 
         private const val SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS $TABLE_NAME"
     }

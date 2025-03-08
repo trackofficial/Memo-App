@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="android:colorPrimary">@color/color_for_actionbar</item>
-        <item name="android:colorPrimaryDark">@color/color_for_actionbar</item>
+        <item name="android:colorPrimary">@color/background_color_dark</item>
+        <item name="android:colorPrimaryDark">@color/background_color_dark</item>
         <item name="android:colorAccent">@color/text_color_for_other</item>
     </style>
-
+    <style name="RoundedCornersOneSide">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopRight">0dp</item>
+        <item name="cornerSizeBottomRight">18dp</item>
+        <item name="cornerSizeTopLeft">0dp</item>
+        <item name="cornerSizeBottomLeft">18dp</item>
+    </style>
 </resources>
