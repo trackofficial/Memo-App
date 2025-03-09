@@ -27,12 +27,12 @@
                         app:shapeAppearanceOverlay="@style/RoundedCornersOneSide" />
                 </FrameLayout>
                 <ImageButton
-                    android:layout_width="25dp"
+                    android:layout_width="22dp"
                     android:background="@drawable/export_image_pin"
-                    android:layout_height="25dp"
+                    android:layout_height="22dp"
                     android:layout_gravity="bottom|end"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginBottom="10dp"
+                    android:layout_marginRight="12dp"
+                    android:layout_marginBottom="12dp"
                     android:id="@+id/buttonSelectImage">
                 </ImageButton>
 

@@ -2,19 +2,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent">
-<FrameLayout
-    android:layout_width="match_parent"
-    android:background="@drawable/image_shape"
-    android:layout_height="wrap_content">
-    <ImageView
-        android:id="@+id/noteImageView"
-        android:background="@drawable/image_shape"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="160dp"
-        android:scaleType="centerCrop"
-        android:adjustViewBounds="false"/>
-</FrameLayout>
+        android:background="@drawable/for_image_add_edit"
+        android:layout_height="wrap_content">
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/noteImageView"
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/RoundedCornersOneSide" />
+    </FrameLayout>
 
     <TextView
         android:layout_marginLeft="16dp"
