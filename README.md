@@ -1,4 +1,8 @@
 # Memo - Planner
+![Kotlin](https://img.shields.io/badge/-Kotlin-ffffff?style=flat&logo=kotlin)
+![XML](https://img.shields.io/badge/-XML-ffffff?style=flat)
+![Android Studio](https://img.shields.io/badge/-Android%20Studio-ffffff?style=flat&logo=android)
+![Figma](https://img.shields.io/badge/-Figma-ffffff?style=flat&logo=figma)
 
 > **Memo** - an intuitive and functional planning app that helps users set and achieve their goals. With Memo, you can easily create and manage your plans, tasks, and projects.
 ___
