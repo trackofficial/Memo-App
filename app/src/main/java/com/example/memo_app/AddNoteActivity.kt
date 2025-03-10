@@ -1,6 +1,7 @@
 package com.example.memo_app
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.graphics.Bitmap
@@ -11,7 +12,9 @@ import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -20,6 +23,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -69,9 +73,7 @@ class AddNoteActivity : ComponentActivity() {
         }
 
         buttonSelectImage.setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK)
-            intent.type = "image/*"
-            selectImageLauncher.launch(intent)
+            showImageSelectionDialog()
         }
 
         editTextTime.addTextChangedListener(object : TextWatcher {
@@ -146,6 +148,27 @@ class AddNoteActivity : ComponentActivity() {
         }
     }
 
+    private fun selectDate() {
+        val calendar = Calendar.getInstance()
+        val datePickerDialog = DatePickerDialog(this, { _, year, month, dayOfMonth ->
+            selectedDate = "$year-${month + 1}-$dayOfMonth"
+            Log.d("AddNoteActivity", "Selected date: $selectedDate")
+        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+        datePickerDialog.show()
+    }
+    private fun displaySelectedImage(uri: Uri) {
+        val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
+        val file = saveImageToInternalStorage(bitmap)
+        imagePath = file.absolutePath
+        displayImageWithGlide(imagePath)
+    }
+    private fun displaySelectedImageResource(resId: Int) {
+        val noteImageView = findViewById<ImageView>(R.id.noteImageView)
+        noteImageView.visibility = View.VISIBLE
+        noteImageView.setImageResource(resId)
+        imagePath = null // Сбрасываем путь к пользовательскому изображению
+    }
+
     private fun saveImageToInternalStorage(bitmap: Bitmap): File {
         val filename = "${System.currentTimeMillis()}.jpg"
         val file = File(filesDir, filename)
@@ -159,13 +182,53 @@ class AddNoteActivity : ComponentActivity() {
         }
         return file
     }
+    private fun showImageSelectionDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_select_image, null)
+        val bottomSheetDialog = BottomSheetDialog(this, R.style.RoundedBottomSheetDialog)
+        bottomSheetDialog.setContentView(dialogView)
 
-    private fun selectDate() {
-        val calendar = Calendar.getInstance()
-        val datePickerDialog = DatePickerDialog(this, { _, year, month, dayOfMonth ->
-            selectedDate = "$year-${month + 1}-$dayOfMonth"
-            Log.d("AddNoteActivity", "Selected date: $selectedDate")
-        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
-        datePickerDialog.show()
+        dialogView.findViewById<ImageView>(R.id.imageOption1).setOnClickListener {
+            // Обработка выбора изображения
+            displaySelectedImageResource(R.drawable.img_memo_1)
+            bottomSheetDialog.dismiss()
+        }
+
+        dialogView.findViewById<ImageView>(R.id.imageOption2).setOnClickListener {
+            // Обработка выбора изображения
+            displaySelectedImageResource(R.drawable.img_memo_2)
+            bottomSheetDialog.dismiss()
+        }
+        dialogView.findViewById<ImageView>(R.id.imageOption3).setOnClickListener {
+            // Обработка выбора изображения
+            displaySelectedImageResource(R.drawable.img_memo_3)
+            bottomSheetDialog.dismiss()
+        }
+        dialogView.findViewById<ImageView>(R.id.imageOption4).setOnClickListener {
+            // Обработка выбора изображения
+            displaySelectedImageResource(R.drawable.img_memo_4)
+            bottomSheetDialog.dismiss()
+        }
+        dialogView.findViewById<ImageView>(R.id.imageOption5).setOnClickListener {
+            // Обработка выбора изображения
+            displaySelectedImageResource(R.drawable.img_memo_5)
+            bottomSheetDialog.dismiss()
+        }
+        dialogView.findViewById<ImageView>(R.id.imageOption6).setOnClickListener {
+            // Обработка выбора изображения
+            displaySelectedImageResource(R.drawable.img_memo_6)
+            bottomSheetDialog.dismiss()
+        }
+
+        // Повторите для всех изображений
+
+        dialogView.findViewById<Button>(R.id.buttonSelectFromGallery).setOnClickListener {
+            // Выбор изображения из галереи
+            val intent = Intent(Intent.ACTION_PICK)
+            intent.type = "image/*"
+            selectImageLauncher.launch(intent)
+            bottomSheetDialog.dismiss()
+        }
+
+        bottomSheetDialog.show()
     }
 }

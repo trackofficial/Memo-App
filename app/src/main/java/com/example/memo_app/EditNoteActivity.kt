@@ -4,10 +4,12 @@ import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.graphics.Bitmap
+import android.provider.MediaStore
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.app.AlertDialog
+import android.widget.Button
 import android.os.Bundle
-import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -24,6 +26,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.util.Calendar
+import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class EditNoteActivity : ComponentActivity() {
 
@@ -52,7 +55,6 @@ class EditNoteActivity : ComponentActivity() {
                 }
             }
         }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_note)
@@ -92,7 +94,9 @@ class EditNoteActivity : ComponentActivity() {
         buttonSelectDate.setOnClickListener {
             selectDate()
         }
-
+        buttonSelectImage.setOnClickListener {
+            showImageSelectionDialog()
+        }
         buttonSelectImage.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK)
             intent.type = "image/*"
@@ -184,6 +188,27 @@ class EditNoteActivity : ComponentActivity() {
             imageViewNote.visibility = View.VISIBLE // Отображаем изображение
         }
     }
+    private fun selectDate() {
+        val calendar = Calendar.getInstance()
+        val datePickerDialog = DatePickerDialog(this, { _, year, month, dayOfMonth ->
+            selectedDate = "$year-${month + 1}-$dayOfMonth"
+            Log.d("EditNoteActivity", "Selected date: $selectedDate")
+        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+        datePickerDialog.show()
+    }
+
+    private fun displaySelectedImage(uri: Uri) {
+        val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
+        val file = saveImageToInternalStorage(bitmap)
+        imagePath = file.absolutePath
+        displayImageWithGlide(imagePath)
+    }
+    private fun displaySelectedImageResource(resId: Int) {
+        val noteImageView = findViewById<ImageView>(R.id.noteImageView)
+        noteImageView.visibility = View.VISIBLE
+        noteImageView.setImageResource(resId)
+        imagePath = null // Сбрасываем путь к пользовательскому изображению
+    }
 
     private fun saveImageToInternalStorage(bitmap: Bitmap): File {
         val filename = "${System.currentTimeMillis()}.jpg"
@@ -198,12 +223,53 @@ class EditNoteActivity : ComponentActivity() {
         }
         return file
     }
-    private fun selectDate() {
-        val calendar = Calendar.getInstance()
-        val datePickerDialog = DatePickerDialog(this, { _, year, month, dayOfMonth ->
-            selectedDate = "$year-${month + 1}-$dayOfMonth"
-            Log.d("EditNoteActivity", "Selected date: $selectedDate")
-        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
-        datePickerDialog.show()
+    private fun showImageSelectionDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_select_image, null)
+        val bottomSheetDialog = BottomSheetDialog(this, R.style.RoundedBottomSheetDialog)
+        bottomSheetDialog.setContentView(dialogView)
+
+        dialogView.findViewById<ImageView>(R.id.imageOption1).setOnClickListener {
+            // Обработка выбора изображения
+            displaySelectedImageResource(R.drawable.img_memo_1)
+            bottomSheetDialog.dismiss()
+        }
+
+        dialogView.findViewById<ImageView>(R.id.imageOption2).setOnClickListener {
+            // Обработка выбора изображения
+            displaySelectedImageResource(R.drawable.img_memo_2)
+            bottomSheetDialog.dismiss()
+        }
+        dialogView.findViewById<ImageView>(R.id.imageOption3).setOnClickListener {
+            // Обработка выбора изображения
+            displaySelectedImageResource(R.drawable.img_memo_3)
+            bottomSheetDialog.dismiss()
+        }
+        dialogView.findViewById<ImageView>(R.id.imageOption4).setOnClickListener {
+            // Обработка выбора изображения
+            displaySelectedImageResource(R.drawable.img_memo_4)
+            bottomSheetDialog.dismiss()
+        }
+        dialogView.findViewById<ImageView>(R.id.imageOption5).setOnClickListener {
+            // Обработка выбора изображения
+            displaySelectedImageResource(R.drawable.img_memo_5)
+            bottomSheetDialog.dismiss()
+        }
+        dialogView.findViewById<ImageView>(R.id.imageOption6).setOnClickListener {
+            // Обработка выбора изображения
+            displaySelectedImageResource(R.drawable.img_memo_6)
+            bottomSheetDialog.dismiss()
+        }
+
+        // Повторите для всех изображений
+
+        dialogView.findViewById<Button>(R.id.buttonSelectFromGallery).setOnClickListener {
+            // Выбор изображения из галереи
+            val intent = Intent(Intent.ACTION_PICK)
+            intent.type = "image/*"
+            selectImageLauncher.launch(intent)
+            bottomSheetDialog.dismiss()
+        }
+
+        bottomSheetDialog.show()
     }
 }
