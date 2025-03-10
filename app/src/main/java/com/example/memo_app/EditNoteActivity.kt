@@ -51,7 +51,7 @@ class EditNoteActivity : ComponentActivity() {
                     val file = saveImageToInternalStorage(bitmap)
                     imagePath = file.absolutePath
                     displayImageWithGlide(imagePath)
-                    Log.d("EditNoteActivity", "Image saved at: $imagePath")
+                    Log.d("AddNoteActivity", "Image saved at: $imagePath")
                 }
             }
         }
@@ -176,6 +176,10 @@ class EditNoteActivity : ComponentActivity() {
                 startActivity(intent)
                 finish()
             }
+        }
+        val buttonSelectImage: ImageButton = findViewById(R.id.buttonSelectImage)
+        buttonSelectImage.setOnClickListener {
+            showImageSelectionDialog()
         }
     }
 
