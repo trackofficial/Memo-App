@@ -33,15 +33,55 @@
         </FrameLayout>
     </FrameLayout>
     <ImageButton
-        android:layout_width="22dp"
+        android:layout_width="20dp"
         android:background="@drawable/export_image_pin"
-        android:layout_height="22dp"
+        android:layout_height="20dp"
         android:layout_gravity="bottom|end"
         android:layout_marginRight="12dp"
         android:layout_marginBottom="12dp"
         android:id="@+id/buttonSelectImage">
 </ImageButton>
-
+    <ImageButton
+        android:layout_marginRight="52dp"
+        android:layout_marginBottom="12dp"
+        android:id="@+id/buttonSelectDateTime"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:background="@drawable/calendar_button"
+        android:layout_gravity="bottom|end" />
+    <FrameLayout
+        android:layout_marginRight="12dp"
+        android:layout_marginTop="12dp"
+        android:layout_gravity="end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+    <ImageButton
+        android:background="@drawable/create_pin_button"
+        android:id="@+id/buttonSaveNote"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_gravity="center_vertical|end" />
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginRight="36dp">
+        <ImageButton
+            android:id="@+id/buttonDeleteNote"
+            android:layout_width="80dp"
+            android:layout_height="28dp"
+            android:background="@drawable/form_for_edit_button_del"
+            android:layout_gravity="center_horizontal"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Удалить"
+            android:layout_gravity="center"
+            android:textSize="14dp"
+            android:fontFamily="@font/tilda_medium"
+            android:textColor="@color/black"></TextView>
+    </FrameLayout>
+    </FrameLayout>
 </FrameLayout>
 
             <EditText
@@ -79,100 +119,7 @@
                 android:maxLength="200"
                 android:gravity="top|start"
                 android:layout_marginTop="10dp"/>
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|center"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp">
-                <ImageButton
-                    android:id="@+id/buttonSelectDateTime"
-                    android:layout_width="match_parent"
-                    android:layout_height="36dp"
-                    android:background="@drawable/form_for_other_button"
-                    android:layout_gravity="center" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Выберете дату"
-                    android:layout_gravity="center"
-                    android:textSize="14dp"
-                    android:fontFamily="@font/lineyka"
-                    android:textColor="@color/background_color_light"></TextView>
-            </FrameLayout>
-            <!--Этот блок для смены фона-->
- <!-- Скрываем изображение, если его нет -->
+
         </LinearLayout>
-
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="60dp"
-    android:layout_gravity="bottom"
-    android:layout_marginLeft="16dp"
-    android:layout_marginBottom="15dp"
-    android:background="@drawable/form_for_navigation_bar"
-    android:gravity="center"
-    android:layout_marginRight="16dp">
-    <Space
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"></Space>
-    <Space
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"></Space>
-        <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <ImageButton
-                android:id="@+id/buttonSaveNote"
-                android:layout_width="120dp"
-                android:layout_height="40dp"
-                android:background="@drawable/form_for_main_button"
-                android:layout_gravity="center" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Редактировать"
-                android:layout_gravity="center"
-                android:textSize="14dp"
-                android:fontFamily="@font/lineyka"
-                android:textColor="@color/text_color_main_button"></TextView>
-        </FrameLayout>
-    <Space
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"></Space>
-        <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center"
-            android:layout_marginBottom="10dp">
-            <ImageButton
-                android:id="@+id/buttonDeleteNote"
-                android:layout_width="120dp"
-                android:layout_height="40dp"
-                android:background="@drawable/form_for_delete_button"
-                android:layout_gravity="center" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Удалить"
-                android:layout_gravity="center"
-                android:textSize="14dp"
-                android:fontFamily="@font/lineyka"
-                android:textColor="@color/white"></TextView>
-        </FrameLayout>
-    <Space
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"></Space>
-    <Space
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"></Space>
-</LinearLayout>
     </FrameLayout>
 </LinearLayout>

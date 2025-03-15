@@ -27,14 +27,30 @@
                         app:shapeAppearanceOverlay="@style/RoundedCornersOneSide" />
                 </FrameLayout>
                 <ImageButton
-                    android:layout_width="22dp"
+                    android:background="@drawable/create_pin_button"
+                    android:id="@+id/buttonSave"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginRight="12dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_gravity="end" />
+                <ImageButton
+                    android:layout_width="20dp"
                     android:background="@drawable/export_image_pin"
-                    android:layout_height="22dp"
+                    android:layout_height="20dp"
                     android:layout_gravity="bottom|end"
                     android:layout_marginRight="12dp"
                     android:layout_marginBottom="12dp"
                     android:id="@+id/buttonSelectImage">
                 </ImageButton>
+                <ImageButton
+                    android:layout_marginRight="52dp"
+                    android:layout_marginBottom="12dp"
+                    android:id="@+id/buttonSelectDateTime"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:background="@drawable/calendar_button"
+                    android:layout_gravity="bottom|end" />
 
             </FrameLayout>
     <EditText
@@ -72,62 +88,7 @@
                 android:maxLength="200"
                 android:gravity="top|start"
                 android:layout_marginTop="10dp"/>
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|center"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp">
-
-                <ImageButton
-                    android:id="@+id/buttonSelectDateTime"
-                    android:layout_width="match_parent"
-                    android:layout_height="36dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/form_for_other_button" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Выберете дату"
-                    android:layout_gravity="center"
-                    android:textSize="14dp"
-                    android:fontFamily="@font/lineyka"
-                    android:textColor="@color/background_color_light"></TextView>
-            </FrameLayout>
         </LinearLayout>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_gravity="bottom"
-            android:layout_marginLeft="16dp"
-            android:layout_marginBottom="15dp"
-            android:gravity="center"
-            android:layout_marginRight="16dp"
-            android:background="@drawable/form_for_navigation_bar">
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center">
-                <ImageButton
-                    android:background="@drawable/form_for_other_button"
-                    android:id="@+id/buttonSave"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Сохранить"
-                    android:layout_gravity="center"
-                    android:textSize="18dp"
-                    android:fontFamily="@font/lineyka"
-                    android:textColor="@color/background_color_light"></TextView>
-            </FrameLayout>
-        </FrameLayout>
-
 
     </FrameLayout>
 
