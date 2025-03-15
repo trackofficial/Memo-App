@@ -54,6 +54,7 @@
 
             </FrameLayout>
     <EditText
+        android:fontFamily="@font/lineyka"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:background="@drawable/block_for_edit_text"
@@ -68,6 +69,7 @@
                     android:id="@+id/editTextTime"
                     android:hint="Введите время"
                     android:inputType="time"
+                    android:fontFamily="@font/lineyka"
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
                     android:background="@drawable/block_for_edit_text"
@@ -76,18 +78,25 @@
                     android:maxLength="5"
                     android:gravity="top|start"
                     android:layout_marginTop="10dp"/>
-            <EditText
-                android:id="@+id/editAddText"
-                android:hint="Введите описание"
-                android:inputType="text"
+            <ScrollView
                 android:layout_marginLeft="16dp"
+                android:fadeScrollbars="false"
+                android:scrollbars="none"
                 android:layout_marginRight="16dp"
-                android:background="@drawable/block_for_edit_text"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:maxLength="200"
+                android:background="@drawable/block_for_edit_text"
+                android:layout_height="300dp"
                 android:gravity="top|start"
-                android:layout_marginTop="10dp"/>
+                android:layout_marginTop="10dp">
+                <EditText
+                    android:id="@+id/editAddText"
+                    android:hint="Введите описание"
+                    android:inputType="textMultiLine"
+                    android:background="@drawable/block_for_edit_text"
+                    android:layout_width="wrap_content"
+                    android:fontFamily="@font/lineyka"
+                    android:layout_height="wrap_content"/>
+            </ScrollView>
         </LinearLayout>
 
     </FrameLayout>
