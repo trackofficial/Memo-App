@@ -3,6 +3,7 @@ package com.example.memo_app
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -45,13 +46,30 @@ class AddNoteActivity : ComponentActivity() {
     private val selectImageLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                result.data?.data?.let { uri ->
-                    val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
-                    val file = saveImageToInternalStorage(bitmap)
-                    imagePath = file.absolutePath
-                    displayImageWithGlide(imagePath)
-                    Log.d("AddNoteActivity", "Image saved at: $imagePath")
+                val data = result.data
+                val uri = data?.data
+                if (uri != null) {
+                    try {
+                        // Загружаем изображение в Bitmap из URI
+                        val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
+                        // Сохраняем изображение во внутреннее хранилище
+                        val file = saveImageToInternalStorage(bitmap)
+                        // Сохраняем путь к изображению
+                        imagePath = file.absolutePath
+                        // Отображаем выбранное изображение
+                        displayImageWithGlide(imagePath)
+                        // Сохраняем путь и источник изображения
+                        saveSelectedImagePath(this, imagePath, "gallery")
+                        Log.d("selectImageLauncher", "Gallery image saved at: $imagePath")
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                        Log.e("selectImageLauncher", "Error saving image from gallery: ${e.message}")
+                    }
+                } else {
+                    Log.e("selectImageLauncher", "No URI returned from gallery selection!")
                 }
+            } else {
+                Log.d("selectImageLauncher", "No image selected or operation canceled")
             }
         }
 
@@ -139,13 +157,14 @@ class AddNoteActivity : ComponentActivity() {
     }
 
     private fun displayImageWithGlide(imagePath: String?) {
-        imagePath?.let {
+        val path = imagePath // Локально сохраняем текущее значение
+        path?.let {
             Glide.with(this)
-                .load(File(it)) // Оборачиваем путь в File
+                .load(File(it))
                 .apply(RequestOptions.bitmapTransform(RoundedCorners(20)))
                 .into(imageViewNote)
-            imageViewNote.visibility = View.VISIBLE // Отображаем изображение
-        }
+            imageViewNote.visibility = View.VISIBLE
+        } ?: Log.e("Activity", "Image path is null!")
     }
 
     private fun selectDate() {
@@ -188,47 +207,79 @@ class AddNoteActivity : ComponentActivity() {
         bottomSheetDialog.setContentView(dialogView)
 
         dialogView.findViewById<ImageView>(R.id.imageOption1).setOnClickListener {
-            // Обработка выбора изображения
-            displaySelectedImageResource(R.drawable.img_memo_1)
+            handleLibraryImageSelection(R.drawable.img_memo_1) // Выбор изображения из библиотеки
             bottomSheetDialog.dismiss()
         }
-
         dialogView.findViewById<ImageView>(R.id.imageOption2).setOnClickListener {
-            // Обработка выбора изображения
-            displaySelectedImageResource(R.drawable.img_memo_2)
+            handleLibraryImageSelection(R.drawable.img_memo_2)
             bottomSheetDialog.dismiss()
         }
         dialogView.findViewById<ImageView>(R.id.imageOption3).setOnClickListener {
-            // Обработка выбора изображения
-            displaySelectedImageResource(R.drawable.img_memo_3)
+            handleLibraryImageSelection(R.drawable.img_memo_3)
             bottomSheetDialog.dismiss()
         }
         dialogView.findViewById<ImageView>(R.id.imageOption4).setOnClickListener {
-            // Обработка выбора изображения
-            displaySelectedImageResource(R.drawable.img_memo_4)
+            handleLibraryImageSelection(R.drawable.img_memo_4)
             bottomSheetDialog.dismiss()
         }
         dialogView.findViewById<ImageView>(R.id.imageOption5).setOnClickListener {
-            // Обработка выбора изображения
-            displaySelectedImageResource(R.drawable.img_memo_5)
+            handleLibraryImageSelection(R.drawable.img_memo_5)
             bottomSheetDialog.dismiss()
         }
         dialogView.findViewById<ImageView>(R.id.imageOption6).setOnClickListener {
-            // Обработка выбора изображения
-            displaySelectedImageResource(R.drawable.img_memo_6)
+            handleLibraryImageSelection(R.drawable.img_memo_6)
             bottomSheetDialog.dismiss()
         }
 
-        // Повторите для всех изображений
-
         dialogView.findViewById<Button>(R.id.buttonSelectFromGallery).setOnClickListener {
-            // Выбор изображения из галереи
             val intent = Intent(Intent.ACTION_PICK)
             intent.type = "image/*"
-            selectImageLauncher.launch(intent)
+            selectImageLauncher.launch(intent) // Обработка выбора изображения из галереи
             bottomSheetDialog.dismiss()
         }
 
         bottomSheetDialog.show()
+    }
+    private fun handleLibraryImageSelection(resId: Int) {
+        try {
+            // Декодируем изображение из ресурсов
+            val bitmap = BitmapFactory.decodeResource(resources, resId)
+            if (bitmap == null) {
+                Log.e("handleLibraryImageSelection", "Bitmap decoding failed for resource ID: $resId")
+                return
+            }
+
+            // Сохраняем изображение во внутреннее хранилище
+            val file = saveImageToInternalStorage(bitmap)
+            imagePath = file.absolutePath // Сохраняем путь к изображению
+
+            // Проверяем корректность пути
+            if (imagePath.isNullOrEmpty()) {
+                Log.e("handleLibraryImageSelection", "Failed to save image to internal storage")
+                return
+            }
+
+            // Отображаем изображение
+            displayImageWithGlide(imagePath)
+
+            // Сохраняем информацию об изображении с использованием обновленной функции
+            saveSelectedImagePath(this, imagePath, "library") // Передаем контекст и данные
+            Log.d("handleLibraryImageSelection", "Library image saved at: $imagePath")
+        } catch (e: Exception) {
+            Log.e("handleLibraryImageSelection", "Error in handling library image: ${e.message}", e)
+        }
+    }
+    private fun saveSelectedImagePath(context: Context, path: String?, source: String?) {
+        if (path.isNullOrEmpty() || source.isNullOrEmpty()) {
+            Log.e("saveSelectedImagePath", "Path or source is null or empty!")
+            return
+        }
+
+        val sharedPreferences = context.getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE)
+        sharedPreferences.edit()
+            .putString("selectedImagePath", path)
+            .putString("imageSource", source)
+            .apply()
+        Log.d("saveSelectedImagePath", "Path and source saved: $path, $source")
     }
 }
