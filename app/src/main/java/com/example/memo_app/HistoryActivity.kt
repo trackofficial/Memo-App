@@ -54,9 +54,12 @@ class HistoryActivity : ComponentActivity() {
         val noteView = inflater.inflate(R.layout.note_item_h, linearLayoutHistory, false) as ViewGroup
         val noteTextView = noteView.findViewById<TextView>(R.id.noteTextView)
         val timeTextView = noteView.findViewById<TextView>(R.id.timeTextView)
-        val noteImageView = noteView.findViewById<ImageView>(R.id.noteImageView) // Новый элемент для изображения
+        val noteImageView = noteView.findViewById<ImageView>(R.id.noteImageView) // Элемент для изображения
 
+        // Устанавливаем текст заметки
         noteTextView.text = note.content
+
+        // Форматируем дату и время
         try {
             val dateTime = dateTimeFormat.parse(note.dateTime)
             timeTextView.text = timeFormat.format(dateTime)
@@ -65,24 +68,40 @@ class HistoryActivity : ComponentActivity() {
         }
 
         // Установка изображения для noteView
-        if (note.imageUri != null) {
-            Glide.with(this)
-                .load(File(note.imageUri)) // Оборачиваем путь в File
-                .apply(RequestOptions.bitmapTransform(RoundedCorners(20)))
-                .into(noteImageView)
-            noteImageView.visibility = View.VISIBLE // Отображаем изображение
+        if (!note.imageUri.isNullOrEmpty()) {
+            val imageFile = File(note.imageUri)
+            if (imageFile.exists()) {
+                // Если это пользовательское изображение, загружаем из файлов
+                Glide.with(this)
+                    .load(imageFile)
+                    .apply(RequestOptions.bitmapTransform(RoundedCorners(20)))
+                    .into(noteImageView)
+                noteImageView.visibility = View.VISIBLE
+            } else {
+                // Если это имя ресурса случайного изображения, загружаем из ресурсов
+                val resourceId = resources.getIdentifier(note.imageUri, "drawable", packageName)
+                if (resourceId != 0) {
+                    noteImageView.setImageResource(resourceId)
+                    noteImageView.visibility = View.VISIBLE
+                } else {
+                    noteImageView.visibility = View.GONE
+                    Log.e("HistoryActivity", "Invalid imageUri: ${note.imageUri}")
+                }
+            }
         } else {
             noteImageView.visibility = View.GONE // Скрываем ImageView, если изображения нет
         }
 
         Log.d("HistoryActivity", "Note added to history layout: ${note.content}")
 
+        // Событие нажатия для перехода к ViewNoteActivity
         noteView.setOnClickListener {
             val intent = Intent(this, ViewNoteActivity::class.java)
             intent.putExtra("noteId", note.id)
             startActivity(intent)
         }
 
+        // Добавляем элемент в History Layout
         linearLayoutHistory.addView(noteView)
     }
 }

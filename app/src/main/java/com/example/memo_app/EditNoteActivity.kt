@@ -77,6 +77,7 @@ class EditNoteActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_note)
 
+        // Инициализация UI элементов
         editTextNoteContent = findViewById(R.id.editTextNoteContent)
         editTextDescription = findViewById(R.id.editAddText)
         editTextTime = findViewById(R.id.editTextTime)
@@ -85,49 +86,86 @@ class EditNoteActivity : ComponentActivity() {
         buttonSelectDate = findViewById(R.id.buttonSelectDateTime)
         buttonSelectImage = findViewById(R.id.buttonSelectImage)
         imageViewNote = findViewById(R.id.noteImageView)
-        noteDao = NoteDao(this)
 
+        noteDao = NoteDao(this)
         noteId = intent.getIntExtra("noteId", 0)
+
         Log.d("EditNoteActivity", "Initializing with noteId: $noteId")
 
         val note = noteDao.getAllNotesIncludingDeleted().firstOrNull { it.id == noteId }
 
         if (note != null) {
             Log.d("EditNoteActivity", "Note loaded: $note")
+
+            // Заполняем поля заметки
             editTextNoteContent.setText(note.content)
             editTextDescription.setText(note.description)
+
+            // Разделяем дату и время
             val dateTimeParts = note.dateTime.split(" ")
             if (dateTimeParts.size == 2) {
                 selectedDate = dateTimeParts[0]
                 editTextTime.setText(dateTimeParts[1])
             }
+
+            // Обработка изображения
             imagePath = note.imageUri
-            imagePath?.let {
-                displayImageWithGlide(it)
+            if (!imagePath.isNullOrEmpty()) {
+                val imageFile = File(imagePath)
+                if (imageFile.exists()) {
+                    // Пользовательское изображение
+                    displayImageWithGlide(imagePath)
+                } else {
+                    // Случайное изображение
+                    val resourceId = resources.getIdentifier(imagePath, "drawable", packageName)
+                    if (resourceId != 0) {
+                        imageViewNote.setImageResource(resourceId)
+                        imageViewNote.visibility = View.VISIBLE
+                    } else {
+                        imageViewNote.visibility = View.GONE
+                        Log.e("EditNoteActivity", "Invalid imagePath: $imagePath")
+                    }
+                }
+            } else {
+                imageViewNote.visibility = View.GONE
             }
         } else {
             Log.d("EditNoteActivity", "Note not found")
         }
 
+        // Обработка кнопки "Удалить" (перенос в History)
+        buttonDeleteNote.setOnClickListener {
+            if (note != null) {
+                note.isDeleted = true // Помечаем заметку как удалённую
+                noteDao.update(note) // Обновляем статус заметки в базе данных
+
+                Log.d("EditNoteActivity", "Note marked as deleted: $note")
+
+                // Переход в MainActivity после переноса в History
+                val intent = Intent(this, MainActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+                finish()
+            } else {
+                Log.e("EditNoteActivity", "Cannot delete: note is null")
+            }
+        }
+
+        // Обработка остальных кнопок
         buttonSelectDate.setOnClickListener {
             selectDate()
         }
+
         buttonSelectImage.setOnClickListener {
             showImageSelectionDialog()
         }
-        buttonSelectImage.setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK)
-            intent.type = "image/*"
-            selectImageLauncher.launch(intent)
-        }
 
+        // Обработка времени
         editTextTime.addTextChangedListener(object : TextWatcher {
             private var isUpdating: Boolean = false
-
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (isUpdating) return
-
                 s?.let {
                     val cleanString = it.toString().replace(":", "")
                     val formattedString = when (cleanString.length) {
@@ -143,23 +181,26 @@ class EditNoteActivity : ComponentActivity() {
                     }
                 }
             }
-
             override fun afterTextChanged(s: Editable?) {}
         })
 
+        // Обработка кнопки "Сохранить"
         buttonSaveNote.setOnClickListener {
             val updatedContent = editTextNoteContent.text.toString()
             val updatedDescription = editTextDescription.text.toString()
             val time = editTextTime.text.toString()
+
             Log.d("EditNoteActivity", "Updated content: $updatedContent, description: $updatedDescription")
+
             if (note != null && updatedContent.isNotEmpty() && selectedDate.isNotEmpty() && time.isNotEmpty()) {
                 val dateTime = "$selectedDate $time"
                 note.content = updatedContent
                 note.description = updatedDescription
                 note.dateTime = dateTime
-                note.imageUri = imagePath
+                note.imageUri = imagePath // Обновляем изображение
                 note.isDeleted = false
                 noteDao.update(note)
+
                 Log.d("EditNoteActivity", "Note updated: $note")
 
                 val intent = Intent(this, MainActivity::class.java)
@@ -180,24 +221,6 @@ class EditNoteActivity : ComponentActivity() {
                     editTextTime.error = "Время не может быть пустым"
                 }
             }
-        }
-
-        buttonDeleteNote.setOnClickListener {
-            Log.d("EditNoteActivity", "Delete button clicked")
-            if (note != null) {
-                note.isDeleted = true
-                noteDao.update(note)
-                Log.d("EditNoteActivity", "Note marked as deleted: $note")
-
-                val intent = Intent(this, MainActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
-                finish()
-            }
-        }
-        val buttonSelectImage: ImageButton = findViewById(R.id.buttonSelectImage)
-        buttonSelectImage.setOnClickListener {
-            showImageSelectionDialog()
         }
     }
 

@@ -152,14 +152,28 @@ class MainActivity : ComponentActivity() {
         }
 
         // Установка изображения для noteView
-        if (note.imageUri != null) {
-            Glide.with(this)
-                .load(File(note.imageUri)) // Оборачиваем путь в File
-                .apply(RequestOptions.bitmapTransform(RoundedCorners(16)))
-                .into(noteImageView)
-            noteImageView.visibility = View.VISIBLE // Отображаем изображение
+        if (!note.imageUri.isNullOrEmpty()) {
+            val imageFile = File(note.imageUri)
+            if (imageFile.exists()) {
+                // Если это пользовательское изображение, загружаем из файлов
+                Glide.with(this)
+                    .load(imageFile)
+                    .apply(RequestOptions.bitmapTransform(RoundedCorners(16)))
+                    .into(noteImageView)
+                noteImageView.visibility = View.VISIBLE
+            } else {
+                // Если это имя ресурса случайного изображения, загружаем из ресурсов
+                val resourceId = resources.getIdentifier(note.imageUri, "drawable", packageName)
+                if (resourceId != 0) {
+                    noteImageView.setImageResource(resourceId)
+                    noteImageView.visibility = View.VISIBLE
+                } else {
+                    noteImageView.visibility = View.GONE // На случай, если ничего не найдено
+                    Log.e("MainActivity", "Invalid imageUri: ${note.imageUri}")
+                }
+            }
         } else {
-            noteImageView.visibility = View.GONE // Скрываем ImageView, если изображения нет
+            noteImageView.visibility = View.GONE // Скрываем, если изображение отсутствует
         }
 
         editButton.setOnClickListener {

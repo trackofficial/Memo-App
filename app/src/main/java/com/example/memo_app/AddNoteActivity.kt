@@ -85,7 +85,10 @@ class AddNoteActivity : ComponentActivity() {
         buttonSelectImage = findViewById(R.id.buttonSelectImage)
         imageViewNote = findViewById(R.id.noteImageView)
         noteDao = NoteDao(this)
-
+        // Устанавливаем случайное изображение
+        val randomResId = getRandomBackgroundResId()
+        Log.d("AddNoteActivity", "Random image selected: $randomResId")
+        displaySelectedImageResource(randomResId)
         buttonSelectDate.setOnClickListener {
             selectDate()
         }
@@ -124,16 +127,23 @@ class AddNoteActivity : ComponentActivity() {
             val noteContent = editTextNoteContent.text.toString()
             val noteDescription = editTextDescription.text.toString()
             val time = editTextTime.text.toString()
+
             Log.d("AddNoteActivity", "Note content: $noteContent, description: $noteDescription")
+
             if (noteContent.isNotEmpty() && selectedDate.isNotEmpty() && time.isNotEmpty()) {
                 val dateTime = "$selectedDate $time"
+
+                // Если пользователь не выбрал изображение, используем случайное
+                val finalImageUri = imagePath ?: resources.getResourceEntryName(randomResId)
+
                 val note = Note(
-                    id = 0, // ID будет генерироваться автоматически
+                    id = 0, // ID генерируется автоматически
                     content = noteContent,
                     description = noteDescription,
                     dateTime = dateTime,
-                    imageUri = imagePath // Сохранение пути к изображению
+                    imageUri = finalImageUri // Используем выбранное или случайное изображение
                 )
+
                 noteDao.insert(note)
                 Log.d("AddNoteActivity", "Note added: $note")
 
@@ -175,17 +185,19 @@ class AddNoteActivity : ComponentActivity() {
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
         datePickerDialog.show()
     }
+    private fun displaySelectedImageResource(resId: Int) {
+        imageViewNote.visibility = View.VISIBLE
+        imageViewNote.setImageResource(resId)
+
+        // Сбрасываем путь, так как используется случайное изображение
+        imagePath = null
+    }
+
     private fun displaySelectedImage(uri: Uri) {
         val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
         val file = saveImageToInternalStorage(bitmap)
         imagePath = file.absolutePath
         displayImageWithGlide(imagePath)
-    }
-    private fun displaySelectedImageResource(resId: Int) {
-        val noteImageView = findViewById<ImageView>(R.id.noteImageView)
-        noteImageView.visibility = View.VISIBLE
-        noteImageView.setImageResource(resId)
-        imagePath = null // Сбрасываем путь к пользовательскому изображению
     }
 
     private fun saveImageToInternalStorage(bitmap: Bitmap): File {
@@ -281,5 +293,16 @@ class AddNoteActivity : ComponentActivity() {
             .putString("imageSource", source)
             .apply()
         Log.d("saveSelectedImagePath", "Path and source saved: $path, $source")
+    }
+    private fun getRandomBackgroundResId(): Int {
+        val backgrounds = listOf(
+            R.drawable.img_memo_1,
+            R.drawable.img_memo_2,
+            R.drawable.img_memo_3,
+            R.drawable.img_memo_4,
+            R.drawable.img_memo_5,
+            R.drawable.img_memo_6
+        )
+        return backgrounds.random() // Возвращает случайный идентификатор ресурса
     }
 }
