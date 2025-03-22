@@ -4,16 +4,22 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:layout_marginTop="12dp"
+    android:gravity="center_horizontal"
     android:layout_marginBottom="1dp"
     android:layout_gravity="center_horizontal">
 
     <TextView
+        android:layout_gravity="center"
         android:gravity="center"
-        android:padding="1dp"
         android:id="@+id/dateTextView"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
+        android:paddingRight="10dp"
+        android:paddingLeft="10dp"
         android:layout_height="wrap_content"
-        android:textSize="18dp"
-        android:fontFamily="@font/songer"
-        android:textColor="@color/text_color_for_other"/>
+        android:textSize="16dp"
+        android:paddingBottom="2dp"
+        android:paddingTop="2dp"
+        android:fontFamily="@font/tilda_medium"
+        android:background="@drawable/form_for_block_date"
+        android:textColor="@color/background_color_light"/>
 </LinearLayout>

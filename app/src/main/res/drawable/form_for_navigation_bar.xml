@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-<solid android:color="@color/navigate_block_color"></solid>
+<solid android:color="@color/new_color_for_navigatebar"></solid>
 <corners
-    android:radius="26dp">
+    android:radius="100dp">
 </corners>
 </shape>

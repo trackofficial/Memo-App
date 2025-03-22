@@ -11,14 +11,13 @@
     <color name="color_for_bottom_bar">#EBEDFF</color>
     <color name="white">#FFFFFFFF</color>
     <color name="color_for_splash_screen">#5E73FF</color>
-    <color name="color_red_for_button">#F66378</color>
 
     <!--Цвета для редизайна-->
 
     <color name="color_for_actionbar">#F8F9FF</color>
 
     <color name="navigate_block_color">#467DFF</color>
-    <color name="background_color_light">#F8F9FF</color>
+
     <color name="text_color_main_button">#3270FF</color>
     <color name="text_color_for_other">#3F79FF</color>
     <color name="text_color_for_border">#683F79FF</color>
@@ -36,4 +35,9 @@
     <color name="stroke_block">#4D44516C</color>
     <color name="none">#00F5F6FF</color>
 
+    <!--Новый дизайн прокета-->
+    <color name="background_color_light">#FDFEFF</color>
+    <color name="new_color_for_navigatebar">#F0131314</color>
+    <color name="new_color_black">#131314</color>
+    <color name="new_color_grey">#4A131314</color>
 </resources>

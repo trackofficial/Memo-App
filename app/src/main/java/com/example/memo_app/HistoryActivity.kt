@@ -7,6 +7,7 @@ import java.io.File
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -53,18 +54,21 @@ class HistoryActivity : ComponentActivity() {
         val inflater = LayoutInflater.from(this)
         val noteView = inflater.inflate(R.layout.note_item_h, linearLayoutHistory, false) as ViewGroup
         val noteTextView = noteView.findViewById<TextView>(R.id.noteTextView)
-        val timeTextView = noteView.findViewById<TextView>(R.id.timeTextView)
-        val noteImageView = noteView.findViewById<ImageView>(R.id.noteImageView) // Элемент для изображения
+        val descriptionTextView = noteView.findViewById<TextView>(R.id.desTextView)
+        val noteImageView = noteView.findViewById<ImageView>(R.id.noteImageView)
+        val editButton = noteView.findViewById<ImageButton>(R.id.deleteButton)
 
-        // Устанавливаем текст заметки
         noteTextView.text = note.content
 
-        // Форматируем дату и время
-        try {
-            val dateTime = dateTimeFormat.parse(note.dateTime)
-            timeTextView.text = timeFormat.format(dateTime)
-        } catch (e: ParseException) {
-            Log.e("HistoryActivity", "Error parsing time: ${note.dateTime}", e)
+        // Обработка текста для description
+        descriptionTextView.text = if (!note.description.isNullOrEmpty()) {
+            if (note.description.length > 40) {
+                note.description.substring(0, 40) + "..."
+            } else {
+                note.description
+            }
+        } else {
+            "Нет описания"
         }
 
         // Установка изображения для noteView
@@ -101,7 +105,7 @@ class HistoryActivity : ComponentActivity() {
             startActivity(intent)
         }
 
-        // Добавляем элемент в History Layout
-        linearLayoutHistory.addView(noteView)
+        // Добавляем элемент в начало History Layout
+        linearLayoutHistory.addView(noteView, 0) // Добавляем элемент в начало
     }
 }

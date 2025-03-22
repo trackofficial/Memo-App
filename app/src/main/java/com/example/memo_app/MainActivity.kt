@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -29,7 +30,7 @@ import java.util.Locale
 class MainActivity : ComponentActivity() {
 
     private lateinit var linearLayoutNotes: LinearLayout
-    private lateinit var buttonAddNote: ImageButton
+    private lateinit var buttonAddNote: Button
     private lateinit var buttonViewHistory: ImageButton
     private lateinit var noteDao: NoteDao
     private lateinit var notificationHelper: NotificationHelper
@@ -57,7 +58,7 @@ class MainActivity : ComponentActivity() {
         }
 
         linearLayoutNotes = findViewById(R.id.linearLayoutNotes)
-        buttonAddNote = findViewById(R.id.main_buttom)
+        buttonAddNote = findViewById(R.id.main_button)
         buttonViewHistory = findViewById(R.id.history_button)
 
         noteDao = NoteDao(this)
@@ -106,9 +107,9 @@ class MainActivity : ComponentActivity() {
                     time = dateTime
                 }
                 val dateLabel = when {
-                    isSameDay(calNoteDate, today) -> "На Сегодня"
-                    isSameDay(calNoteDate, tomorrow) -> "На Завтра"
-                    else -> "На $noteDate"
+                    isSameDay(calNoteDate, today) -> "Сегодня"
+                    isSameDay(calNoteDate, tomorrow) -> "Завтра"
+                    else -> noteDate
                 }
                 if (dateLabel != currentDate) {
                     addDateHeaderToLayout(dateLabel)
@@ -139,45 +140,47 @@ class MainActivity : ComponentActivity() {
         val inflater = LayoutInflater.from(this)
         val noteView = inflater.inflate(R.layout.note_item, linearLayoutNotes, false) as ViewGroup
         val noteTextView = noteView.findViewById<TextView>(R.id.noteTextView)
-        val timeTextView = noteView.findViewById<TextView>(R.id.timeTextView)
-        val noteImageView = noteView.findViewById<ImageView>(R.id.noteImageView) // Новый элемент для изображения
+        val descriptionTextView = noteView.findViewById<TextView>(R.id.desTextView)
+        val noteImageView = noteView.findViewById<ImageView>(R.id.noteImageView)
         val editButton = noteView.findViewById<ImageButton>(R.id.deleteButton)
 
         noteTextView.text = note.content
-        try {
-            val dateTime = dateTimeFormat.parse(note.dateTime)
-            timeTextView.text = timeFormat.format(dateTime)
-        } catch (e: ParseException) {
-            Log.e("MainActivity", "Error parsing time: ${note.dateTime}", e)
+
+        // Обработка текста для description
+        descriptionTextView.text = if (!note.description.isNullOrEmpty()) {
+            if (note.description.length > 40) {
+                note.description.substring(0, 40) + "..."
+            } else {
+                note.description
+            }
+        } else {
+            "Нет описания"
         }
 
-        // Установка изображения для noteView
+        // Установка изображения
         if (!note.imageUri.isNullOrEmpty()) {
             val imageFile = File(note.imageUri)
             if (imageFile.exists()) {
-                // Если это пользовательское изображение, загружаем из файлов
                 Glide.with(this)
                     .load(imageFile)
                     .apply(RequestOptions.bitmapTransform(RoundedCorners(16)))
                     .into(noteImageView)
                 noteImageView.visibility = View.VISIBLE
             } else {
-                // Если это имя ресурса случайного изображения, загружаем из ресурсов
                 val resourceId = resources.getIdentifier(note.imageUri, "drawable", packageName)
                 if (resourceId != 0) {
                     noteImageView.setImageResource(resourceId)
                     noteImageView.visibility = View.VISIBLE
                 } else {
-                    noteImageView.visibility = View.GONE // На случай, если ничего не найдено
+                    noteImageView.visibility = View.GONE
                     Log.e("MainActivity", "Invalid imageUri: ${note.imageUri}")
                 }
             }
         } else {
-            noteImageView.visibility = View.GONE // Скрываем, если изображение отсутствует
+            noteImageView.visibility = View.GONE
         }
 
         editButton.setOnClickListener {
-            Log.d("MainActivity", "Edit button clicked for note: $note")
             val intent = Intent(this, EditNoteActivity::class.java)
             intent.putExtra("noteId", note.id)
             startActivity(intent)
