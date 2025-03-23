@@ -1,55 +1,69 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/historynotescreen">
-    <RelativeLayout
+
+    <!-- Контейнер ScrollView -->
+    <ScrollView
+        android:id="@+id/scroll_for_block"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:fadeScrollbars="false"
+        android:scrollbars="none">
+
         <LinearLayout
-            android:id="@+id/block_history_for_text"
-            android:orientation="vertical"
+            android:id="@+id/linearLayoutNotes"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:fontFamily="@font/songer"
-                    android:text="История"
-                    android:textColor="@color/black"
-                    android:textSize="25dp"></TextView>
-            </FrameLayout>
-
-            <ScrollView
-                android:id="@+id/scroll_for_block"
-                android:layout_width="match_parent"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:layout_height="0dp"
-                android:fadeScrollbars="false"
-                android:scrollbars="none"
-                android:paddingBottom="1dp"
-                android:layout_weight="1">
-
-            <LinearLayout
-                android:layout_marginTop="5dp"
-                android:id="@+id/linearLayoutNotes"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-            </LinearLayout>
-            </ScrollView>
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="5dp">
         </LinearLayout>
+    </ScrollView>
 
+    <!-- TextView, наложенный сверху -->
+    <TextView
+        android:background="@drawable/form_for_navigation_bar"
+        android:id="@+id/overlayTextView"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|top"
+        android:fontFamily="@font/tilda_semibold"
+        android:text="История"
+        android:textColor="@color/background_color_light"
+        android:textSize="20dp"
+        android:layout_marginTop="20dp" />
 
+    <!-- Блок с кнопками, наложенный поверх ScrollView -->
+    <LinearLayout
+        android:id="@+id/navigate_block"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_marginLeft="17dp"
+        android:layout_marginRight="17dp"
+        android:layout_marginBottom="17dp"
+        android:gravity="center"
+        android:layout_gravity="bottom">
 
-    </RelativeLayout>
-</LinearLayout>
+        <!-- Кнопка "Home" -->
+        <FrameLayout
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:background="@drawable/form_for_navigation_bar">
+
+            <ImageButton
+                android:id="@+id/home_button"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:background="@drawable/home_button" />
+        </FrameLayout>
+    </LinearLayout>
+</FrameLayout>

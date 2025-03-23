@@ -3,37 +3,60 @@ package com.example.memo_app
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import java.io.File
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
-import java.text.ParseException
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class HistoryActivity : ComponentActivity() {
-
+    private lateinit var buttonHome: ImageButton
     private lateinit var linearLayoutHistory: LinearLayout
     private lateinit var noteDao: NoteDao
+    private lateinit var overlayTextView: TextView // TextView для анимации
+    private lateinit var scrollView: ScrollView // ScrollView для отслеживания прокрутки
     private val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
     private val dateTimeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
+
+    private var isTextVisible = true // Флаг видимости текста
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.history_note)
 
+        buttonHome = findViewById(R.id.home_button)
         linearLayoutHistory = findViewById(R.id.linearLayoutNotes)
+        overlayTextView = findViewById(R.id.overlayTextView) // Связываем TextView
+        scrollView = findViewById(R.id.scroll_for_block) // Связываем ScrollView
         noteDao = NoteDao(this)
 
         loadAllNotes()
+
+        // Кнопка "Домой"
+        buttonHome.setOnClickListener {
+            startActivity(Intent(this, MainActivity::class.java))
+        }
+
+        // Слушатель прокрутки
+        scrollView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
+            if (scrollY < 100 && !isTextVisible) {
+                // Когда почти достигли начала -> показываем текст
+                showText(overlayTextView)
+            } else if (scrollY > 100 && isTextVisible) {
+                // Прокрутка вниз дальше порога -> скрываем текст
+                hideText(overlayTextView)
+            }
+        }
     }
 
     override fun onResume() {
@@ -107,5 +130,23 @@ class HistoryActivity : ComponentActivity() {
 
         // Добавляем элемент в начало History Layout
         linearLayoutHistory.addView(noteView, 0) // Добавляем элемент в начало
+    }
+
+    private fun hideText(textView: TextView) {
+        isTextVisible = false
+        textView.animate()
+            .translationY(-textView.height.toFloat()) // Перемещаем текст немного вверх
+            .alpha(0f) // Устанавливаем прозрачность в 0
+            .setDuration(200) // Длительность анимации
+            .start()
+    }
+
+    private fun showText(textView: TextView) {
+        isTextVisible = true
+        textView.animate()
+            .translationY(0f) // Возвращаем текст на место
+            .alpha(1f) // Устанавливаем прозрачность в 1
+            .setDuration(200) // Длительность анимации
+            .start()
     }
 }

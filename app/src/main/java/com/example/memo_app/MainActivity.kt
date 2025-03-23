@@ -109,7 +109,7 @@ class MainActivity : ComponentActivity() {
                 val dateLabel = when {
                     isSameDay(calNoteDate, today) -> "Сегодня"
                     isSameDay(calNoteDate, tomorrow) -> "Завтра"
-                    else -> noteDate
+                    else -> "$noteDate"
                 }
                 if (dateLabel != currentDate) {
                     addDateHeaderToLayout(dateLabel)
@@ -144,14 +144,21 @@ class MainActivity : ComponentActivity() {
         val noteImageView = noteView.findViewById<ImageView>(R.id.noteImageView)
         val editButton = noteView.findViewById<ImageButton>(R.id.deleteButton)
 
-        noteTextView.text = note.content
+        // Функция для преобразования первой буквы в заглавную
+        fun capitalizeFirstLetter(text: String?): String {
+            return text?.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } ?: ""
+        }
 
-        // Обработка текста для description
+        // Преобразуем текст названия с заглавной буквы
+        noteTextView.text = capitalizeFirstLetter(note.content)
+
+        // Преобразуем текст описания с заглавной буквы
         descriptionTextView.text = if (!note.description.isNullOrEmpty()) {
-            if (note.description.length > 40) {
-                note.description.substring(0, 40) + "..."
+            val processedDescription = capitalizeFirstLetter(note.description)
+            if (processedDescription.length > 40) {
+                processedDescription.substring(0, 40) + "..."
             } else {
-                note.description
+                processedDescription
             }
         } else {
             "Нет описания"
@@ -187,7 +194,7 @@ class MainActivity : ComponentActivity() {
         }
 
         linearLayoutNotes.addView(noteView)
-        Log.d("MainActivity", "Note added: ${note.content}")
+        Log.d("MainActivity", "Note added with capitalized title and description: ${note.content}")
     }
 
     private fun moveNoteToHistory(noteId: Int) {
