@@ -32,6 +32,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var linearLayoutNotes: LinearLayout
     private lateinit var buttonAddNote: Button
     private lateinit var buttonViewHistory: ImageButton
+    private lateinit var buttonViewCalendar: ImageButton
     private lateinit var noteDao: NoteDao
     private lateinit var notificationHelper: NotificationHelper
     private val dateFormat = SimpleDateFormat("d MMM yyyy", Locale("ru"))
@@ -59,6 +60,7 @@ class MainActivity : ComponentActivity() {
 
         linearLayoutNotes = findViewById(R.id.linearLayoutNotes)
         buttonAddNote = findViewById(R.id.main_button)
+        buttonViewCalendar = findViewById(R.id.statistic_button)
         buttonViewHistory = findViewById(R.id.history_button)
 
         noteDao = NoteDao(this)
@@ -70,6 +72,10 @@ class MainActivity : ComponentActivity() {
 
         buttonViewHistory.setOnClickListener {
             startActivity(Intent(this, HistoryActivity::class.java))
+        }
+
+        buttonViewCalendar.setOnClickListener {
+            startActivity(Intent(this, CalendarActivity::class.java))
         }
 
         val deletedNoteId = intent.getIntExtra("deletedNoteId", -1)

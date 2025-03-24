@@ -33,9 +33,16 @@
             android:name=".EditNoteActivity"
             android:exported="false" />
         <activity
+            android:name=".CalendarActivity"
+            android:theme="@style/AppTheme"
+            android:exported="false" />
+        <activity
             android:name=".ViewNoteActivity"
             android:exported="false" />
         <receiver android:name=".NotificationReceiver" />
     </application>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
 </manifest>

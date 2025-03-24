@@ -1,0 +1,182 @@
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/background_color_light"
+    android:padding="16dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+    <!-- Верхний текстовый блок -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="20dp"
+
+        android:id="@+id/text_section">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/tilda_semibold"
+            android:text="Statistics"
+            android:textColor="@color/black"
+            android:textSize="24dp" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_marginTop="20dp"
+        android:background="@drawable/main_calendar_form"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
+        android:paddingBottom="12dp"
+        android:orientation="vertical">
+    <FrameLayout
+        android:background="@drawable/form_header_calendar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="7dp"
+        android:paddingBottom="7dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <ImageButton
+            android:layout_marginLeft="6dp"
+            android:layout_gravity="left|center_vertical"
+            android:id="@+id/prevMonthButton"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/button_left"
+            android:contentDescription="Предыдущий месяц" />
+
+        <TextView
+            android:id="@+id/monthTitle"
+            android:fontFamily="@font/tilda_medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:layout_gravity="center"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:gravity="center" />
+
+        <ImageButton
+            android:layout_marginRight="6dp"
+            android:layout_gravity="right|center_vertical"
+            android:id="@+id/nextMonthButton"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/button_right"
+            android:contentDescription="Следующий месяц" />
+    </FrameLayout>
+
+    <!-- Заголовок дней недели -->
+    <LinearLayout
+        android:layout_marginTop="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <!-- Понедельник -->
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="MON"
+            android:textColor="@color/new_color_grey_2"
+            android:textSize="12sp"
+            android:gravity="center" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="TUE"
+            android:textColor="@color/new_color_grey_2"
+            android:textSize="12sp"
+            android:gravity="center" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="WEN"
+            android:textColor="@color/new_color_grey_2"
+            android:textSize="12sp"
+            android:gravity="center" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="THU"
+            android:textColor="@color/new_color_grey_2"
+            android:textSize="12sp"
+            android:gravity="center" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="FRI"
+            android:textColor="@color/new_color_grey_2"
+            android:textSize="12sp"
+            android:gravity="center" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="SAT"
+            android:textColor="@color/new_color_grey_2"
+            android:textSize="12sp"
+            android:gravity="center" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="SUN"
+            android:textColor="@color/new_color_grey_2"
+            android:textSize="12sp"
+            android:gravity="center" />
+    </LinearLayout>
+
+    <!-- Сетка дат календаря -->
+    <GridLayout
+        android:layout_marginTop="8dp"
+        android:id="@+id/calendarGrid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:rowCount="6"
+        android:columnCount="7"
+        android:clipToPadding="false">
+        <!-- Программно добавим числа -->
+    </GridLayout>
+    </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/navigate_block"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_marginLeft="17dp"
+        android:layout_marginRight="17dp"
+        android:layout_marginBottom="17dp"
+        android:gravity="center"
+        android:layout_gravity="bottom">
+
+        <!-- Кнопка "Home" -->
+        <FrameLayout
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:background="@drawable/form_for_navigation_bar">
+
+            <ImageButton
+                android:id="@+id/home_button"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:background="@drawable/home_button" />
+        </FrameLayout>
+    </LinearLayout>
+</FrameLayout>
