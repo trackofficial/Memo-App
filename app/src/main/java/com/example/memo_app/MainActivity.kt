@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.ScaleAnimation
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -74,12 +75,12 @@ class MainActivity : ComponentActivity() {
         buttonAddNote = findViewById(R.id.main_button)
         buttonViewCalendar = findViewById(R.id.statistic_button)
         buttonViewHistory = findViewById(R.id.history_button)
-
+        val block_createbutton = findViewById<FrameLayout>(R.id.block_creteblock)
         noteDao = NoteDao(this)
         notificationHelper = NotificationHelper(this)
 
         buttonAddNote.setOnClickListener {
-            animateButtonClick(buttonAddNote)
+            animateButtonClick(block_createbutton)
             startActivity(Intent(this, AddNoteActivity::class.java))
         }
 
@@ -283,15 +284,15 @@ class MainActivity : ComponentActivity() {
 
         button.startAnimation(scaleDown) // Запуск первой анимации
     }
-    fun animateButtonClick(button: Button) {
+    fun animateButtonClick(block: FrameLayout) {
         // Анимация уменьшения кнопки
         val scaleDown = ScaleAnimation(
-            1.0f, 0.9f,  // Уменьшение ширины
-            1.0f, 0.9f,  // Уменьшение высоты
+            1.0f, 0.95f,  // Уменьшение ширины
+            1.0f, 0.95f,  // Уменьшение высоты
             ScaleAnimation.RELATIVE_TO_SELF, 0.5f,  // Точка опоры по X
             ScaleAnimation.RELATIVE_TO_SELF, 0.5f   // Точка опоры по Y
         )
-        scaleDown.duration = 50 // Продолжительность анимации в миллисекундах
+        scaleDown.duration = 100 // Продолжительность анимации в миллисекундах
         scaleDown.fillAfter = true // Кнопка остаётся в уменьшенном состоянии до завершения
 
         // Возвращаем к исходному размеру
@@ -299,19 +300,19 @@ class MainActivity : ComponentActivity() {
             override fun onAnimationStart(animation: android.view.animation.Animation?) {}
             override fun onAnimationEnd(animation: android.view.animation.Animation?) {
                 val scaleUp = ScaleAnimation(
-                    0.9f, 1.0f,  // Увеличение ширины обратно
-                    0.9f, 1.0f,  // Увеличение высоты обратно
+                    0.95f, 1.0f,  // Увеличение ширины обратно
+                    0.95f, 1.0f,  // Увеличение высоты обратно
                     ScaleAnimation.RELATIVE_TO_SELF, 0.5f,
                     ScaleAnimation.RELATIVE_TO_SELF, 0.5f
                 )
-                scaleUp.duration = 50
+                scaleUp.duration = 100
                 scaleUp.fillAfter = true
-                button.startAnimation(scaleUp) // Запуск обратной анимации
+                block.startAnimation(scaleUp) // Запуск обратной анимации
             }
 
             override fun onAnimationRepeat(animation: android.view.animation.Animation?) {}
         })
 
-        button.startAnimation(scaleDown) // Запуск первой анимации
+        block.startAnimation(scaleDown) // Запуск первой анимации
     }
 }
