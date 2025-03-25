@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.ScaleAnimation
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -44,6 +45,7 @@ class HistoryActivity : ComponentActivity() {
 
         // Кнопка "Домой"
         buttonHome.setOnClickListener {
+            animateButtonClick(buttonHome)
             startActivity(Intent(this, MainActivity::class.java))
         }
 
@@ -148,5 +150,36 @@ class HistoryActivity : ComponentActivity() {
             .alpha(1f) // Устанавливаем прозрачность в 1
             .setDuration(200) // Длительность анимации
             .start()
+    }
+    fun animateButtonClick(button: ImageButton) {
+        // Анимация уменьшения кнопки
+        val scaleDown = ScaleAnimation(
+            1.0f, 0.9f,  // Уменьшение ширины
+            1.0f, 0.9f,  // Уменьшение высоты
+            ScaleAnimation.RELATIVE_TO_SELF, 0.5f,  // Точка опоры по X
+            ScaleAnimation.RELATIVE_TO_SELF, 0.5f   // Точка опоры по Y
+        )
+        scaleDown.duration = 40 // Продолжительность анимации в миллисекундах
+        scaleDown.fillAfter = true // Кнопка остаётся в уменьшенном состоянии до завершения
+
+        // Возвращаем к исходному размеру
+        scaleDown.setAnimationListener(object : android.view.animation.Animation.AnimationListener {
+            override fun onAnimationStart(animation: android.view.animation.Animation?) {}
+            override fun onAnimationEnd(animation: android.view.animation.Animation?) {
+                val scaleUp = ScaleAnimation(
+                    0.9f, 1.0f,  // Увеличение ширины обратно
+                    0.9f, 1.0f,  // Увеличение высоты обратно
+                    ScaleAnimation.RELATIVE_TO_SELF, 0.5f,
+                    ScaleAnimation.RELATIVE_TO_SELF, 0.5f
+                )
+                scaleUp.duration = 50
+                scaleUp.fillAfter = true
+                button.startAnimation(scaleUp) // Запуск обратной анимации
+            }
+
+            override fun onAnimationRepeat(animation: android.view.animation.Animation?) {}
+        })
+
+        button.startAnimation(scaleDown) // Запуск первой анимации
     }
 }

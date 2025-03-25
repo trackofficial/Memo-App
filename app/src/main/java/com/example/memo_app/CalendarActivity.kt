@@ -4,6 +4,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.Gravity
+import android.view.animation.ScaleAnimation
 import android.widget.GridLayout
 import android.widget.ImageButton
 import android.widget.TextView
@@ -39,14 +40,17 @@ class CalendarActivity : AppCompatActivity() {
 
         // Настройка кнопок переключения месяца
         prevMonthButton.setOnClickListener {
+            animateButtonClick(prevMonthButton)
             changeMonth(-1)
         }
 
         nextMonthButton.setOnClickListener {
+            animateButtonClick(nextMonthButton)
             changeMonth(1)
         }
 
         buttonHome.setOnClickListener {
+            animateButtonClick(buttonHome)
             startActivity(Intent(this, MainActivity::class.java))
         }
         // Загрузка данных из базы и обновление календаря
@@ -164,5 +168,36 @@ class CalendarActivity : AppCompatActivity() {
             android.util.Log.e("CalendarActivity", "Ошибка парсинга даты: $dateTime", e)
             0L
         }
+    }
+    fun animateButtonClick(button: ImageButton) {
+        // Анимация уменьшения кнопки
+        val scaleDown = ScaleAnimation(
+            1.0f, 0.9f,  // Уменьшение ширины
+            1.0f, 0.9f,  // Уменьшение высоты
+            ScaleAnimation.RELATIVE_TO_SELF, 0.5f,  // Точка опоры по X
+            ScaleAnimation.RELATIVE_TO_SELF, 0.5f   // Точка опоры по Y
+        )
+        scaleDown.duration = 40 // Продолжительность анимации в миллисекундах
+        scaleDown.fillAfter = true // Кнопка остаётся в уменьшенном состоянии до завершения
+
+        // Возвращаем к исходному размеру
+        scaleDown.setAnimationListener(object : android.view.animation.Animation.AnimationListener {
+            override fun onAnimationStart(animation: android.view.animation.Animation?) {}
+            override fun onAnimationEnd(animation: android.view.animation.Animation?) {
+                val scaleUp = ScaleAnimation(
+                    0.9f, 1.0f,  // Увеличение ширины обратно
+                    0.9f, 1.0f,  // Увеличение высоты обратно
+                    ScaleAnimation.RELATIVE_TO_SELF, 0.5f,
+                    ScaleAnimation.RELATIVE_TO_SELF, 0.5f
+                )
+                scaleUp.duration = 50
+                scaleUp.fillAfter = true
+                button.startAnimation(scaleUp) // Запуск обратной анимации
+            }
+
+            override fun onAnimationRepeat(animation: android.view.animation.Animation?) {}
+        })
+
+        button.startAnimation(scaleDown) // Запуск первой анимации
     }
 }
