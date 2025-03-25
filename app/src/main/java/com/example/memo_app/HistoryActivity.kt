@@ -17,7 +17,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import java.io.File
+import java.text.ParseException
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Locale
 
 class HistoryActivity : ComponentActivity() {
@@ -80,12 +82,14 @@ class HistoryActivity : ComponentActivity() {
         val noteView = inflater.inflate(R.layout.note_item_h, linearLayoutHistory, false) as ViewGroup
         val noteTextView = noteView.findViewById<TextView>(R.id.noteTextView)
         val descriptionTextView = noteView.findViewById<TextView>(R.id.desTextView)
+        val timeTextView = noteView.findViewById<TextView>(R.id.timeblock) // TextView для времени
         val noteImageView = noteView.findViewById<ImageView>(R.id.noteImageView)
         val editButton = noteView.findViewById<ImageButton>(R.id.deleteButton)
 
+        // Устанавливаем текст заметки
         noteTextView.text = note.content
 
-        // Обработка текста для description
+        // Обрабатываем описание заметки
         descriptionTextView.text = if (!note.description.isNullOrEmpty()) {
             if (note.description.length > 40) {
                 note.description.substring(0, 40) + "..."
@@ -96,18 +100,28 @@ class HistoryActivity : ComponentActivity() {
             "Нет описания"
         }
 
-        // Установка изображения для noteView
+        // Форматирование и отображение времени из заметки
+        try {
+            val parsedDate = dateTimeFormat.parse(note.dateTime) // Парсим дату из заметки
+            val calendar = Calendar.getInstance().apply { time = parsedDate!! }
+            // Формат времени без ведущих нулей, например "9:00"
+            val formattedTime = "${calendar.get(Calendar.HOUR_OF_DAY)}:${String.format("%02d", calendar.get(Calendar.MINUTE))}"
+            timeTextView.text = "$formattedTime" // Устанавливаем текст времени в TextView
+        } catch (e: ParseException) {
+            Log.e("HistoryActivity", "Error parsing dateTime: ${note.dateTime}", e)
+            timeTextView.text = "Время: не указано" // Если формат неверный
+        }
+
+        // Установка изображения заметки
         if (!note.imageUri.isNullOrEmpty()) {
             val imageFile = File(note.imageUri)
             if (imageFile.exists()) {
-                // Если это пользовательское изображение, загружаем из файлов
                 Glide.with(this)
                     .load(imageFile)
                     .apply(RequestOptions.bitmapTransform(RoundedCorners(20)))
                     .into(noteImageView)
                 noteImageView.visibility = View.VISIBLE
             } else {
-                // Если это имя ресурса случайного изображения, загружаем из ресурсов
                 val resourceId = resources.getIdentifier(note.imageUri, "drawable", packageName)
                 if (resourceId != 0) {
                     noteImageView.setImageResource(resourceId)
@@ -121,9 +135,7 @@ class HistoryActivity : ComponentActivity() {
             noteImageView.visibility = View.GONE // Скрываем ImageView, если изображения нет
         }
 
-        Log.d("HistoryActivity", "Note added to history layout: ${note.content}")
-
-        // Событие нажатия для перехода к ViewNoteActivity
+        // Добавляем событие клика для перехода в ViewNoteActivity
         noteView.setOnClickListener {
             val intent = Intent(this, ViewNoteActivity::class.java)
             intent.putExtra("noteId", note.id)
@@ -131,7 +143,8 @@ class HistoryActivity : ComponentActivity() {
         }
 
         // Добавляем элемент в начало History Layout
-        linearLayoutHistory.addView(noteView, 0) // Добавляем элемент в начало
+        linearLayoutHistory.addView(noteView, 0)
+        Log.d("HistoryActivity", "Note added to history layout with time: ${note.content}")
     }
 
     private fun hideText(textView: TextView) {

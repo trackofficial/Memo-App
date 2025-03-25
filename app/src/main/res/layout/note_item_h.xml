@@ -4,31 +4,32 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="1.5dp"
-    android:layout_marginTop="5dp"
-    android:layout_marginBottom="3dp"
-    android:layout_marginRight="12dp"
-    android:elevation="4dp"
-    app:cardCornerRadius="25dp"
+    android:padding="1.5sp"
+    android:layout_marginTop="5sp"
+    android:layout_marginBottom="3sp"
+    android:layout_marginRight="17sp"
+    android:elevation="4sp"
+    app:cardCornerRadius="25sp"
     android:background="@drawable/back_none"
-    android:layout_marginLeft="12dp">
+    android:layout_marginLeft="17sp">
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="244dp">
+        android:layout_height="wrap_content"
+        android:paddingBottom="18sp">
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="10sp"
             android:background="@drawable/for_image"
             android:layout_height="wrap_content">
             <androidx.cardview.widget.CardView
 
                 android:layout_width="match_parent"
-                android:layout_marginRight="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_height="160dp"
-                app:cardCornerRadius="15dp"
-                app:cardElevation="0dp">
+                android:layout_marginRight="10sp"
+                android:layout_marginLeft="10sp"
+                android:layout_height="160sp"
+                app:cardCornerRadius="15sp"
+                app:cardElevation="0sp">
 
                 <ImageView
                     android:id="@+id/noteImageView"
@@ -36,7 +37,26 @@
                     android:layout_height="match_parent"
                     android:adjustViewBounds="false"
                     android:scaleType="centerCrop" />
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="8sp"
+                    android:paddingRight="8sp"
+                    android:paddingBottom="1sp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="6sp"
+                    android:paddingTop="1sp"
+                    android:background="@drawable/form_for_timeblock">
 
+                    <TextView
+                        android:id="@+id/timeblock"
+                        android:layout_width="wrap_content"
+                        android:layout_height="21dp"
+                        android:layout_gravity="center"
+                        android:fontFamily="@font/liter"
+                        android:textColor="@color/background_color_light"
+                        android:textSize="16sp"></TextView>
+                </FrameLayout>
             </androidx.cardview.widget.CardView>
         </FrameLayout>
 
@@ -44,34 +64,33 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="12dp"
+            android:layout_marginLeft="12sp"
             android:orientation="vertical">
 
             <TextView
-                android:layout_marginTop="2dp"
-                android:layout_marginLeft="4dp"
+                android:layout_marginTop="3sp"
+                android:layout_marginLeft="6sp"
                 android:id="@+id/noteTextView"
                 android:layout_width="match_parent"
-                android:layout_height="21dp"
+                android:layout_height="wrap_content"
                 android:fontFamily="@font/tilda_semibold"
                 android:textColor="@color/black"
-                android:textSize="21dp" />
+                android:textSize="22sp" />
 
             <LinearLayout
-                android:layout_marginLeft="4dp"
-                android:layout_marginTop="2dp"
+                android:layout_marginLeft="6sp"
+                android:layout_marginTop="0sp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:orientation="horizontal">
-
                 <TextView
                     android:id="@+id/desTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/tilda_medium"
                     android:textColor="@color/new_color_grey"
-                    android:textSize="16dp" />
+                    android:textSize="15sp" />
             </LinearLayout>
         </LinearLayout>
 

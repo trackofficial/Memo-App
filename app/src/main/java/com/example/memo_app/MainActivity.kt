@@ -162,6 +162,7 @@ class MainActivity : ComponentActivity() {
         val noteView = inflater.inflate(R.layout.note_item, linearLayoutNotes, false) as ViewGroup
         val noteTextView = noteView.findViewById<TextView>(R.id.noteTextView)
         val descriptionTextView = noteView.findViewById<TextView>(R.id.desTextView)
+        val timeTextView = noteView.findViewById<TextView>(R.id.timeblock) // Время в блоке
         val noteImageView = noteView.findViewById<ImageView>(R.id.noteImageView)
         val editButton = noteView.findViewById<ImageButton>(R.id.deleteButton)
 
@@ -183,6 +184,17 @@ class MainActivity : ComponentActivity() {
             }
         } else {
             "Нет описания"
+        }
+
+        // Устанавливаем время заметки в формате без ведущих нулей
+        try {
+            val parsedDate = dateTimeFormat.parse(note.dateTime) // Парсим строку времени из БД
+            val calendar = Calendar.getInstance().apply { time = parsedDate!! }
+            val formattedTime = "${calendar.get(Calendar.HOUR_OF_DAY)}:${String.format("%02d", calendar.get(Calendar.MINUTE))}"
+            timeTextView.text = "$formattedTime" // Устанавливаем текст времени в блоке
+        } catch (e: ParseException) {
+            Log.e("MainActivity", "Error parsing dateTime: ${note.dateTime}", e)
+            timeTextView.text = "Время: не указано"
         }
 
         // Установка изображения
@@ -213,9 +225,25 @@ class MainActivity : ComponentActivity() {
             intent.putExtra("noteId", note.id)
             startActivity(intent)
         }
-
         linearLayoutNotes.addView(noteView)
-        Log.d("MainActivity", "Note added with capitalized title and description: ${note.content}")
+        Log.d("MainActivity", "Note added with time and capitalized title/description: ${note.content}")
+    }
+
+
+    private fun addTimeToLayout(dateTime: String) {
+        try {
+            val parsedDate = dateTimeFormat.parse(dateTime) // Парсим строку времени из БД
+            val formattedTime = SimpleDateFormat("HH:mm", Locale.getDefault()).format(parsedDate!!)
+            val timeTextView = TextView(this).apply {
+                text = "$formattedTime"
+                textSize = 16f
+                setTextColor(ContextCompat.getColor(this@MainActivity, R.color.black))
+                setPadding(16, 16, 16, 16)
+            }
+            linearLayoutNotes.addView(timeTextView) // Добавляем TextView в макет перед заметкой
+        } catch (e: ParseException) {
+            Log.e("MainActivity", "Error parsing dateTime: $dateTime", e)
+        }
     }
 
     private fun moveNoteToHistory(noteId: Int) {
