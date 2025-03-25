@@ -23,11 +23,15 @@ class NotificationReceiver : BroadcastReceiver() {
         }
 
         if (notes.isNotEmpty()) {
+            val planDetails = notes.joinToString(separator = "\n") { it.content }
+
             val notificationHelper = NotificationHelper(context)
             notificationHelper.sendNotification(
-                "Планы на сегодня!",
-                "У вас есть запланированные события на сегодня."
+                "Похоже, у вас планы",
+                planDetails
             )
+        } else {
+            Log.d("NotificationReceiver", "No plans found for today")
         }
     }
 

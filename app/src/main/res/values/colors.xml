@@ -42,4 +42,5 @@
     <color name="new_color_grey">#4A131314</color>
     <color name="new_color_grey_2">#7D7E85</color>
     <color name="orange_for_calendar">#FF7C48</color>
+    <color name="green_for_calendar">#56B530</color>
 </resources>

@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import java.io.File
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -42,11 +43,21 @@ class MainActivity : ComponentActivity() {
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
-                notificationHelper.scheduleDailyNotification()
+                Log.d("MainActivity", "Notification permission granted")
             } else {
                 Log.e("MainActivity", "Permission for notifications not granted")
             }
         }
+
+    private fun requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED
+            ) {
+                requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -209,4 +220,5 @@ class MainActivity : ComponentActivity() {
             Log.d("MainActivity", "Note moved to history: $deletedNote")
         }
     }
+
 }
