@@ -17,32 +17,31 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
     <FrameLayout
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:layout_width="match_parent"
         android:background="@drawable/for_image_add_edit"
         android:layout_height="wrap_content">
-        <FrameLayout
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/noteImageView"
             android:layout_width="match_parent"
-            android:background="@drawable/for_image_add_edit"
-            android:layout_height="wrap_content">
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/noteImageView"
-                android:layout_width="match_parent"
-                android:layout_height="160dp"
-                android:scaleType="centerCrop"
-                app:shapeAppearanceOverlay="@style/RoundedCornersOneSide" />
-        </FrameLayout>
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/RoundedCornersOneSide" />
     </FrameLayout>
     <ImageButton
         android:layout_width="20dp"
         android:background="@drawable/export_image_pin"
         android:layout_height="20dp"
         android:layout_gravity="bottom|end"
-        android:layout_marginRight="12dp"
+        android:layout_marginRight="28dp"
         android:layout_marginBottom="12dp"
         android:id="@+id/buttonSelectImage">
 </ImageButton>
     <ImageButton
-        android:layout_marginRight="52dp"
+        android:layout_marginRight="64dp"
         android:layout_marginBottom="12dp"
         android:id="@+id/buttonSelectDateTime"
         android:layout_width="20dp"
@@ -61,7 +60,7 @@
                 android:fontFamily="@font/lineyka"
                 android:hint="Введите заметку"
                 android:gravity="top|start"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 />
             <EditText
                 android:id="@+id/editTextTime"
@@ -81,7 +80,7 @@
                 android:layout_marginRight="16dp"
                 android:layout_width="match_parent"
                 android:background="@drawable/block_for_edit_text"
-                android:layout_height="300dp"
+                android:layout_height="280dp"
                 android:fadeScrollbars="false"
                 android:scrollbars="none"
                 android:gravity="top|start"

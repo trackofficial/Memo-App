@@ -52,8 +52,8 @@
         android:gravity="center"
         android:layout_gravity="bottom">
 
-        <!-- Кнопка "Home" -->
         <FrameLayout
+            android:id="@+id/block_back"
             android:layout_width="55dp"
             android:layout_height="55dp"
             android:background="@drawable/form_for_navigation_bar">

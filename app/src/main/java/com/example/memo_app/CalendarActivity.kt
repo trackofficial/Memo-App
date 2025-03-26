@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.Gravity
 import android.view.animation.ScaleAnimation
+import android.widget.FrameLayout
 import android.widget.GridLayout
 import android.widget.ImageButton
 import android.widget.TextView
@@ -21,6 +22,7 @@ class CalendarActivity : AppCompatActivity() {
     private lateinit var nextMonthButton: ImageButton
     private lateinit var buttonHome: ImageButton
     private lateinit var noteDao: NoteDao
+    private lateinit var exitblock: FrameLayout
 
     private var currentMonth = Calendar.getInstance().apply { set(Calendar.DAY_OF_MONTH, 1) }
     private val activeDates = mutableSetOf<Long>() // Список дат активных блоков
@@ -34,6 +36,7 @@ class CalendarActivity : AppCompatActivity() {
         monthTitle = findViewById(R.id.monthTitle)
         prevMonthButton = findViewById(R.id.prevMonthButton)
         nextMonthButton = findViewById(R.id.nextMonthButton)
+        exitblock = findViewById(R.id.block_back)
 
         // Инициализация NoteDao
         noteDao = NoteDao(this)
@@ -51,6 +54,7 @@ class CalendarActivity : AppCompatActivity() {
 
         buttonHome.setOnClickListener {
             animateButtonClick(buttonHome)
+            animateButtonClick(exitblock)
             startActivity(Intent(this, MainActivity::class.java))
         }
         // Загрузка данных из базы и обновление календаря
@@ -199,5 +203,36 @@ class CalendarActivity : AppCompatActivity() {
         })
 
         button.startAnimation(scaleDown) // Запуск первой анимации
+    }
+    fun animateButtonClick(block: FrameLayout) {
+        // Анимация уменьшения кнопки
+        val scaleDown = ScaleAnimation(
+            1.0f, 0.95f,  // Уменьшение ширины
+            1.0f, 0.95f,  // Уменьшение высоты
+            ScaleAnimation.RELATIVE_TO_SELF, 0.5f,  // Точка опоры по X
+            ScaleAnimation.RELATIVE_TO_SELF, 0.5f   // Точка опоры по Y
+        )
+        scaleDown.duration = 100 // Продолжительность анимации в миллисекундах
+        scaleDown.fillAfter = true // Кнопка остаётся в уменьшенном состоянии до завершения
+
+        // Возвращаем к исходному размеру
+        scaleDown.setAnimationListener(object : android.view.animation.Animation.AnimationListener {
+            override fun onAnimationStart(animation: android.view.animation.Animation?) {}
+            override fun onAnimationEnd(animation: android.view.animation.Animation?) {
+                val scaleUp = ScaleAnimation(
+                    0.95f, 1.0f,  // Увеличение ширины обратно
+                    0.95f, 1.0f,  // Увеличение высоты обратно
+                    ScaleAnimation.RELATIVE_TO_SELF, 0.5f,
+                    ScaleAnimation.RELATIVE_TO_SELF, 0.5f
+                )
+                scaleUp.duration = 100
+                scaleUp.fillAfter = true
+                block.startAnimation(scaleUp) // Запуск обратной анимации
+            }
+
+            override fun onAnimationRepeat(animation: android.view.animation.Animation?) {}
+        })
+
+        block.startAnimation(scaleDown) // Запуск первой анимации
     }
 }
