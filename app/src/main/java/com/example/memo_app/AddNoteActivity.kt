@@ -15,8 +15,10 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.animation.ScaleAnimation
 import android.widget.Button
 import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.activity.ComponentActivity
@@ -35,13 +37,16 @@ class AddNoteActivity : ComponentActivity() {
     private lateinit var editTextNoteContent: EditText
     private lateinit var editTextDescription: EditText
     private lateinit var editTextTime: EditText
-    private lateinit var buttonSaveNote: ImageButton
+    private lateinit var buttonSaveNote: Button
     private lateinit var buttonSelectDate: ImageButton
     private lateinit var buttonSelectImage: ImageButton
+    private lateinit var exitbutton: ImageButton
     private lateinit var imageViewNote: ImageView
     private lateinit var noteDao: NoteDao
     private var selectedDate: String = ""
     private var imagePath: String? = null
+    private lateinit var blockmainbutton: FrameLayout
+    private lateinit var blockexitbutton: FrameLayout
 
     private val selectImageLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -76,7 +81,7 @@ class AddNoteActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_note)
-
+        exitbutton = findViewById(R.id.exit_button)
         editTextNoteContent = findViewById(R.id.editTextNoteContent)
         editTextDescription = findViewById(R.id.editAddText)
         editTextTime = findViewById(R.id.editTextTime)
@@ -84,6 +89,10 @@ class AddNoteActivity : ComponentActivity() {
         buttonSelectDate = findViewById(R.id.buttonSelectDateTime)
         buttonSelectImage = findViewById(R.id.buttonSelectImage)
         imageViewNote = findViewById(R.id.noteImageView)
+        blockexitbutton = findViewById(R.id.block_createblock)
+        blockmainbutton = findViewById(R.id.block_createblock_main)
+
+
         noteDao = NoteDao(this)
         // Устанавливаем случайное изображение
         val randomResId = getRandomBackgroundResId()
@@ -124,6 +133,7 @@ class AddNoteActivity : ComponentActivity() {
             override fun afterTextChanged(s: Editable?) {}
         })
         buttonSaveNote.setOnClickListener {
+            animateButtonClick(blockmainbutton)
             val noteContent = editTextNoteContent.text.toString()
             val noteDescription = editTextDescription.text.toString()
             val time = editTextTime.text.toString()
@@ -164,8 +174,11 @@ class AddNoteActivity : ComponentActivity() {
                 }
             }
         }
+        exitbutton.setOnClickListener {
+            animateButtonClick(blockexitbutton)
+            startActivity(Intent(this, MainActivity::class.java))
+        }
     }
-
     private fun displayImageWithGlide(imagePath: String?) {
         val path = imagePath // Локально сохраняем текущее значение
         path?.let {
@@ -304,5 +317,36 @@ class AddNoteActivity : ComponentActivity() {
             R.drawable.img_memo_6
         )
         return backgrounds.random() // Возвращает случайный идентификатор ресурса
+    }
+    fun animateButtonClick(block: FrameLayout) {
+        // Анимация уменьшения кнопки
+        val scaleDown = ScaleAnimation(
+            1.0f, 0.95f,  // Уменьшение ширины
+            1.0f, 0.95f,  // Уменьшение высоты
+            ScaleAnimation.RELATIVE_TO_SELF, 0.5f,  // Точка опоры по X
+            ScaleAnimation.RELATIVE_TO_SELF, 0.5f   // Точка опоры по Y
+        )
+        scaleDown.duration = 100 // Продолжительность анимации в миллисекундах
+        scaleDown.fillAfter = true // Кнопка остаётся в уменьшенном состоянии до завершения
+
+        // Возвращаем к исходному размеру
+        scaleDown.setAnimationListener(object : android.view.animation.Animation.AnimationListener {
+            override fun onAnimationStart(animation: android.view.animation.Animation?) {}
+            override fun onAnimationEnd(animation: android.view.animation.Animation?) {
+                val scaleUp = ScaleAnimation(
+                    0.95f, 1.0f,  // Увеличение ширины обратно
+                    0.95f, 1.0f,  // Увеличение высоты обратно
+                    ScaleAnimation.RELATIVE_TO_SELF, 0.5f,
+                    ScaleAnimation.RELATIVE_TO_SELF, 0.5f
+                )
+                scaleUp.duration = 100
+                scaleUp.fillAfter = true
+                block.startAnimation(scaleUp) // Запуск обратной анимации
+            }
+
+            override fun onAnimationRepeat(animation: android.view.animation.Animation?) {}
+        })
+
+        block.startAnimation(scaleDown) // Запуск первой анимации
     }
 }

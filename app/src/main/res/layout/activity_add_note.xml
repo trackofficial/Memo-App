@@ -27,14 +27,6 @@
                         app:shapeAppearanceOverlay="@style/RoundedCornersOneSide" />
                 </FrameLayout>
                 <ImageButton
-                    android:background="@drawable/create_pin_button"
-                    android:id="@+id/buttonSave"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:layout_marginRight="12dp"
-                    android:layout_marginTop="12dp"
-                    android:layout_gravity="end" />
-                <ImageButton
                     android:layout_width="20dp"
                     android:background="@drawable/export_image_pin"
                     android:layout_height="20dp"
@@ -98,7 +90,80 @@
                     android:layout_height="wrap_content"/>
             </ScrollView>
         </LinearLayout>
+        <LinearLayout
+            android:id="@+id/navigate_block"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginLeft="17dp"
+            android:layout_marginRight="17dp"
+            android:layout_marginBottom="17dp"
+            android:gravity="center"
+            android:layout_gravity="bottom">
 
+            <!-- Внутренние кнопки -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="55dp"
+                android:gravity="start"
+                android:background="@drawable/form_for_navigation_bar">
+
+                <LinearLayout
+                    android:layout_gravity="center_vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="6dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginLeft="6dp"
+                    android:layout_marginRight="6dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <FrameLayout
+                        android:id="@+id/block_createblock_main"
+                        android:layout_width="match_parent"
+                        android:paddingLeft="14dp"
+                        android:paddingRight="14dp"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/form_for_main_button">
+                        <Button
+                            android:id="@+id/buttonSave"
+                            android:layout_width="wrap_content"
+                            android:background="@color/color_none"
+                            android:layout_height="wrap_content" />
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:fontFamily="@font/tilda_medium"
+                                android:text="Add"
+                                android:textAlignment="center"
+                                android:textColor="@color/new_color_black"
+                                android:textSize="16dp" />
+                        </LinearLayout>
+                    </FrameLayout>
+                    <FrameLayout
+                        android:layout_marginLeft="5dp"
+                        android:gravity="center"
+                        android:id="@+id/block_createblock"
+                        android:layout_width="43dp"
+                        android:layout_height="43dp"
+                        android:padding="6dp"
+                        android:background="@drawable/form_for_main_button">
+                        <ImageButton
+                            android:id="@+id/exit_button"
+                            android:layout_width="wrap_content"
+                            android:background="@drawable/exit_button"
+                            android:layout_height="wrap_content" />
+                    </FrameLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
     </FrameLayout>
 
 </LinearLayout>

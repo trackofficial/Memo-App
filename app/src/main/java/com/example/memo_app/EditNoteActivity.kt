@@ -15,7 +15,9 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.view.animation.ScaleAnimation
 import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.activity.ComponentActivity
@@ -35,14 +37,18 @@ class EditNoteActivity : ComponentActivity() {
     private lateinit var editTextDescription: EditText
     private lateinit var editTextTime: EditText
     private lateinit var buttonDeleteNote: ImageButton
-    private lateinit var buttonSaveNote: ImageButton
+    private lateinit var buttonSaveNote: Button
     private lateinit var buttonSelectDate: ImageButton
     private lateinit var buttonSelectImage: ImageButton
+    private lateinit var exitbutton: ImageButton
     private lateinit var imageViewNote: ImageView
     private lateinit var noteDao: NoteDao
     private var noteId: Int = 0
     private var selectedDate: String = ""
     private var imagePath: String? = null
+    private lateinit var blockmainbutton: FrameLayout
+    private lateinit var blockexitbutton: FrameLayout
+    private lateinit var blockdeletebutton: FrameLayout
 
     private val selectImageLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -76,7 +82,7 @@ class EditNoteActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_note)
-
+        exitbutton = findViewById(R.id.exit_button)
         // Инициализация UI элементов
         editTextNoteContent = findViewById(R.id.editTextNoteContent)
         editTextDescription = findViewById(R.id.editAddText)
@@ -86,6 +92,10 @@ class EditNoteActivity : ComponentActivity() {
         buttonSelectDate = findViewById(R.id.buttonSelectDateTime)
         buttonSelectImage = findViewById(R.id.buttonSelectImage)
         imageViewNote = findViewById(R.id.noteImageView)
+        blockexitbutton = findViewById(R.id.block_createblock)
+        blockmainbutton = findViewById(R.id.block_createblock_main)
+        blockdeletebutton = findViewById(R.id.block_delete)
+
 
         noteDao = NoteDao(this)
         noteId = intent.getIntExtra("noteId", 0)
@@ -135,6 +145,7 @@ class EditNoteActivity : ComponentActivity() {
 
         // Обработка кнопки "Удалить" (перенос в History)
         buttonDeleteNote.setOnClickListener {
+            animateButtonClick(blockdeletebutton)
             if (note != null) {
                 note.isDeleted = true // Помечаем заметку как удалённую
                 noteDao.update(note) // Обновляем статус заметки в базе данных
@@ -186,6 +197,7 @@ class EditNoteActivity : ComponentActivity() {
 
         // Обработка кнопки "Сохранить"
         buttonSaveNote.setOnClickListener {
+            animateButtonClick(blockmainbutton)
             val updatedContent = editTextNoteContent.text.toString()
             val updatedDescription = editTextDescription.text.toString()
             val time = editTextTime.text.toString()
@@ -221,6 +233,10 @@ class EditNoteActivity : ComponentActivity() {
                     editTextTime.error = "Время не может быть пустым"
                 }
             }
+        }
+        exitbutton.setOnClickListener {
+            animateButtonClick(blockexitbutton)
+            startActivity(Intent(this, MainActivity::class.java))
         }
     }
 
@@ -349,5 +365,36 @@ class EditNoteActivity : ComponentActivity() {
             .putString("imageSource", source)
             .apply()
         Log.d("saveSelectedImagePath", "Path and source saved: $path, $source")
+    }
+    fun animateButtonClick(block: FrameLayout) {
+        // Анимация уменьшения кнопки
+        val scaleDown = ScaleAnimation(
+            1.0f, 0.95f,  // Уменьшение ширины
+            1.0f, 0.95f,  // Уменьшение высоты
+            ScaleAnimation.RELATIVE_TO_SELF, 0.5f,  // Точка опоры по X
+            ScaleAnimation.RELATIVE_TO_SELF, 0.5f   // Точка опоры по Y
+        )
+        scaleDown.duration = 100 // Продолжительность анимации в миллисекундах
+        scaleDown.fillAfter = true // Кнопка остаётся в уменьшенном состоянии до завершения
+
+        // Возвращаем к исходному размеру
+        scaleDown.setAnimationListener(object : android.view.animation.Animation.AnimationListener {
+            override fun onAnimationStart(animation: android.view.animation.Animation?) {}
+            override fun onAnimationEnd(animation: android.view.animation.Animation?) {
+                val scaleUp = ScaleAnimation(
+                    0.95f, 1.0f,  // Увеличение ширины обратно
+                    0.95f, 1.0f,  // Увеличение высоты обратно
+                    ScaleAnimation.RELATIVE_TO_SELF, 0.5f,
+                    ScaleAnimation.RELATIVE_TO_SELF, 0.5f
+                )
+                scaleUp.duration = 100
+                scaleUp.fillAfter = true
+                block.startAnimation(scaleUp) // Запуск обратной анимации
+            }
+
+            override fun onAnimationRepeat(animation: android.view.animation.Animation?) {}
+        })
+
+        block.startAnimation(scaleDown) // Запуск первой анимации
     }
 }
