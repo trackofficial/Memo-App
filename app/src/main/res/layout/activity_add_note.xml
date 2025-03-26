@@ -3,6 +3,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background_color_light"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/addnote">
     <FrameLayout
@@ -16,9 +17,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <FrameLayout
-                    android:layout_marginTop="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginRight="12dp"
                     android:layout_width="match_parent"
                     android:background="@drawable/for_image_add_edit"
                     android:layout_height="wrap_content">
@@ -26,87 +27,125 @@
                     <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/noteImageView"
                         android:layout_width="match_parent"
-                        android:layout_height="200dp"
+                        android:layout_height="210dp"
                         android:scaleType="centerCrop"
                         app:shapeAppearanceOverlay="@style/RoundedCornersOneSide" />
                 </FrameLayout>
                 <ImageButton
-                    android:layout_width="20dp"
+                    android:layout_width="22dp"
                     android:background="@drawable/export_image_pin"
-                    android:layout_height="20dp"
+                    android:layout_height="22dp"
                     android:layout_gravity="bottom|end"
                     android:layout_marginRight="28dp"
-                    android:layout_marginBottom="12dp"
+                    android:layout_marginBottom="14dp"
                     android:id="@+id/buttonSelectImage">
                 </ImageButton>
-                <ImageButton
-                    android:layout_marginRight="64dp"
-                    android:layout_marginBottom="12dp"
-                    android:id="@+id/buttonSelectDateTime"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:background="@drawable/calendar_button"
-                    android:layout_gravity="bottom|end" />
 
             </FrameLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/block_for_edittext">
     <EditText
-        android:fontFamily="@font/lineyka"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:background="@drawable/block_for_edit_text"
+        android:fontFamily="@font/tilda_semibold"
+        android:layout_marginLeft="14dp"
+        android:layout_marginRight="14dp"
+        android:textSize="26dp"
+        android:background="@drawable/form_for_new_edit_text"
         android:id="@+id/editTextNoteContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Введите заметку"
+        android:textColorHint="@color/background_color_for_hint"
         android:gravity="top|start"
-        android:layout_marginTop="10dp"
-        />
+        android:layout_marginTop="5dp"/>
                 <EditText
+                    android:visibility="gone"
                     android:id="@+id/editTextTime"
                     android:hint="Введите время"
                     android:inputType="time"
-                    android:fontFamily="@font/lineyka"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
-                    android:background="@drawable/block_for_edit_text"
+                    android:fontFamily="@font/tilda_medium"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="@drawable/form_for_new_edit_text"
                     android:layout_width="match_parent"
+                    android:textColorHint="@color/new_color_grey"
                     android:layout_height="wrap_content"
                     android:maxLength="5"
                     android:gravity="top|start"
-                    android:layout_marginTop="10dp"/>
+                    android:layout_marginTop="5dp"/>
+            </LinearLayout>
             <ScrollView
-                android:layout_marginLeft="16dp"
+                android:layout_marginLeft="15dp"
                 android:fadeScrollbars="false"
                 android:scrollbars="none"
-                android:layout_marginRight="16dp"
+                android:layout_marginRight="15dp"
                 android:layout_width="match_parent"
-                android:background="@drawable/block_for_edit_text"
+                android:background="@drawable/form_for_new_edit_text"
                 android:layout_height="280dp"
                 android:gravity="top|start"
-                android:layout_marginTop="10dp">
+                android:layout_marginTop="2dp">
                 <EditText
                     android:id="@+id/editAddText"
                     android:hint="Введите описание"
                     android:inputType="textMultiLine"
-                    android:background="@drawable/block_for_edit_text"
+                    android:background="@drawable/form_for_new_edit_text"
+                    android:textColorHint="@color/background_color_for_hint"
                     android:layout_width="wrap_content"
-                    android:fontFamily="@font/lineyka"
+                    android:fontFamily="@font/tilda_medium"
                     android:layout_height="wrap_content"/>
             </ScrollView>
         </LinearLayout>
         <LinearLayout
             android:id="@+id/navigate_block"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="55dp"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="17dp"
             android:layout_marginRight="17dp"
             android:layout_marginBottom="17dp"
             android:gravity="center"
             android:layout_gravity="bottom">
-
-            <!-- Внутренние кнопки -->
+            <FrameLayout
+                android:id="@+id/blockelement"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:paddingRight="10dp"
+                android:paddingLeft="5dp"
+                android:background="@drawable/form_for_navigation_bar"
+                android:layout_height="30dp">
+                <Button
+                    android:id="@+id/buttonshowbaroptions"
+                    android:background="@color/color_none"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                </Button>
+                <LinearLayout
+                    android:layout_gravity="center_vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:background="@drawable/add_pin">
+                    </ImageView>
+                <TextView
+                    android:gravity="center_vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Add Elements"
+                    android:textSize="14dp"
+                    android:textColor="@color/background_color_light"
+                    android:fontFamily="@font/tilda_medium">
+                </TextView>
+                </LinearLayout>
+            </FrameLayout>
             <LinearLayout
+                android:layout_marginTop="6dp"
                 android:layout_width="wrap_content"
                 android:layout_height="55dp"
                 android:gravity="start"
@@ -126,8 +165,8 @@
                     <FrameLayout
                         android:id="@+id/block_createblock_main"
                         android:layout_width="match_parent"
-                        android:paddingLeft="14dp"
-                        android:paddingRight="14dp"
+                        android:paddingLeft="12dp"
+                        android:paddingRight="12dp"
                         android:layout_height="wrap_content"
                         android:background="@drawable/form_for_main_button">
                         <Button

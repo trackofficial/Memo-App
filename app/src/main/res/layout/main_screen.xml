@@ -13,7 +13,7 @@
         android:orientation="vertical"
         android:paddingTop="20dp"
         android:paddingLeft="17dp"
-        android:paddingRight="17dp"
+
         android:id="@+id/text_section">
         <TextView
             android:layout_width="wrap_content"
@@ -22,6 +22,24 @@
             android:text="Notes"
             android:textColor="@color/black"
             android:textSize="24dp" />
+        <HorizontalScrollView
+            android:clipToPadding="false"
+            android:paddingBottom="8dp"
+            android:fadeScrollbars="false"
+            android:scrollbars="none"
+            android:id="@+id/horizontalScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="3dp">
+
+            <LinearLayout
+                android:id="@+id/linearLayoutSimpleNotes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
+
     </LinearLayout>
 
     <!-- Прокручиваемый контент + блок кнопок в FrameLayout -->

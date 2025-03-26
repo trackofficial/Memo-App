@@ -96,7 +96,6 @@ class EditNoteActivity : ComponentActivity() {
         blockmainbutton = findViewById(R.id.block_createblock_main)
         blockdeletebutton = findViewById(R.id.block_delete)
 
-
         noteDao = NoteDao(this)
         noteId = intent.getIntExtra("noteId", 0)
 
@@ -112,10 +111,17 @@ class EditNoteActivity : ComponentActivity() {
             editTextDescription.setText(note.description)
 
             // Разделяем дату и время
-            val dateTimeParts = note.dateTime.split(" ")
-            if (dateTimeParts.size == 2) {
-                selectedDate = dateTimeParts[0]
-                editTextTime.setText(dateTimeParts[1])
+            note.dateTime?.let { dateTime ->
+                val dateTimeParts = dateTime.split(" ")
+                if (dateTimeParts.size == 2) {
+                    selectedDate = dateTimeParts[0]
+                    editTextTime.setText(dateTimeParts[1])
+                }
+            } ?: run {
+                // Если dateTime равно null, можно обработать это здесь
+                selectedDate = ""
+                editTextTime.setText("")
+                Log.d("EditNoteActivity", "DateTime is null, setting default values")
             }
 
             // Обработка изображения

@@ -36,6 +36,7 @@
     <color name="none">#00F5F6FF</color>
 
     <color name="background_color_light">#FDFEFF</color>
+    <color name="background_color_for_hint">#D5D7DA</color>
     <color name="new_color_for_navigatebar">#F0131314</color>
     <color name="new_color_black">#131314</color>
     <color name="new_color_black_for_timeblock">#E1131314</color>

@@ -1,0 +1,88 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/blockbottomsheet"
+    android:orientation="vertical"
+    android:background="@drawable/form_for_select_block"
+    android:padding="16dp">
+    <View
+        android:id="@+id/pullHandle"
+        android:layout_width="80dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/form_for_navigation_bar" />
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_marginTop="20dp"
+    android:layout_marginBottom="20dp"
+    android:orientation="horizontal">
+    <LinearLayout
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+<FrameLayout
+    android:id="@+id/block_button_1"
+    android:layout_gravity="center"
+    android:layout_width="60dp"
+    android:layout_height="60dp"
+    android:background="@drawable/form_for_button_sheet">
+    <ImageView
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:background="@drawable/calendar_button"
+        android:layout_gravity="center"></ImageView>
+    <Button
+        android:id="@+id/buttonSelectDate"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/color_none"/>
+</FrameLayout>
+        <TextView
+            android:layout_marginTop="5dp"
+            android:textColor="@color/new_color_black"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Date"
+            android:fontFamily="@font/tilda_semibold"
+            android:textSize="14dp">
+        </TextView>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_marginLeft="80dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+<FrameLayout
+    android:id="@+id/block_button_2"
+    android:layout_gravity="center"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/form_for_button_sheet">
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/time_button"
+            android:layout_gravity="center"></ImageView>
+        <Button
+            android:id="@+id/buttonSelectTime"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/color_none"/>
+    </FrameLayout>
+        <TextView
+            android:layout_marginTop="5dp"
+            android:textColor="@color/new_color_black"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Time"
+            android:fontFamily="@font/tilda_semibold"
+            android:textSize="14dp">
+        </TextView>
+    </LinearLayout>
+</LinearLayout>
+</LinearLayout>

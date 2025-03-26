@@ -17,9 +17,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
     <FrameLayout
-        android:layout_marginTop="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
         android:layout_width="match_parent"
         android:background="@drawable/for_image_add_edit"
         android:layout_height="wrap_content">
@@ -27,25 +27,25 @@
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/noteImageView"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="210dp"
             android:scaleType="centerCrop"
             app:shapeAppearanceOverlay="@style/RoundedCornersOneSide" />
     </FrameLayout>
     <ImageButton
-        android:layout_width="20dp"
+        android:layout_width="22dp"
         android:background="@drawable/export_image_pin"
-        android:layout_height="20dp"
+        android:layout_height="22dp"
         android:layout_gravity="bottom|end"
         android:layout_marginRight="28dp"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="14dp"
         android:id="@+id/buttonSelectImage">
 </ImageButton>
     <ImageButton
-        android:layout_marginRight="64dp"
-        android:layout_marginBottom="12dp"
+        android:layout_marginRight="66dp"
+        android:layout_marginBottom="14dp"
         android:id="@+id/buttonSelectDateTime"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
         android:background="@drawable/calendar_button"
         android:layout_gravity="bottom|end" />
 </FrameLayout>
@@ -129,8 +129,8 @@
                     <FrameLayout
                         android:id="@+id/block_createblock_main"
                         android:layout_width="match_parent"
-                        android:paddingLeft="14dp"
-                        android:paddingRight="14dp"
+                        android:paddingLeft="12dp"
+                        android:paddingRight="12dp"
                         android:layout_height="wrap_content"
                         android:background="@drawable/form_for_main_button">
                         <Button

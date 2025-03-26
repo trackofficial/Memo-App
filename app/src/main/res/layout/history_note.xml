@@ -3,7 +3,38 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/historynotescreen">
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
+    <LinearLayout
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="5dp"
+        android:paddingLeft="17dp"
+        android:id="@+id/text_section">
+        <HorizontalScrollView
+            android:clipToPadding="false"
+            android:paddingBottom="2dp"
+            android:fadeScrollbars="false"
+            android:scrollbars="none"
+            android:id="@+id/horizontalScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="3dp">
+
+            <LinearLayout
+                android:id="@+id/linearLayoutSimpleNotes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
+
+    </LinearLayout>
     <!-- Контейнер ScrollView -->
     <ScrollView
         android:id="@+id/scroll_for_block"
@@ -22,8 +53,7 @@
             android:layout_marginTop="5dp">
         </LinearLayout>
     </ScrollView>
-
-    <!-- TextView, наложенный сверху -->
+</LinearLayout>
     <TextView
         android:background="@drawable/form_for_navigation_bar"
         android:id="@+id/overlayTextView"

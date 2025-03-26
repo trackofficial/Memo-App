@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.ScaleAnimation
+import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -83,74 +84,123 @@ class HistoryActivity : ComponentActivity() {
 
     private fun addNoteToHistoryLayout(note: Note) {
         val inflater = LayoutInflater.from(this)
-        val noteView = inflater.inflate(R.layout.note_item_h, linearLayoutHistory, false) as ViewGroup
-        val noteTextView = noteView.findViewById<TextView>(R.id.noteTextView)
-        val descriptionTextView = noteView.findViewById<TextView>(R.id.desTextView)
-        val timeTextView = noteView.findViewById<TextView>(R.id.timeblock) // TextView для времени
-        val noteImageView = noteView.findViewById<ImageView>(R.id.noteImageView)
-        val editButton = noteView.findViewById<ImageButton>(R.id.deleteButton)
 
-        // Устанавливаем текст заметки
-        noteTextView.text = note.content
+        // Проверяем, есть ли дата и время
+        if (note.dateTime.isNullOrEmpty()) {
+            // Если дата и время отсутствуют, добавляем в горизонтальный ScrollView
+            val simpleNoteView = inflater.inflate(R.layout.note_item_simple, null) as ViewGroup
+            val simpleNoteTextView = simpleNoteView.findViewById<TextView>(R.id.noteTitleTextView)
+            val simpleNoteImageView = simpleNoteView.findViewById<ImageView>(R.id.noteImageView)
+            val viewNoteButton = simpleNoteView.findViewById<Button>(R.id.buttonsipleblock) // Новая кнопка
 
-        // Обрабатываем описание заметки
-        descriptionTextView.text = if (!note.description.isNullOrEmpty()) {
-            if (note.description.length > 40) {
-                note.description.substring(0, 40) + "..."
+            // Устанавливаем отступ между блоками программно
+            val params = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            params.marginEnd = 24
+            simpleNoteView.layoutParams = params
+
+            // Устанавливаем название заметки
+            simpleNoteTextView.text = note.content
+
+            // Устанавливаем изображение, если оно есть
+            if (!note.imageUri.isNullOrEmpty()) {
+                val imageFile = File(note.imageUri)
+                if (imageFile.exists()) {
+                    Glide.with(this)
+                        .load(imageFile)
+                        .centerCrop()
+                        .into(simpleNoteImageView)
+                    simpleNoteImageView.visibility = View.VISIBLE
+                } else {
+                    val resourceId = resources.getIdentifier(note.imageUri, "drawable", packageName)
+                    if (resourceId != 0) {
+                        simpleNoteImageView.setImageResource(resourceId)
+                        simpleNoteImageView.visibility = View.VISIBLE
+                    } else {
+                        simpleNoteImageView.visibility = View.GONE
+                    }
+                }
             } else {
-                note.description
+                simpleNoteImageView.visibility = View.GONE
             }
+
+            // Устанавливаем обработчик клика на кнопку
+            viewNoteButton.setOnClickListener {
+                val intent = Intent(this, ViewNoteActivity::class.java)
+                intent.putExtra("noteId", note.id) // Передаём ID заметки
+                startActivity(intent)
+            }
+
+            // Добавляем блок в горизонтальный контейнер
+            val horizontalContainer = findViewById<LinearLayout>(R.id.linearLayoutSimpleNotes)
+            horizontalContainer.addView(simpleNoteView)
+
+            Log.d("HistoryActivity", "Simple note added to horizontal layout: ${note.content}")
         } else {
-            "Нет описания"
-        }
+            // Если дата и время есть, добавляем в основной вертикальный LinearLayout
+            val noteView = inflater.inflate(R.layout.note_item_h, linearLayoutHistory, false) as ViewGroup
+            val noteTextView = noteView.findViewById<TextView>(R.id.noteTextView)
+            val descriptionTextView = noteView.findViewById<TextView>(R.id.desTextView)
+            val timeTextView = noteView.findViewById<TextView>(R.id.timeblock)
+            val noteImageView = noteView.findViewById<ImageView>(R.id.noteImageView)
 
-        // Форматирование и отображение времени из заметки
-        try {
-            val parsedDate = dateTimeFormat.parse(note.dateTime) // Парсим дату из заметки
-            val calendar = Calendar.getInstance().apply { time = parsedDate!! }
-            // Формат времени без ведущих нулей, например "9:00"
-            val formattedTime = "${calendar.get(Calendar.HOUR_OF_DAY)}:${String.format("%02d", calendar.get(Calendar.MINUTE))}"
-            timeTextView.text = "$formattedTime" // Устанавливаем текст времени в TextView
-        } catch (e: ParseException) {
-            Log.e("HistoryActivity", "Error parsing dateTime: ${note.dateTime}", e)
-            timeTextView.text = "Время: не указано" // Если формат неверный
-        }
+            // Устанавливаем текст заметки
+            noteTextView.text = note.content
 
-        // Установка изображения заметки
-        if (!note.imageUri.isNullOrEmpty()) {
-            val imageFile = File(note.imageUri)
-            if (imageFile.exists()) {
-                Glide.with(this)
-                    .load(imageFile)
-                    .apply(RequestOptions.bitmapTransform(RoundedCorners(20)))
-                    .into(noteImageView)
-                noteImageView.visibility = View.VISIBLE
+            // Устанавливаем описание
+            descriptionTextView.text = if (!note.description.isNullOrEmpty()) {
+                if (note.description.length > 40) {
+                    "${note.description.substring(0, 40)}..."
+                } else {
+                    note.description
+                }
             } else {
-                val resourceId = resources.getIdentifier(note.imageUri, "drawable", packageName)
-                if (resourceId != 0) {
-                    noteImageView.setImageResource(resourceId)
+                "Нет описания"
+            }
+
+            // Форматируем и отображаем время
+            try {
+                val parsedDate = dateTimeFormat.parse(note.dateTime)
+                val calendar = Calendar.getInstance().apply { time = parsedDate!! }
+                val formattedTime = "${calendar.get(Calendar.HOUR_OF_DAY)}:${
+                    String.format("%02d", calendar.get(Calendar.MINUTE))
+                }"
+                timeTextView.text = "Время: $formattedTime"
+            } catch (e: ParseException) {
+                Log.e("HistoryActivity", "Error parsing dateTime: ${note.dateTime}", e)
+                timeTextView.text = "Время: некорректный формат"
+            }
+// Устанавливаем изображение
+            if (!note.imageUri.isNullOrEmpty()) {
+                val imageFile = File(note.imageUri)
+                if (imageFile.exists()) {
+                    Glide.with(this)
+                        .load(imageFile)
+                        .apply(RequestOptions.bitmapTransform(RoundedCorners(20)))
+                        .into(noteImageView)
                     noteImageView.visibility = View.VISIBLE
                 } else {
-                    noteImageView.visibility = View.GONE
-                    Log.e("HistoryActivity", "Invalid imageUri: ${note.imageUri}")
+                    val resourceId = resources.getIdentifier(note.imageUri, "drawable", packageName)
+                    if (resourceId != 0) {
+                        noteImageView.setImageResource(resourceId)
+                        noteImageView.visibility = View.VISIBLE
+                    } else {
+                        noteImageView.visibility = View.GONE
+                        Log.e("HistoryActivity", "Invalid imageUri: ${note.imageUri}")
+                    }
                 }
+            } else {
+                noteImageView.visibility = View.GONE
             }
-        } else {
-            noteImageView.visibility = View.GONE // Скрываем ImageView, если изображения нет
-        }
 
-        // Добавляем событие клика для перехода в ViewNoteActivity
-        noteView.setOnClickListener {
-            val intent = Intent(this, ViewNoteActivity::class.java)
-            intent.putExtra("noteId", note.id)
-            startActivity(intent)
-        }
+            // Добавляем блок в начало вертикального контейнера
+            linearLayoutHistory.addView(noteView, 0)
 
-        // Добавляем элемент в начало History Layout
-        linearLayoutHistory.addView(noteView, 0)
-        Log.d("HistoryActivity", "Note added to history layout with time: ${note.content}")
+            Log.d("HistoryActivity", "Note added to vertical layout: ${note.content}")
+        }
     }
-
     private fun hideText(textView: TextView) {
         isTextVisible = false
         textView.animate()

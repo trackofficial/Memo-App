@@ -94,6 +94,8 @@ class MainActivity : ComponentActivity() {
             startActivity(Intent(this, CalendarActivity::class.java))
         }
 
+
+
         val deletedNoteId = intent.getIntExtra("deletedNoteId", -1)
         if (deletedNoteId != -1) {
             moveNoteToHistory(deletedNoteId)
@@ -114,32 +116,43 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun loadNotes() {
-        linearLayoutNotes.removeAllViews()
+        linearLayoutNotes.removeAllViews() // Очищаем основной контейнер
+        val horizontalContainer = findViewById<LinearLayout>(R.id.linearLayoutSimpleNotes)
+        horizontalContainer.removeAllViews() // Очищаем контейнер горизонтального ScrollView
+
         val notes = noteDao.getAllNotes()
         var currentDate = ""
         val today = Calendar.getInstance()
         val tomorrow = Calendar.getInstance().apply {
             add(Calendar.DAY_OF_YEAR, 1)
         }
+
         notes.forEach { note ->
-            try {
-                val dateTime = dateTimeFormat.parse(note.dateTime)
-                val noteDate = dateFormat.format(dateTime)
-                val calNoteDate = Calendar.getInstance().apply {
-                    time = dateTime
+            if (note.dateTime.isNullOrEmpty()) {
+                // Если дата отсутствует, добавляем простой блок в горизонтальный ScrollView
+                addSimpleNoteToLayout(note)
+            } else {
+                try {
+                    val dateTime = dateTimeFormat.parse(note.dateTime)
+                    val noteDate = dateFormat.format(dateTime)
+                    val calNoteDate = Calendar.getInstance().apply { time = dateTime }
+
+                    val dateLabel = when {
+                        isSameDay(calNoteDate, today) -> "Сегодня"
+                        isSameDay(calNoteDate, tomorrow) -> "Завтра"
+                        else -> "$noteDate"
+                    }
+
+                    if (dateLabel != currentDate) {
+                        addDateHeaderToLayout(dateLabel)
+                        currentDate = dateLabel
+                    }
+
+                    addNoteToLayout(note)
+                } catch (e: ParseException) {
+                    Log.e("MainActivity", "Error parsing date: ${note.dateTime}", e)
+                    addSimpleNoteToLayout(note) // Добавляем простой блок, если ошибка в дате
                 }
-                val dateLabel = when {
-                    isSameDay(calNoteDate, today) -> "Сегодня"
-                    isSameDay(calNoteDate, tomorrow) -> "Завтра"
-                    else -> "$noteDate"
-                }
-                if (dateLabel != currentDate) {
-                    addDateHeaderToLayout(dateLabel)
-                    currentDate = dateLabel
-                }
-                addNoteToLayout(note)
-            } catch (e: ParseException) {
-                Log.e("MainActivity", "Error parsing date: ${note.dateTime}", e)
             }
         }
     }
@@ -160,74 +173,116 @@ class MainActivity : ComponentActivity() {
 
     private fun addNoteToLayout(note: Note) {
         val inflater = LayoutInflater.from(this)
-        val noteView = inflater.inflate(R.layout.note_item, linearLayoutNotes, false) as ViewGroup
-        val noteTextView = noteView.findViewById<TextView>(R.id.noteTextView)
-        val descriptionTextView = noteView.findViewById<TextView>(R.id.desTextView)
-        val timeTextView = noteView.findViewById<TextView>(R.id.timeblock) // Время в блоке
-        val noteImageView = noteView.findViewById<ImageView>(R.id.noteImageView)
-        val editButton = noteView.findViewById<ImageButton>(R.id.deleteButton)
 
-        // Функция для преобразования первой буквы в заглавную
-        fun capitalizeFirstLetter(text: String?): String {
-            return text?.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } ?: ""
-        }
+        if (note.dateTime.isNullOrEmpty()) {
+            // Если дата и время отсутствуют, используем упрощённый блок
+            val simpleNoteView = inflater.inflate(R.layout.note_item_simple, linearLayoutNotes, false) as ViewGroup
+            val simpleNoteTextView = simpleNoteView.findViewById<TextView>(R.id.noteTitleTextView)
+            val simpleNoteImageView = simpleNoteView.findViewById<ImageView>(R.id.noteImageView)
 
-        // Преобразуем текст названия с заглавной буквы
-        noteTextView.text = capitalizeFirstLetter(note.content)
+            // Устанавливаем название заметки
+            simpleNoteTextView.text = note.content
 
-        // Преобразуем текст описания с заглавной буквы
-        descriptionTextView.text = if (!note.description.isNullOrEmpty()) {
-            val processedDescription = capitalizeFirstLetter(note.description)
-            if (processedDescription.length > 40) {
-                processedDescription.substring(0, 40) + "..."
+            // Устанавливаем изображение
+            if (!note.imageUri.isNullOrEmpty()) {
+                val imageFile = File(note.imageUri)
+                if (imageFile.exists()) {
+                    Glide.with(this)
+                        .load(imageFile)
+                        .centerCrop()
+                        .into(simpleNoteImageView)
+                    simpleNoteImageView.visibility = View.VISIBLE
+                } else {
+                    val resourceId = resources.getIdentifier(note.imageUri, "drawable", packageName)
+                    if (resourceId != 0) {
+                        simpleNoteImageView.setImageResource(resourceId)
+                        simpleNoteImageView.visibility = View.VISIBLE
+                    } else {
+                        simpleNoteImageView.visibility = View.GONE
+                        Log.e("MainActivity", "Invalid imageUri: ${note.imageUri}")
+                    }
+                }
             } else {
-                processedDescription
+                simpleNoteImageView.visibility = View.GONE
             }
+
+            // Добавляем упрощённый блок в макет
+            linearLayoutNotes.addView(simpleNoteView)
+            Log.d("MainActivity", "Simple note added: ${note.content}")
         } else {
-            "Нет описания"
-        }
+            // Если дата и время указаны, используем обычный блок
+            val noteView = inflater.inflate(R.layout.note_item, linearLayoutNotes, false) as ViewGroup
+            val noteTextView = noteView.findViewById<TextView>(R.id.noteTextView)
+            val descriptionTextView = noteView.findViewById<TextView>(R.id.desTextView)
+            val timeTextView = noteView.findViewById<TextView>(R.id.timeblock)
+            val noteImageView = noteView.findViewById<ImageView>(R.id.noteImageView)
+            val editButton = noteView.findViewById<ImageButton>(R.id.deleteButton)
 
-        // Устанавливаем время заметки в формате без ведущих нулей
-        try {
-            val parsedDate = dateTimeFormat.parse(note.dateTime) // Парсим строку времени из БД
-            val calendar = Calendar.getInstance().apply { time = parsedDate!! }
-            val formattedTime = "${calendar.get(Calendar.HOUR_OF_DAY)}:${String.format("%02d", calendar.get(Calendar.MINUTE))}"
-            timeTextView.text = "$formattedTime" // Устанавливаем текст времени в блоке
-        } catch (e: ParseException) {
-            Log.e("MainActivity", "Error parsing dateTime: ${note.dateTime}", e)
-            timeTextView.text = "Время: не указано"
-        }
+            // Функция для преобразования первой буквы в заглавную
+            fun capitalizeFirstLetter(text: String?): String {
+                return text?.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } ?: ""
+            }
 
-        // Установка изображения
-        if (!note.imageUri.isNullOrEmpty()) {
-            val imageFile = File(note.imageUri)
-            if (imageFile.exists()) {
-                Glide.with(this)
-                    .load(imageFile)
-                    .apply(RequestOptions.bitmapTransform(RoundedCorners(16)))
-                    .into(noteImageView)
-                noteImageView.visibility = View.VISIBLE
+            // Преобразуем текст названия с заглавной буквы
+            noteTextView.text = capitalizeFirstLetter(note.content)
+
+            // Преобразуем текст описания с заглавной буквы
+            descriptionTextView.text = if (!note.description.isNullOrEmpty()) {
+                val processedDescription = capitalizeFirstLetter(note.description)
+                if (processedDescription.length > 40) {
+                    processedDescription.substring(0, 40) + "..."
+                } else {
+                    processedDescription
+                }
             } else {
-                val resourceId = resources.getIdentifier(note.imageUri, "drawable", packageName)
-                if (resourceId != 0) {
-                    noteImageView.setImageResource(resourceId)
+                "Нет описания"
+            }
+
+            // Устанавливаем время заметки в формате без ведущих нулей
+            try {
+                val parsedDate = dateTimeFormat.parse(note.dateTime)
+                val calendar = Calendar.getInstance().apply { time = parsedDate!! }
+                val formattedTime = "${calendar.get(Calendar.HOUR_OF_DAY)}:${String.format("%02d", calendar.get(Calendar.MINUTE))}"
+                timeTextView.text = "$formattedTime"
+            } catch (e: ParseException) {
+                Log.e("MainActivity", "Error parsing dateTime: ${note.dateTime}", e)
+                timeTextView.text = "Время: не указано"
+            }
+
+            // Устанавливаем изображение
+            if (!note.imageUri.isNullOrEmpty()) {
+                val imageFile = File(note.imageUri)
+                if (imageFile.exists()) {
+                    Glide.with(this)
+                        .load(imageFile)
+                        .apply(RequestOptions.bitmapTransform(RoundedCorners(16)))
+                        .into(noteImageView)
                     noteImageView.visibility = View.VISIBLE
                 } else {
-                    noteImageView.visibility = View.GONE
-                    Log.e("MainActivity", "Invalid imageUri: ${note.imageUri}")
+                    val resourceId = resources.getIdentifier(note.imageUri, "drawable", packageName)
+                    if (resourceId != 0) {
+                        noteImageView.setImageResource(resourceId)
+                        noteImageView.visibility = View.VISIBLE
+                    } else {
+                        noteImageView.visibility = View.GONE
+                        Log.e("MainActivity", "Invalid imageUri: ${note.imageUri}")
+                    }
                 }
+            } else {
+                noteImageView.visibility = View.GONE
             }
-        } else {
-            noteImageView.visibility = View.GONE
-        }
 
-        editButton.setOnClickListener {
-            val intent = Intent(this, EditNoteActivity::class.java)
-            intent.putExtra("noteId", note.id)
-            startActivity(intent)
+            // Слушатель на кнопку редактирования
+            editButton.setOnClickListener {
+                val intent = Intent(this, EditNoteActivity::class.java)
+                intent.putExtra("noteId", note.id)
+                startActivity(intent)
+            }
+
+            // Добавляем обычный блок в макет
+            linearLayoutNotes.addView(noteView)
+            Log.d("MainActivity", "Note added with time and capitalized title/description: ${note.content}")
         }
-        linearLayoutNotes.addView(noteView)
-        Log.d("MainActivity", "Note added with time and capitalized title/description: ${note.content}")
     }
 
 
@@ -314,5 +369,56 @@ class MainActivity : ComponentActivity() {
         })
 
         block.startAnimation(scaleDown) // Запуск первой анимации
+    }
+    private fun addSimpleNoteToLayout(note: Note) {
+        val inflater = LayoutInflater.from(this)
+        val simpleNoteView = inflater.inflate(R.layout.note_item_simple, null) as ViewGroup
+
+        val simpleNoteTextView = simpleNoteView.findViewById<TextView>(R.id.noteTitleTextView)
+        val simpleNoteImageView = simpleNoteView.findViewById<ImageView>(R.id.noteImageView)
+        val buttonEditNote = simpleNoteView.findViewById<Button>(R.id.buttonsipleblock)
+        val params = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+        params.marginEnd = 24
+        simpleNoteView.layoutParams = params
+        // Устанавливаем название заметки
+        simpleNoteTextView.text = note.content
+
+        // Устанавливаем изображение, если оно есть
+        if (!note.imageUri.isNullOrEmpty()) {
+            val imageFile = File(note.imageUri)
+            if (imageFile.exists()) {
+                Glide.with(this)
+                    .load(imageFile)
+                    .centerCrop()
+                    .into(simpleNoteImageView)
+                simpleNoteImageView.visibility = View.VISIBLE
+            } else {
+                val resourceId = resources.getIdentifier(note.imageUri, "drawable", packageName)
+                if (resourceId != 0) {
+                    simpleNoteImageView.setImageResource(resourceId)
+                    simpleNoteImageView.visibility = View.VISIBLE
+                } else {
+                    simpleNoteImageView.visibility = View.GONE
+                    Log.e("MainActivity", "Invalid imageUri: ${note.imageUri}")
+                }
+            }
+        } else {
+            simpleNoteImageView.visibility = View.GONE
+        }
+
+        // Настройка кнопки для редактирования заметки
+        buttonEditNote.setOnClickListener {
+            val intent = Intent(this, EditNoteActivity::class.java)
+            intent.putExtra("noteId", note.id) // Передаём ID заметки в EditNoteActivity
+            startActivity(intent)
+        }
+
+        // Добавляем блок в горизонтальный ScrollView
+        val horizontalContainer = findViewById<LinearLayout>(R.id.linearLayoutSimpleNotes)
+        horizontalContainer.addView(simpleNoteView)
+        Log.d("MainActivity", "Simple note added: ${note.content}")
     }
 }

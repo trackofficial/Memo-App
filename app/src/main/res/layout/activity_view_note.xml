@@ -1,17 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
+    android:background="@color/background_color_light"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
     <FrameLayout
         android:layout_width="match_parent"
         android:background="@drawable/for_image_add_edit"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp">
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/noteImageView"
             android:layout_width="match_parent"
-            android:layout_height="160dp"
+            android:layout_height="210dp"
             android:scaleType="centerCrop"
             app:shapeAppearanceOverlay="@style/RoundedCornersOneSide" />
     </FrameLayout>
@@ -19,14 +27,15 @@
     <TextView
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:background="@drawable/block_for_edit_text"
+        android:background="@drawable/form_for_new_edit_text"
         android:id="@+id/textViewNoteContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="top|start"
-        android:textSize="16dp"
+        android:textSize="28dp"
+        android:fontFamily="@font/tilda_semibold"
         android:textColor="@color/black"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="5dp"
         />
     <TextView
         android:id="@+id/textViewDateTime"
@@ -34,23 +43,50 @@
         android:textSize="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:background="@drawable/block_for_edit_text"
+        android:background="@drawable/form_for_new_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:maxLength="100"
+        android:fontFamily="@font/tilda_medium"
         android:textColor="@color/black"
         android:gravity="top|start"
-        android:layout_marginTop="10dp"/>
+        android:layout_marginTop="2dp"/>
     <TextView
         android:id="@+id/textViewDescription"
         android:textColor="@color/black"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:textSize="16dp"
-        android:background="@drawable/block_for_edit_text"
+        android:background="@drawable/form_for_new_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:maxLength="200"
         android:gravity="top|start"
-        android:layout_marginTop="10dp"/>
-</LinearLayout>
+        android:layout_marginTop="2dp"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/navigate_block"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_marginLeft="17dp"
+        android:layout_marginRight="17dp"
+        android:layout_marginBottom="17dp"
+        android:gravity="center"
+        android:layout_gravity="bottom">
+
+        <FrameLayout
+            android:id="@+id/block_back"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:background="@drawable/form_for_navigation_bar">
+
+            <ImageButton
+                android:id="@+id/home_button"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:background="@drawable/home_button" />
+        </FrameLayout>
+    </LinearLayout>
+</FrameLayout>

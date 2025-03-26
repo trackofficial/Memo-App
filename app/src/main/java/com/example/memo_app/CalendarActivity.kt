@@ -73,7 +73,7 @@ class CalendarActivity : AppCompatActivity() {
 
         // Фильтруем и добавляем только активные даты в миллисекундах
         notes.filter { !it.isDeleted }.forEach { note ->
-            val noteTime = parseDateTime(note.dateTime) // Преобразуем строку даты в миллисекунды
+            val noteTime = note.dateTime?.let { parseDateTime(it) } ?: 0L // Проверяем на null
             if (noteTime != 0L) {
                 activeDates.add(noteTime)
             }

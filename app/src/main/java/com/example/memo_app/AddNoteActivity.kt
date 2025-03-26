@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -21,12 +22,17 @@ import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.LinearLayout
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.shape.CornerFamily
+import com.google.android.material.shape.MaterialShapeDrawable
+import com.google.android.material.shape.ShapeAppearanceModel
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -38,15 +44,16 @@ class AddNoteActivity : ComponentActivity() {
     private lateinit var editTextDescription: EditText
     private lateinit var editTextTime: EditText
     private lateinit var buttonSaveNote: Button
-    private lateinit var buttonSelectDate: ImageButton
     private lateinit var buttonSelectImage: ImageButton
     private lateinit var exitbutton: ImageButton
     private lateinit var imageViewNote: ImageView
     private lateinit var noteDao: NoteDao
-    private var selectedDate: String = ""
+    private var selectedDate: String? = null
     private var imagePath: String? = null
     private lateinit var blockmainbutton: FrameLayout
     private lateinit var blockexitbutton: FrameLayout
+    private lateinit var buttonelement: Button
+    private lateinit var blockelement: FrameLayout
 
     private val selectImageLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -86,26 +93,22 @@ class AddNoteActivity : ComponentActivity() {
         editTextDescription = findViewById(R.id.editAddText)
         editTextTime = findViewById(R.id.editTextTime)
         buttonSaveNote = findViewById(R.id.buttonSave)
-        buttonSelectDate = findViewById(R.id.buttonSelectDateTime)
         buttonSelectImage = findViewById(R.id.buttonSelectImage)
         imageViewNote = findViewById(R.id.noteImageView)
         blockexitbutton = findViewById(R.id.block_createblock)
         blockmainbutton = findViewById(R.id.block_createblock_main)
-
+        buttonelement = findViewById(R.id.buttonshowbaroptions)
+        blockelement = findViewById(R.id.blockelement)
 
         noteDao = NoteDao(this)
         // Устанавливаем случайное изображение
         val randomResId = getRandomBackgroundResId()
         Log.d("AddNoteActivity", "Random image selected: $randomResId")
         displaySelectedImageResource(randomResId)
-        buttonSelectDate.setOnClickListener {
-            selectDate()
-        }
 
         buttonSelectImage.setOnClickListener {
             showImageSelectionDialog()
         }
-
         editTextTime.addTextChangedListener(object : TextWatcher {
             private var isUpdating: Boolean = false
 
@@ -134,30 +137,45 @@ class AddNoteActivity : ComponentActivity() {
         })
         buttonSaveNote.setOnClickListener {
             animateButtonClick(blockmainbutton)
-            val noteContent = editTextNoteContent.text.toString()
-            val noteDescription = editTextDescription.text.toString()
-            val time = editTextTime.text.toString()
 
-            Log.d("AddNoteActivity", "Note content: $noteContent, description: $noteDescription")
+            var noteContent = editTextNoteContent.text.toString().trim()
+            var noteDescription = editTextDescription.text.toString().trim()
 
-            if (noteContent.isNotEmpty() && selectedDate.isNotEmpty() && time.isNotEmpty()) {
-                val dateTime = "$selectedDate $time"
+            // Преобразуем первую букву в заглавную для контента и описания
+            noteContent = noteContent.replaceFirstChar { it.uppercaseChar() }
+            noteDescription = noteDescription.replaceFirstChar { it.uppercaseChar() }
 
-                // Если пользователь не выбрал изображение, используем случайное
-                val finalImageUri = imagePath ?: resources.getResourceEntryName(randomResId)
+            val time = editTextTime.text.toString().trim()
+
+            // Проверяем, что текст заметки не пустой
+            if (noteContent.isNotEmpty()) {
+                val dateTime: String? = if (!selectedDate.isNullOrEmpty() && time.isNotEmpty()) {
+                    "$selectedDate $time"
+                } else {
+                    null
+                }
+
+                val finalImageUri = imagePath ?: run {
+                    val randomUri = try {
+                        resources.getResourceEntryName(randomResId)
+                    } catch (e: Exception) {
+                        Log.e("AddNoteActivity", "Error getting random image resource", e)
+                        null
+                    }
+                    randomUri
+                }
 
                 val note = Note(
-                    id = 0, // ID генерируется автоматически
+                    id = 0,
                     content = noteContent,
                     description = noteDescription,
                     dateTime = dateTime,
-                    imageUri = finalImageUri // Используем выбранное или случайное изображение
+                    imageUri = finalImageUri
                 )
 
                 noteDao.insert(note)
                 Log.d("AddNoteActivity", "Note added: $note")
 
-                // Переход на главный экран
                 val intent = Intent(this, MainActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
@@ -166,17 +184,24 @@ class AddNoteActivity : ComponentActivity() {
                 if (noteContent.isEmpty()) {
                     editTextNoteContent.error = "Текст не может быть пустым"
                 }
-                if (selectedDate.isEmpty()) {
-                    Log.d("AddNoteActivity", "Date is empty")
+                if (noteDescription.isEmpty()) {
+                    editTextDescription.error = "Описание не может быть пустым"
+                }
+                if (selectedDate.isNullOrEmpty()) {
+                    Log.d("AddNoteActivity", "Date is empty (optional)")
                 }
                 if (time.isEmpty()) {
-                    editTextTime.error = "Время не может быть пустым"
+                    Log.d("AddNoteActivity", "Time is empty (optional)")
                 }
             }
         }
         exitbutton.setOnClickListener {
             animateButtonClick(blockexitbutton)
             startActivity(Intent(this, MainActivity::class.java))
+        }
+        buttonelement.setOnClickListener {
+            animateButtonClick(blockelement)
+            showBottomSheet()
         }
     }
     private fun displayImageWithGlide(imagePath: String?) {
@@ -189,13 +214,53 @@ class AddNoteActivity : ComponentActivity() {
             imageViewNote.visibility = View.VISIBLE
         } ?: Log.e("Activity", "Image path is null!")
     }
+    private fun showBottomSheet() {
+        val bottomSheetDialog = BottomSheetDialog(this)
+        val bottomSheetView = layoutInflater.inflate(R.layout.layout_bottom_sheet, null)
 
+        // Создаём MaterialShapeDrawable с закруглёнными углами
+        val shapeDrawable = MaterialShapeDrawable().apply {
+            shapeAppearanceModel = ShapeAppearanceModel.Builder()
+                .setTopLeftCorner(CornerFamily.ROUNDED, 40f) // Радиус верхнего левого угла
+                .setTopRightCorner(CornerFamily.ROUNDED, 40f) // Радиус верхнего правого угла
+                .build()
+            fillColor = getColorStateList(R.color.white) // Цвет фона
+        }
+
+        // Устанавливаем фон для корневого View BottomSheet
+        bottomSheetView.background = shapeDrawable
+
+        // Обработка кнопок
+        val buttonSelectDate = bottomSheetView.findViewById<Button>(R.id.buttonSelectDate)
+        val buttonSelectTime = bottomSheetView.findViewById<Button>(R.id.buttonSelectTime)
+        val editTextTime = findViewById<EditText>(R.id.editTextTime)
+
+        buttonSelectDate.setOnClickListener {
+            selectDate()
+            bottomSheetDialog.dismiss()
+        }
+
+        buttonSelectTime.setOnClickListener {
+            editTextTime.visibility = View.VISIBLE
+            bottomSheetDialog.dismiss()
+        }
+
+        bottomSheetDialog.setContentView(bottomSheetView)
+        bottomSheetDialog.show()
+    }
     private fun selectDate() {
         val calendar = Calendar.getInstance()
         val datePickerDialog = DatePickerDialog(this, { _, year, month, dayOfMonth ->
             selectedDate = "$year-${month + 1}-$dayOfMonth"
             Log.d("AddNoteActivity", "Selected date: $selectedDate")
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+
+        // Настраиваем кнопку отмены, чтобы дата оставалась необязательной
+        datePickerDialog.setOnCancelListener {
+            selectedDate = "" // Очищаем выбранную дату, если пользователь отменил выбор
+            Log.d("AddNoteActivity", "Date selection canceled")
+        }
+
         datePickerDialog.show()
     }
     private fun displaySelectedImageResource(resId: Int) {
