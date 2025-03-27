@@ -50,48 +50,58 @@
         android:layout_gravity="bottom|end" />
 </FrameLayout>
 
-            <EditText
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:background="@drawable/block_for_edit_text"
-                android:id="@+id/editTextNoteContent"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/lineyka"
-                android:hint="Введите заметку"
-                android:gravity="top|start"
-                android:layout_marginTop="10dp"
-                />
-            <EditText
-                android:id="@+id/editTextTime"
-                android:hint="Введите время"
-                android:inputType="time"
-                android:fontFamily="@font/lineyka"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:background="@drawable/block_for_edit_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:maxLength="5"
-                android:gravity="top|start"
-                android:layout_marginTop="10dp"/>
+                android:orientation="vertical"
+                android:id="@+id/block_for_edittext">
+                <EditText
+                    android:fontFamily="@font/tilda_semibold"
+                    android:layout_marginLeft="14dp"
+                    android:layout_marginRight="14dp"
+                    android:textSize="26dp"
+                    android:background="@drawable/form_for_new_edit_text"
+                    android:id="@+id/editTextNoteContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Введите заметку"
+                    android:textColorHint="@color/background_color_for_hint"
+                    android:gravity="top|start"
+                    android:layout_marginTop="5dp"/>
+                <EditText
+                    android:id="@+id/editTextTime"
+                    android:hint="Введите время"
+                    android:inputType="time"
+                    android:fontFamily="@font/tilda_medium"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="@drawable/form_for_new_edit_text"
+                    android:layout_width="match_parent"
+                    android:textColorHint="@color/new_color_grey"
+                    android:layout_height="wrap_content"
+                    android:maxLength="5"
+                    android:gravity="top|start"
+                    android:layout_marginTop="5dp"/>
+            </LinearLayout>
             <ScrollView
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_width="match_parent"
-                android:background="@drawable/block_for_edit_text"
-                android:layout_height="280dp"
+                android:layout_marginLeft="15dp"
                 android:fadeScrollbars="false"
                 android:scrollbars="none"
+                android:layout_marginRight="15dp"
+                android:layout_width="match_parent"
+                android:background="@drawable/form_for_new_edit_text"
+                android:layout_height="280dp"
                 android:gravity="top|start"
-                android:layout_marginTop="10dp">
+                android:layout_marginTop="2dp">
                 <EditText
                     android:id="@+id/editAddText"
                     android:hint="Введите описание"
                     android:inputType="textMultiLine"
-                    android:fontFamily="@font/lineyka"
-                    android:background="@drawable/block_for_edit_text"
+                    android:background="@drawable/form_for_new_edit_text"
+                    android:textColorHint="@color/background_color_for_hint"
                     android:layout_width="wrap_content"
+                    android:fontFamily="@font/tilda_medium"
                     android:layout_height="wrap_content"/>
             </ScrollView>
 
