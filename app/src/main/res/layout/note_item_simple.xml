@@ -5,14 +5,14 @@
     android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingBottom="8dp"
+    android:elevation="4dp"
     android:layout_marginTop="10dp"
-    android:layout_marginBottom="10dp"
     android:background="@drawable/backnone_for_simpleblock">
     <LinearLayout
+        android:paddingBottom="4dp"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="8sp">
+        android:layout_height="wrap_content">
         <FrameLayout
             android:layout_gravity="center_horizontal"
             android:layout_width="wrap_content"
@@ -62,7 +62,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/form_for_button_simpleblock">
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="•••"
                 android:textColor="@color/background_color_light"

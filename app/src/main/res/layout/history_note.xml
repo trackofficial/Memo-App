@@ -18,14 +18,14 @@
         android:id="@+id/text_section">
         <HorizontalScrollView
             android:clipToPadding="false"
-            android:paddingBottom="2dp"
+            android:padding="8dp"
             android:fadeScrollbars="false"
             android:scrollbars="none"
             android:id="@+id/horizontalScrollView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:layout_marginBottom="3dp">
+            android:clipChildren="false"
+            android:layout_marginTop="6dp">
 
             <LinearLayout
                 android:id="@+id/linearLayoutSimpleNotes"

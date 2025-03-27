@@ -180,24 +180,35 @@ class EditNoteActivity : ComponentActivity() {
         // Обработка времени
         editTextTime.addTextChangedListener(object : TextWatcher {
             private var isUpdating: Boolean = false
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (isUpdating) return
+
                 s?.let {
-                    val cleanString = it.toString().replace(":", "")
-                    val formattedString = when (cleanString.length) {
-                        1, 2 -> cleanString
-                        3, 4 -> "${cleanString.substring(0, cleanString.length - 2)}:${cleanString.substring(cleanString.length - 2)}"
-                        else -> cleanString
+                    val cleanString = it.toString().replace(":", "") // Удаляем двоеточие, чтобы работать с цифрами
+
+                    val formattedString = when {
+                        cleanString.length == 1 -> cleanString // Если введено 1 число, просто отображаем его
+                        cleanString.length == 2 -> "${cleanString[0]}:${cleanString[1]}" // Добавляем двоеточие между часами и минутами
+                        cleanString.length > 2 -> {
+                            val hours = cleanString.substring(0, 2) // Первые 2 символа — часы
+                            val minutes = cleanString.substring(2)  // Остальные символы — минуты
+                            "$hours:$minutes"
+                        }
+                        else -> cleanString // Для любого другого случая
                     }
+
                     if (it.toString() != formattedString) {
                         isUpdating = true
-                        editTextTime.setText(formattedString)
-                        editTextTime.setSelection(formattedString.length)
+                        editTextTime.setText(formattedString) // Устанавливаем форматированный текст
+                        editTextTime.setSelection(formattedString.length) // Устанавливаем позицию курсора
                         isUpdating = false
                     }
                 }
             }
+
             override fun afterTextChanged(s: Editable?) {}
         })
 
