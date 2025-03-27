@@ -119,19 +119,34 @@ class AddNoteActivity : ComponentActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (isUpdating) return
 
-                s?.let {
-                    val cleanString = it.toString().replace(":", "")
-                    val formattedString = when (cleanString.length) {
-                        1, 2 -> cleanString
-                        3, 4 -> "${cleanString.substring(0, cleanString.length - 2)}:${cleanString.substring(cleanString.length - 2)}"
-                        else -> cleanString
+                val cleanString = s?.toString()?.replace(":", "") ?: ""
+
+                // Если строка пуста, оставляем поле пустым
+                if (cleanString.isEmpty()) {
+                    isUpdating = true
+                    editTextTime.setText("")
+                    editTextTime.setSelection(0)
+                    isUpdating = false
+                    return
+                }
+
+                // Форматирование времени
+                val formattedString = when {
+                    cleanString.length == 2 -> "${cleanString.substring(0, 1)}:${cleanString.substring(1)}"
+                    cleanString.length > 2 -> {
+                        val hours = cleanString.substring(0, cleanString.length - 2).toInt().coerceIn(0, 23) // Корректируем часы
+                        val minutes = cleanString.substring(cleanString.length - 2).toInt().coerceIn(0, 59) // Корректируем минуты
+                        "$hours:$minutes"
                     }
-                    if (it.toString() != formattedString) {
-                        isUpdating = true
-                        editTextTime.setText(formattedString)
-                        editTextTime.setSelection(formattedString.length)
-                        isUpdating = false
-                    }
+                    else -> cleanString
+                }
+
+                // Обновляем текст только при необходимости
+                if (formattedString != s.toString()) {
+                    isUpdating = true
+                    editTextTime.setText(formattedString)
+                    editTextTime.setSelection(formattedString.length)
+                    isUpdating = false
                 }
             }
 
