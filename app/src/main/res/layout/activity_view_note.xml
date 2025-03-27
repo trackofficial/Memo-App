@@ -62,7 +62,7 @@
         android:layout_height="wrap_content"
         android:maxLength="200"
         android:gravity="top|start"
-        android:layout_marginTop="2dp"/>
+        android:layout_marginTop="4dp"/>
     </LinearLayout>
     <LinearLayout
         android:id="@+id/navigate_block"

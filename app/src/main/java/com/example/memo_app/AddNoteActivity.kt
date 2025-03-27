@@ -36,7 +36,9 @@ import com.google.android.material.shape.ShapeAppearanceModel
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 
 class AddNoteActivity : ComponentActivity() {
 
@@ -135,26 +137,60 @@ class AddNoteActivity : ComponentActivity() {
 
             override fun afterTextChanged(s: Editable?) {}
         })
+
         buttonSaveNote.setOnClickListener {
             animateButtonClick(blockmainbutton)
 
             var noteContent = editTextNoteContent.text.toString().trim()
             var noteDescription = editTextDescription.text.toString().trim()
+            val time = editTextTime.text.toString().trim()
 
             // Преобразуем первую букву в заглавную для контента и описания
             noteContent = noteContent.replaceFirstChar { it.uppercaseChar() }
             noteDescription = noteDescription.replaceFirstChar { it.uppercaseChar() }
 
-            val time = editTextTime.text.toString().trim()
+            // Получаем текущую дату и время
+            val currentDate = Calendar.getInstance()
+            val currentDateStr = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(currentDate.time)
+
+            // Проверяем, указано ли время, и переносим дату, если время уже прошло
+            val selectedDateTime = if (time.isNotEmpty()) {
+                try {
+                    val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+                    val selectedTime = timeFormat.parse(time) // Время из EditText
+
+                    val selectedDateCalendar = Calendar.getInstance()
+                    if (!selectedDate.isNullOrEmpty()) {
+                        val selectedDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                        val selectedDateParsed = selectedDateFormat.parse(selectedDate)
+                        selectedDateCalendar.time = selectedDateParsed
+                    } else {
+                        selectedDateCalendar.time = currentDate.time // Если дата не указана, берём текущую
+                    }
+
+                    // Устанавливаем выбранное время в Calendar
+                    selectedDateCalendar.set(Calendar.HOUR_OF_DAY, selectedTime.hours)
+                    selectedDateCalendar.set(Calendar.MINUTE, selectedTime.minutes)
+
+                    // Если выбранное время уже прошло, переносим дату на следующий день
+                    if (selectedDateCalendar.before(currentDate)) {
+                        selectedDateCalendar.add(Calendar.DAY_OF_MONTH, 1)
+                    }
+
+                    // Возвращаем строку с новой датой и временем
+                    SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(selectedDateCalendar.time)
+                } catch (e: Exception) {
+                    Log.e("AddNoteActivity", "Error parsing time or date", e)
+                    null
+                }
+            } else {
+                // Если время не указано, проверяем только дату
+                if (!selectedDate.isNullOrEmpty()) selectedDate else null
+            }
 
             // Проверяем, что текст заметки не пустой
             if (noteContent.isNotEmpty()) {
-                val dateTime: String? = if (!selectedDate.isNullOrEmpty() && time.isNotEmpty()) {
-                    "$selectedDate $time"
-                } else {
-                    null
-                }
-
+                // Генерируем случайный URI изображения (если оно не указано)
                 val finalImageUri = imagePath ?: run {
                     val randomUri = try {
                         resources.getResourceEntryName(randomResId)
@@ -165,17 +201,20 @@ class AddNoteActivity : ComponentActivity() {
                     randomUri
                 }
 
+                // Создаём заметку с учётом заполненных полей
                 val note = Note(
                     id = 0,
                     content = noteContent,
-                    description = noteDescription,
-                    dateTime = dateTime,
+                    description = noteDescription.ifEmpty { "Описание отсутствует" },
+                    dateTime = selectedDateTime,
                     imageUri = finalImageUri
                 )
 
+                // Сохраняем заметку в базе данных
                 noteDao.insert(note)
                 Log.d("AddNoteActivity", "Note added: $note")
 
+                // Переход к MainActivity
                 val intent = Intent(this, MainActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
@@ -183,9 +222,6 @@ class AddNoteActivity : ComponentActivity() {
             } else {
                 if (noteContent.isEmpty()) {
                     editTextNoteContent.error = "Текст не может быть пустым"
-                }
-                if (noteDescription.isEmpty()) {
-                    editTextDescription.error = "Описание не может быть пустым"
                 }
                 if (selectedDate.isNullOrEmpty()) {
                     Log.d("AddNoteActivity", "Date is empty (optional)")
@@ -195,6 +231,28 @@ class AddNoteActivity : ComponentActivity() {
                 }
             }
         }
+
+        fun selectDate() {
+            val calendar = Calendar.getInstance()
+            val datePickerDialog = DatePickerDialog(
+                this,
+                { _, year, month, dayOfMonth ->
+                    selectedDate = String.format("%d-%02d-%02d", year, month + 1, dayOfMonth) // Форматируем дату в YYYY-MM-DD
+                    Log.d("AddNoteActivity", "Selected date: $selectedDate")
+                },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+            )
+
+            // Настраиваем кнопку отмены, чтобы дата оставалась необязательной
+            datePickerDialog.setOnCancelListener {
+                selectedDate = "" // Очищаем выбранную дату, если пользователь отменил выбор
+                Log.d("AddNoteActivity", "Date selection canceled")
+            }
+            datePickerDialog.show()
+        }
+
         exitbutton.setOnClickListener {
             animateButtonClick(blockexitbutton)
             startActivity(Intent(this, MainActivity::class.java))

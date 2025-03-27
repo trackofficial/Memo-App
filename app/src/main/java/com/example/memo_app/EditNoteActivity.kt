@@ -215,39 +215,53 @@ class EditNoteActivity : ComponentActivity() {
         // Обработка кнопки "Сохранить"
         buttonSaveNote.setOnClickListener {
             animateButtonClick(blockmainbutton)
-            val updatedContent = editTextNoteContent.text.toString()
-            val updatedDescription = editTextDescription.text.toString()
-            val time = editTextTime.text.toString()
 
-            Log.d("EditNoteActivity", "Updated content: $updatedContent, description: $updatedDescription")
+            var noteContent = editTextNoteContent.text.toString().trim()
+            var noteDescription = editTextDescription.text.toString().trim()
+            val time = editTextTime.text.toString().trim()
 
-            if (note != null && updatedContent.isNotEmpty() && selectedDate.isNotEmpty() && time.isNotEmpty()) {
-                val dateTime = "$selectedDate $time"
-                note.content = updatedContent
-                note.description = updatedDescription
-                note.dateTime = dateTime
-                note.imageUri = imagePath // Обновляем изображение
-                note.isDeleted = false
-                noteDao.update(note)
+            // Преобразование первой буквы в заглавную
+            noteContent = noteContent.replaceFirstChar { it.uppercaseChar() }
+            noteDescription = noteDescription.replaceFirstChar { it.uppercaseChar() }
 
-                Log.d("EditNoteActivity", "Note updated: $note")
-
-                val intent = Intent(this, MainActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
-                finish()
-            } else {
-                if (note == null) {
-                    Log.d("EditNoteActivity", "Note is null")
+            // Проверяем, что текст заметки не пустой
+            if (noteContent.isNotEmpty()) {
+                val dateTime: String? = when {
+                    !selectedDate.isNullOrEmpty() && time.isNotEmpty() -> "$selectedDate $time" // Если указаны и дата, и время
+                    !selectedDate.isNullOrEmpty() -> selectedDate // Только дата
+                    time.isNotEmpty() -> time // Только время
+                    else -> null // Ничего не указано
                 }
-                if (updatedContent.isEmpty()) {
+
+                // Убедимся, что объект заметки существует
+                note?.let {
+                    it.content = noteContent
+                    it.description = noteDescription.ifEmpty { "Описание отсутствует" } // Описание по умолчанию
+                    it.dateTime = dateTime // Сохраняем дату/время
+                    it.imageUri = imagePath ?: it.imageUri // Если изображение не обновлено, оставляем старое
+                    it.isDeleted = false
+
+                    noteDao.update(it) // Сохраняем изменения в базе данных
+                    Log.d("EditNoteActivity", "Note updated: $note")
+
+                    // Переход к MainActivity
+                    val intent = Intent(this, MainActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
+                    finish()
+                } ?: run {
+                    Log.e("EditNoteActivity", "Note is null, cannot update")
+                }
+            } else {
+                // Логика для обработки ошибок
+                if (noteContent.isEmpty()) {
                     editTextNoteContent.error = "Текст не может быть пустым"
                 }
-                if (selectedDate.isEmpty()) {
-                    Log.d("EditNoteActivity", "Date is empty")
+                if (selectedDate.isNullOrEmpty()) {
+                    Log.d("EditNoteActivity", "Date is empty (optional)")
                 }
                 if (time.isEmpty()) {
-                    editTextTime.error = "Время не может быть пустым"
+                    Log.d("EditNoteActivity", "Time is empty (optional)")
                 }
             }
         }

@@ -167,18 +167,18 @@ class HistoryActivity : ComponentActivity() {
                 val formattedTime = "${calendar.get(Calendar.HOUR_OF_DAY)}:${
                     String.format("%02d", calendar.get(Calendar.MINUTE))
                 }"
-                timeTextView.text = "Время: $formattedTime"
-            } catch (e: ParseException) {
-                Log.e("HistoryActivity", "Error parsing dateTime: ${note.dateTime}", e)
-                timeTextView.text = "Время: некорректный формат"
+                timeTextView.text = formattedTime
+            } catch (e: Exception) {
+                timeTextView.text = "Неизвестное время"
+                Log.e("HistoryActivity", "Failed to parse dateTime: ${note.dateTime}", e)
             }
-// Устанавливаем изображение
+// Устанавливаем изображение, если оно есть
             if (!note.imageUri.isNullOrEmpty()) {
                 val imageFile = File(note.imageUri)
                 if (imageFile.exists()) {
                     Glide.with(this)
                         .load(imageFile)
-                        .apply(RequestOptions.bitmapTransform(RoundedCorners(20)))
+                        .centerCrop()
                         .into(noteImageView)
                     noteImageView.visibility = View.VISIBLE
                 } else {
@@ -188,19 +188,27 @@ class HistoryActivity : ComponentActivity() {
                         noteImageView.visibility = View.VISIBLE
                     } else {
                         noteImageView.visibility = View.GONE
-                        Log.e("HistoryActivity", "Invalid imageUri: ${note.imageUri}")
                     }
                 }
             } else {
                 noteImageView.visibility = View.GONE
             }
 
-            // Добавляем блок в начало вертикального контейнера
-            linearLayoutHistory.addView(noteView, 0)
+            // Устанавливаем обработчик клика на большой блок
+            noteView.setOnClickListener {
+                val intent = Intent(this, ViewNoteActivity::class.java)
+                intent.putExtra("noteId", note.id) // Передаём ID заметки
+                startActivity(intent)
+            }
 
-            Log.d("HistoryActivity", "Note added to vertical layout: ${note.content}")
+            // Добавляем блок в основной вертикальный контейнер
+            val verticalContainer = findViewById<LinearLayout>(R.id.linearLayoutNotes)
+            verticalContainer.addView(noteView)
+
+            Log.d("HistoryActivity", "Full note added to vertical layout: ${note.content}")
         }
     }
+
     private fun hideText(textView: TextView) {
         isTextVisible = false
         textView.animate()

@@ -62,8 +62,9 @@ class ViewNoteActivity : ComponentActivity() {
             // Устанавливаем содержание заметки с заглавной буквой
             textViewNoteContent.text = capitalizeFirstLetter(note.content ?: "Без текста")
 
-            // Устанавливаем описание с заглавной буквой
-            textViewDescription.text = capitalizeFirstLetter(note.description ?: "Без описания")
+            // Устанавливаем описание с заглавной буквой или заменяем текстом "Описание отсутствует"
+            textViewDescription.text = capitalizeFirstLetter(note.description?.takeIf { it.isNotEmpty() }
+                ?: "Описание отсутствует")
 
             // Обрабатываем дату и время
             setupDateTime(note.dateTime)
