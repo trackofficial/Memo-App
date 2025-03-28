@@ -13,9 +13,11 @@ import android.view.ViewGroup
 import android.view.animation.ScaleAnimation
 import android.widget.Button
 import android.widget.FrameLayout
+import android.widget.HorizontalScrollView
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
@@ -96,6 +98,8 @@ class MainActivity : ComponentActivity() {
 
 
 
+
+
         val deletedNoteId = intent.getIntExtra("deletedNoteId", -1)
         if (deletedNoteId != -1) {
             moveNoteToHistory(deletedNoteId)
@@ -123,9 +127,7 @@ class MainActivity : ComponentActivity() {
         val notes = noteDao.getAllNotes()
         var currentDate = ""
         val today = Calendar.getInstance()
-        val tomorrow = Calendar.getInstance().apply {
-            add(Calendar.DAY_OF_YEAR, 1)
-        }
+        val tomorrow = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, 1) }
 
         notes.forEach { note ->
             if (note.dateTime.isNullOrEmpty()) {
@@ -136,7 +138,6 @@ class MainActivity : ComponentActivity() {
                     val dateTime = dateTimeFormat.parse(note.dateTime)
                     val noteDate = dateFormat.format(dateTime)
                     val calNoteDate = Calendar.getInstance().apply { time = dateTime }
-
                     val dateLabel = when {
                         isSameDay(calNoteDate, today) -> "Сегодня"
                         isSameDay(calNoteDate, tomorrow) -> "Завтра"
@@ -155,6 +156,9 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+
+        // Вызов функции для обновления UI после всех операций
+        updateUI()
     }
 
     private fun isSameDay(cal1: Calendar, cal2: Calendar): Boolean {
@@ -175,7 +179,7 @@ class MainActivity : ComponentActivity() {
         val inflater = LayoutInflater.from(this)
 
         if (note.dateTime.isNullOrEmpty()) {
-            // Если дата и время отсутствуют, используем упрощённый блок
+            // Добавляем упрощённый блок
             val simpleNoteView = inflater.inflate(R.layout.note_item_simple, linearLayoutNotes, false) as ViewGroup
             val simpleNoteTextView = simpleNoteView.findViewById<TextView>(R.id.noteTitleTextView)
             val simpleNoteImageView = simpleNoteView.findViewById<ImageView>(R.id.noteImageView)
@@ -206,11 +210,10 @@ class MainActivity : ComponentActivity() {
                 simpleNoteImageView.visibility = View.GONE
             }
 
-            // Добавляем упрощённый блок в макет
+            // Добавляем блок в макет
             linearLayoutNotes.addView(simpleNoteView)
-            Log.d("MainActivity", "Simple note added: ${note.content}")
         } else {
-            // Если дата и время указаны, используем обычный блок
+            // Добавляем обычный блок
             val noteView = inflater.inflate(R.layout.note_item, linearLayoutNotes, false) as ViewGroup
             val noteTextView = noteView.findViewById<TextView>(R.id.noteTextView)
             val descriptionTextView = noteView.findViewById<TextView>(R.id.desTextView)
@@ -218,36 +221,13 @@ class MainActivity : ComponentActivity() {
             val noteImageView = noteView.findViewById<ImageView>(R.id.noteImageView)
             val editButton = noteView.findViewById<ImageButton>(R.id.deleteButton)
 
-            // Функция для преобразования первой буквы в заглавную
-            fun capitalizeFirstLetter(text: String?): String {
-                return text?.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } ?: ""
+            // Преобразуем текст названия и описания с заглавной буквы
+            noteTextView.text = note.content?.replaceFirstChar {
+                if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
             }
-
-            // Преобразуем текст названия с заглавной буквы
-            noteTextView.text = capitalizeFirstLetter(note.content)
-
-            // Преобразуем текст описания с заглавной буквы
-            descriptionTextView.text = if (!note.description.isNullOrEmpty()) {
-                val processedDescription = capitalizeFirstLetter(note.description)
-                if (processedDescription.length > 40) {
-                    processedDescription.substring(0, 40) + "..."
-                } else {
-                    processedDescription
-                }
-            } else {
-                "Нет описания"
-            }
-
-            // Устанавливаем время заметки в формате без ведущих нулей
-            try {
-                val parsedDate = dateTimeFormat.parse(note.dateTime)
-                val calendar = Calendar.getInstance().apply { time = parsedDate!! }
-                val formattedTime = "${calendar.get(Calendar.HOUR_OF_DAY)}:${String.format("%02d", calendar.get(Calendar.MINUTE))}"
-                timeTextView.text = "$formattedTime"
-            } catch (e: ParseException) {
-                Log.e("MainActivity", "Error parsing dateTime: ${note.dateTime}", e)
-                timeTextView.text = "Время: не указано"
-            }
+            descriptionTextView.text = note.description?.replaceFirstChar {
+                if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
+            } ?: "Нет описания"
 
             // Устанавливаем изображение
             if (!note.imageUri.isNullOrEmpty()) {
@@ -272,19 +252,15 @@ class MainActivity : ComponentActivity() {
                 noteImageView.visibility = View.GONE
             }
 
-            // Слушатель на кнопку редактирования
-            editButton.setOnClickListener {
-                val intent = Intent(this, EditNoteActivity::class.java)
-                intent.putExtra("noteId", note.id)
-                startActivity(intent)
-            }
-
-            // Добавляем обычный блок в макет
+            // Добавляем блок в макет
             linearLayoutNotes.addView(noteView)
-            Log.d("MainActivity", "Note added with time and capitalized title/description: ${note.content}")
         }
-    }
 
+        // Обновляем интерфейс после добавления блока
+        updateUI()
+
+        Log.d("MainActivity", "Note added: ${note.content}")
+    }
 
     private fun addTimeToLayout(dateTime: String) {
         try {
@@ -307,7 +283,9 @@ class MainActivity : ComponentActivity() {
         if (deletedNote != null) {
             Log.d("MainActivity", "Note moved to history: $deletedNote")
         }
+        updateUI()
     }
+
     fun animateButtonClick(button: ImageButton) {
         // Анимация уменьшения кнопки
         val scaleDown = ScaleAnimation(
@@ -339,6 +317,7 @@ class MainActivity : ComponentActivity() {
 
         button.startAnimation(scaleDown) // Запуск первой анимации
     }
+
     fun animateButtonClick(block: FrameLayout) {
         // Анимация уменьшения кнопки
         val scaleDown = ScaleAnimation(
@@ -370,19 +349,21 @@ class MainActivity : ComponentActivity() {
 
         block.startAnimation(scaleDown) // Запуск первой анимации
     }
+
     private fun addSimpleNoteToLayout(note: Note) {
         val inflater = LayoutInflater.from(this)
         val simpleNoteView = inflater.inflate(R.layout.note_item_simple, null) as ViewGroup
-
         val simpleNoteTextView = simpleNoteView.findViewById<TextView>(R.id.noteTitleTextView)
         val simpleNoteImageView = simpleNoteView.findViewById<ImageView>(R.id.noteImageView)
         val buttonEditNote = simpleNoteView.findViewById<Button>(R.id.buttonsipleblock)
+
         val params = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.WRAP_CONTENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
         )
         params.marginEnd = 24
         simpleNoteView.layoutParams = params
+
         // Устанавливаем название заметки
         simpleNoteTextView.text = note.content
 
@@ -412,13 +393,31 @@ class MainActivity : ComponentActivity() {
         // Настройка кнопки для редактирования заметки
         buttonEditNote.setOnClickListener {
             val intent = Intent(this, EditNoteActivity::class.java)
-            intent.putExtra("noteId", note.id) // Передаём ID заметки в EditNoteActivity
+            intent.putExtra("noteId", note.id)
             startActivity(intent)
         }
 
         // Добавляем блок в горизонтальный ScrollView
         val horizontalContainer = findViewById<LinearLayout>(R.id.linearLayoutSimpleNotes)
         horizontalContainer.addView(simpleNoteView)
+
+        // Обновляем интерфейс после добавления блока
+        updateUI()
+
         Log.d("MainActivity", "Simple note added: ${note.content}")
+    }
+
+    fun updateUI() {
+        val container1 = findViewById<LinearLayout>(R.id.linearLayoutSimpleNotes) // Первый контейнер
+        val container2 = findViewById<LinearLayout>(R.id.linearLayoutNotes)
+        val imageView = findViewById<LinearLayout>(R.id.block_with_image)
+        val lineView = findViewById<View>(R.id.lineView) // Линия, которую нужно скрыть
+        if (container1.childCount == 0 && container2.childCount == 0) {
+            imageView.visibility = View.VISIBLE
+            lineView.visibility = View.GONE
+        } else if (container1.childCount != 0 || container2.childCount != 0){
+            imageView.visibility = View.GONE
+            lineView.visibility = View.VISIBLE
+        }
     }
 }

@@ -37,12 +37,13 @@
 
     <color name="background_color_light">#FDFEFF</color>
     <color name="background_color_for_hint">#D5D7DA</color>
-    <color name="new_color_for_navigatebar">#F0131314</color>
+    <color name="new_color_for_navigatebar">#FC131314</color>
     <color name="new_color_black">#131314</color>
     <color name="new_color_black_for_timeblock">#E1131314</color>
     <color name="new_color_grey">#4A131314</color>
     <color name="new_grey_3">#0F131314</color>
     <color name="new_color_grey_2">#7D7E85</color>
+    <color name="new_color_grey_for_imageblock">#1A444952</color>
     <color name="orange_for_calendar">#FF7C48</color>
     <color name="green_for_calendar">#56B530</color>
 </resources>

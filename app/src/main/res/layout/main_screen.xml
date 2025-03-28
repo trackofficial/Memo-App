@@ -40,17 +40,43 @@
                 android:orientation="horizontal" />
         </HorizontalScrollView>
         <View
+            android:id="@+id/lineView"
             android:layout_width="match_parent"
-            android:layout_height="3dp"
+            android:layout_height="2dp"
             android:layout_marginRight="18dp"
             android:layout_marginLeft="18dp"
             android:background="@drawable/line_form" />
     </LinearLayout>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
-
+        <!--Блок с изображением-->
+        <LinearLayout
+            android:visibility="gone"
+            android:orientation="vertical"
+            android:id="@+id/block_with_image"
+            android:layout_marginBottom="70dp"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_gravity="center"
+                android:layout_width="110dp"
+                android:layout_height="110dp"
+                android:background="@drawable/havenoplans_image">
+            </ImageView>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="У вас пока что нет планов"
+                android:textSize="18dp"
+                android:textColor="@color/new_color_grey_for_imageblock"
+                android:fontFamily="@font/tilda_semibold">
+            </TextView>
+        </LinearLayout>
         <!-- ScrollView для контента -->
         <ScrollView
             android:id="@+id/main_scroll"
@@ -161,4 +187,5 @@
             </FrameLayout>
         </LinearLayout>
     </FrameLayout>
+
 </LinearLayout>
