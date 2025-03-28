@@ -186,7 +186,7 @@ class MainActivity : ComponentActivity() {
         val inflater = LayoutInflater.from(this)
 
         if (note.dateTime.isNullOrEmpty()) {
-            // Добавляем упрощённый блок
+            // Если дата и время отсутствуют, используем упрощённый блок
             val simpleNoteView = inflater.inflate(R.layout.note_item_simple, linearLayoutNotes, false) as ViewGroup
             val simpleNoteTextView = simpleNoteView.findViewById<TextView>(R.id.noteTitleTextView)
             val simpleNoteImageView = simpleNoteView.findViewById<ImageView>(R.id.noteImageView)
@@ -217,10 +217,11 @@ class MainActivity : ComponentActivity() {
                 simpleNoteImageView.visibility = View.GONE
             }
 
-            // Добавляем блок в макет
+            // Добавляем упрощённый блок в макет
             linearLayoutNotes.addView(simpleNoteView)
+            Log.d("MainActivity", "Simple note added: ${note.content}")
         } else {
-            // Добавляем обычный блок
+            // Если дата и время указаны, используем обычный блок
             val noteView = inflater.inflate(R.layout.note_item, linearLayoutNotes, false) as ViewGroup
             val noteTextView = noteView.findViewById<TextView>(R.id.noteTextView)
             val descriptionTextView = noteView.findViewById<TextView>(R.id.desTextView)
@@ -228,13 +229,36 @@ class MainActivity : ComponentActivity() {
             val noteImageView = noteView.findViewById<ImageView>(R.id.noteImageView)
             val editButton = noteView.findViewById<ImageButton>(R.id.deleteButton)
 
-            // Преобразуем текст названия и описания с заглавной буквы
-            noteTextView.text = note.content?.replaceFirstChar {
-                if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
+            // Функция для преобразования первой буквы в заглавную
+            fun capitalizeFirstLetter(text: String?): String {
+                return text?.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } ?: ""
             }
-            descriptionTextView.text = note.description?.replaceFirstChar {
-                if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
-            } ?: "Нет описания"
+
+            // Преобразуем текст названия с заглавной буквы
+            noteTextView.text = capitalizeFirstLetter(note.content)
+
+            // Преобразуем текст описания с заглавной буквы
+            descriptionTextView.text = if (!note.description.isNullOrEmpty()) {
+                val processedDescription = capitalizeFirstLetter(note.description)
+                if (processedDescription.length > 40) {
+                    processedDescription.substring(0, 40) + "..."
+                } else {
+                    processedDescription
+                }
+            } else {
+                "Нет описания"
+            }
+
+            // Устанавливаем время заметки в формате без ведущих нулей
+            try {
+                val parsedDate = dateTimeFormat.parse(note.dateTime)
+                val calendar = Calendar.getInstance().apply { time = parsedDate!! }
+                val formattedTime = "${calendar.get(Calendar.HOUR_OF_DAY)}:${String.format("%02d", calendar.get(Calendar.MINUTE))}"
+                timeTextView.text = "$formattedTime"
+            } catch (e: ParseException) {
+                Log.e("MainActivity", "Error parsing dateTime: ${note.dateTime}", e)
+                timeTextView.text = "Время: не указано"
+            }
 
             // Устанавливаем изображение
             if (!note.imageUri.isNullOrEmpty()) {
@@ -259,15 +283,20 @@ class MainActivity : ComponentActivity() {
                 noteImageView.visibility = View.GONE
             }
 
-            // Добавляем блок в макет
+            // Слушатель на кнопку редактирования
+            editButton.setOnClickListener {
+                val intent = Intent(this, EditNoteActivity::class.java)
+                intent.putExtra("noteId", note.id)
+                startActivity(intent)
+            }
+
+            // Добавляем обычный блок в макет
             linearLayoutNotes.addView(noteView)
+            Log.d("MainActivity", "Note added with time and capitalized title/description: ${note.content}")
         }
-
-        // Обновляем интерфейс после добавления блока
         updateUI()
-
-        Log.d("MainActivity", "Note added: ${note.content}")
     }
+
 
     private fun addTimeToLayout(dateTime: String) {
         try {
