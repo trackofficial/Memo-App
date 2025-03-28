@@ -111,6 +111,28 @@ class AddNoteActivity : ComponentActivity() {
         buttonSelectImage.setOnClickListener {
             showImageSelectionDialog()
         }
+// Слушатель для форматирования времени при потере фокуса
+        editTextTime.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                val input = editTextTime.text.toString()
+                // Убираем двоеточие, если оно уже введено
+                val cleanInput = input.replace(":", "")
+                // Если набрано ровно 4 цифры, форматируем в "HH:mm"
+                if (cleanInput.length == 4) {
+                    try {
+                        val hours = cleanInput.substring(0, 2).toInt().coerceIn(0, 23)
+                        val minutes = cleanInput.substring(2, 4).toInt().coerceIn(0, 59)
+                        val formattedTime = "%02d:%02d".format(hours, minutes)
+                        editTextTime.setText(formattedTime)
+                    } catch (e: NumberFormatException) {
+                        // Если произошла ошибка при парсинге, оставляем введённый текст
+                        e.printStackTrace()
+                    }
+                }
+            }
+        }
+
+// (Опционально) TextWatcher можно оставить для контроля ввода, но без автоформатирования:
         editTextTime.addTextChangedListener(object : TextWatcher {
             private var isUpdating: Boolean = false
 
@@ -119,9 +141,10 @@ class AddNoteActivity : ComponentActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (isUpdating) return
 
+                // Убираем двоеточия для работы с чистыми цифрами
                 val cleanString = s?.toString()?.replace(":", "") ?: ""
 
-                // Если строка пуста, оставляем поле пустым
+                // Если строка пуста, очищаем поле
                 if (cleanString.isEmpty()) {
                     isUpdating = true
                     editTextTime.setText("")
@@ -130,18 +153,22 @@ class AddNoteActivity : ComponentActivity() {
                     return
                 }
 
-                // Форматирование времени
+                // Форматирование времени:
+                // Если введена 1 цифра — оставляем как есть.
+                // Если введено 2 цифры — форматируем как "X:Y"
+                // Если введено 3 цифры — форматируем как "X:YZ"
+                // Если введено 4 и более цифр — форматируем как "XX:YY" (берём первые 4 цифры)
                 val formattedString = when {
-                    cleanString.length == 2 -> "${cleanString.substring(0, 1)}:${cleanString.substring(1)}"
-                    cleanString.length > 2 -> {
-                        val hours = cleanString.substring(0, cleanString.length - 2).toInt().coerceIn(0, 23) // Корректируем часы
-                        val minutes = cleanString.substring(cleanString.length - 2).toInt().coerceIn(0, 59) // Корректируем минуты
-                        "$hours:$minutes"
-                    }
+                    cleanString.length == 1 -> cleanString
+                    cleanString.length == 2 ->
+                        "${cleanString.substring(0, 1)}:${cleanString.substring(1)}"
+                    cleanString.length == 3 ->
+                        "${cleanString.substring(0, 1)}:${cleanString.substring(1)}"
+                    cleanString.length >= 4 ->
+                        "${cleanString.substring(0, 2)}:${cleanString.substring(2, minOf(cleanString.length, 4))}"
                     else -> cleanString
                 }
 
-                // Обновляем текст только при необходимости
                 if (formattedString != s.toString()) {
                     isUpdating = true
                     editTextTime.setText(formattedString)
@@ -307,7 +334,6 @@ class AddNoteActivity : ComponentActivity() {
         val buttonSelectDate = bottomSheetView.findViewById<Button>(R.id.buttonSelectDate)
         val buttonSelectTime = bottomSheetView.findViewById<Button>(R.id.buttonSelectTime)
         val editTextTime = findViewById<EditText>(R.id.editTextTime)
-
         buttonSelectDate.setOnClickListener {
             selectDate()
             bottomSheetDialog.dismiss()

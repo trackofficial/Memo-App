@@ -186,9 +186,10 @@ class EditNoteActivity : ComponentActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (isUpdating) return
 
+                // Убираем двоеточия для работы с чистыми цифрами
                 val cleanString = s?.toString()?.replace(":", "") ?: ""
 
-                // Если строка пуста, оставляем поле пустым
+                // Если строка пуста, очищаем поле
                 if (cleanString.isEmpty()) {
                     isUpdating = true
                     editTextTime.setText("")
@@ -197,18 +198,22 @@ class EditNoteActivity : ComponentActivity() {
                     return
                 }
 
-                // Форматирование времени
+                // Форматирование времени:
+                // Если введена 1 цифра — оставляем как есть.
+                // Если введено 2 цифры — форматируем как "X:Y"
+                // Если введено 3 цифры — форматируем как "X:YZ"
+                // Если введено 4 и более цифр — форматируем как "XX:YY" (берём первые 4 цифры)
                 val formattedString = when {
-                    cleanString.length == 2 -> "${cleanString.substring(0, 1)}:${cleanString.substring(1)}"
-                    cleanString.length > 2 -> {
-                        val hours = cleanString.substring(0, cleanString.length - 2).toInt().coerceIn(0, 23) // Корректируем часы
-                        val minutes = cleanString.substring(cleanString.length - 2).toInt().coerceIn(0, 59) // Корректируем минуты
-                        "$hours:$minutes"
-                    }
+                    cleanString.length == 1 -> cleanString
+                    cleanString.length == 2 ->
+                        "${cleanString.substring(0, 1)}:${cleanString.substring(1)}"
+                    cleanString.length == 3 ->
+                        "${cleanString.substring(0, 1)}:${cleanString.substring(1)}"
+                    cleanString.length >= 4 ->
+                        "${cleanString.substring(0, 2)}:${cleanString.substring(2, minOf(cleanString.length, 4))}"
                     else -> cleanString
                 }
 
-                // Обновляем текст только при необходимости
                 if (formattedString != s.toString()) {
                     isUpdating = true
                     editTextTime.setText(formattedString)
