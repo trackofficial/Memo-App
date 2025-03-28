@@ -177,6 +177,7 @@
                 android:layout_marginLeft="16dp"
                 android:layout_width="55dp"
                 android:layout_height="55dp"
+                android:id="@+id/settings_block"
                 android:background="@drawable/form_for_navigation_bar">
                 <ImageButton
                     android:id="@+id/settings_button"

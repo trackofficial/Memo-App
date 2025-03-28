@@ -80,6 +80,7 @@ class HistoryActivity : ComponentActivity() {
         allNotes.forEach { note ->
             addNoteToHistoryLayout(note)
         }
+        updateUI()
     }
 
     private fun addNoteToHistoryLayout(note: Note) {
@@ -226,6 +227,7 @@ class HistoryActivity : ComponentActivity() {
             .setDuration(200) // Длительность анимации
             .start()
     }
+
     fun animateButtonClick(button: ImageButton) {
         // Анимация уменьшения кнопки
         val scaleDown = ScaleAnimation(
@@ -257,6 +259,7 @@ class HistoryActivity : ComponentActivity() {
 
         button.startAnimation(scaleDown) // Запуск первой анимации
     }
+
     fun animateButtonClick(block: FrameLayout) {
         // Анимация уменьшения кнопки
         val scaleDown = ScaleAnimation(
@@ -287,5 +290,19 @@ class HistoryActivity : ComponentActivity() {
         })
 
         block.startAnimation(scaleDown) // Запуск первой анимации
+    }
+
+    fun updateUI() {
+        val container1 = findViewById<LinearLayout>(R.id.linearLayoutSimpleNotes) // Первый контейнер
+        val container2 = findViewById<LinearLayout>(R.id.linearLayoutNotes)
+        val imageView = findViewById<LinearLayout>(R.id.block_with_image)
+        val lineView = findViewById<View>(R.id.lineView) // Линия, которую нужно скрыть
+        if (container1.childCount == 0 && container2.childCount == 0) {
+            imageView.visibility = View.VISIBLE
+            lineView.visibility = View.GONE
+        } else if (container1.childCount != 0 || container2.childCount != 0){
+            imageView.visibility = View.GONE
+            lineView.visibility = View.VISIBLE
+        }
     }
 }

@@ -38,6 +38,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var buttonAddNote: Button
     private lateinit var buttonViewHistory: ImageButton
     private lateinit var buttonViewCalendar: ImageButton
+    private lateinit var buttonSettings: ImageButton
     private lateinit var noteDao: NoteDao
     private lateinit var notificationHelper: NotificationHelper
     private val dateFormat = SimpleDateFormat("d MMM yyyy", Locale("ru"))
@@ -80,6 +81,8 @@ class MainActivity : ComponentActivity() {
         val block_createbutton = findViewById<FrameLayout>(R.id.block_creteblock)
         noteDao = NoteDao(this)
         notificationHelper = NotificationHelper(this)
+        buttonSettings = findViewById(R.id.settings_button)
+        val blockSettings = findViewById<FrameLayout>(R.id.settings_block)
 
         buttonAddNote.setOnClickListener {
             animateButtonClick(block_createbutton)
@@ -95,7 +98,11 @@ class MainActivity : ComponentActivity() {
             animateButtonClick(buttonViewCalendar)
             startActivity(Intent(this, CalendarActivity::class.java))
         }
-
+        buttonSettings.setOnClickListener {
+            animateButtonClick(buttonSettings)
+            animateButtonClick(blockSettings)
+            startActivity(Intent(this, SettingsActivity::class.java))
+        }
 
 
 

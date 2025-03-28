@@ -37,6 +37,10 @@
             android:theme="@style/AppTheme"
             android:exported="false" />
         <activity
+            android:name=".SettingsActivity"
+            android:theme="@style/AppTheme"
+            android:exported="false" />
+        <activity
             android:name=".ViewNoteActivity"
             android:exported="false" />
         <receiver android:name=".NotificationReceiver" />
