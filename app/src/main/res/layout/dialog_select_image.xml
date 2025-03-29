@@ -4,24 +4,59 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@drawable/form_for_select_block"
-    android:padding="16dp">
-
+    android:paddingTop="16dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp">
+    <View
+        android:id="@+id/pullHandle"
+        android:layout_width="80dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/form_for_navigation_bar" />
     <TextView
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/tilda_semibold"
+        android:textColor="@color/new_color_black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="Выберите изображение"
-        android:textSize="18sp"
+        android:textSize="20sp"
         android:paddingBottom="8dp" />
-<LinearLayout
-    android:layout_width="wrap_content"
-    android:orientation="vertical"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center_horizontal">
-    <TextView
+    <Button
+        android:elevation="0dp"
+        android:id="@+id/buttonSelectFromGallery"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="start"
+        android:textColor="@color/background_color_light"
+        android:background="@drawable/form_for_navigation_bar"
+        android:layout_marginBottom="0dp"
+        android:shadowDy="0"
+        android:text="Выбрать из галереи"
+        android:fontFamily="@font/tilda_medium"
+        android:layout_marginTop="6dp" />
+    <com.example.memo_app.OneWayScrollView
+        android:layout_marginTop="6dp"
+        android:fadeScrollbars="false"
+        android:scrollbars="none"
+        android:layout_width="match_parent"
+        android:layout_height="320dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_gravity="center"
+    android:layout_width="wrap_content"
+    android:orientation="vertical"
+    android:layout_height="wrap_content">
+    <TextView
+
+        android:fontFamily="@font/tilda_medium"
+        android:textColor="@color/new_color_black"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="Учеба"
         android:textSize="18sp"/>
     <GridLayout
@@ -101,17 +136,96 @@
         <!-- Повторите для всех изображений -->
 
     </GridLayout>
+    <GridLayout
+        android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content"
+        android:columnCount="7">
+
+        <!-- Добавим ImageView для каждого изображения -->
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"></Space>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="80dp"
+            android:layout_height="60dp"
+            android:layout_margin="8dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="0dp">
+            <ImageView
+                android:src="@drawable/img_memo_23"
+                android:id="@+id/imageOption23"
+                android:adjustViewBounds="false"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"/>
+
+        </androidx.cardview.widget.CardView>
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"></Space>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="80dp"
+            android:layout_height="60dp"
+            android:layout_margin="8dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="0dp">
+            <ImageView
+                android:src="@drawable/img_memo_24"
+                android:id="@+id/imageOption24"
+                android:adjustViewBounds="false"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"/>
+
+        </androidx.cardview.widget.CardView>
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"></Space>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="80dp"
+            android:layout_height="60dp"
+            android:layout_margin="8dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="0dp">
+            <ImageView
+                android:src="@drawable/img_memo_22"
+                android:id="@+id/imageOption22"
+                android:adjustViewBounds="false"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"/>
+
+        </androidx.cardview.widget.CardView>
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"></Space>
+        <!-- Повторите для всех изображений -->
+
+    </GridLayout>
 </LinearLayout>
 
-    <LinearLayout
+            <LinearLayout
         android:layout_width="wrap_content"
         android:orientation="vertical"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal">
         <TextView
+            android:fontFamily="@font/tilda_medium"
+            android:textColor="@color/new_color_black"
+            android:gravity="center_horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="start"
             android:text="Путешествие"
             android:textSize="18sp"/>
         <GridLayout
@@ -191,12 +305,422 @@
             <!-- Повторите для всех изображений -->
 
         </GridLayout>
+        <GridLayout
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:layout_height="wrap_content"
+            android:columnCount="7">
+
+            <!-- Добавим ImageView для каждого изображения -->
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"></Space>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="80dp"
+                android:layout_height="60dp"
+                android:layout_margin="8dp"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp">
+                <ImageView
+                    android:src="@drawable/img_memo_7"
+                    android:id="@+id/imageOption7"
+                    android:adjustViewBounds="false"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"/>
+
+            </androidx.cardview.widget.CardView>
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"></Space>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="80dp"
+                android:layout_height="60dp"
+                android:layout_margin="8dp"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp">
+                <ImageView
+                    android:src="@drawable/img_memo_8"
+                    android:id="@+id/imageOption8"
+                    android:adjustViewBounds="false"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"/>
+
+            </androidx.cardview.widget.CardView>
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"></Space>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="80dp"
+                android:layout_height="60dp"
+                android:layout_margin="8dp"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp">
+                <ImageView
+                    android:src="@drawable/img_memo_9"
+                    android:id="@+id/imageOption9"
+                    android:adjustViewBounds="false"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"/>
+
+            </androidx.cardview.widget.CardView>
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"></Space>
+            <!-- Повторите для всех изображений -->
+
+        </GridLayout>
     </LinearLayout>
 
-    <Button
-        android:id="@+id/buttonSelectFromGallery"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Выбрать из галереи"
-        android:layout_marginTop="16dp" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:orientation="vertical"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal">
+                <TextView
+                    android:fontFamily="@font/tilda_medium"
+                    android:textColor="@color/new_color_black"
+                    android:gravity="center_horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Работа и дедлайн"
+                    android:textSize="18sp"/>
+                <GridLayout
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_height="wrap_content"
+                    android:columnCount="7">
+
+                    <!-- Добавим ImageView для каждого изображения -->
+                    <Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"></Space>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="80dp"
+                        android:layout_height="60dp"
+                        android:layout_margin="8dp"
+                        app:cardCornerRadius="10dp"
+                        app:cardElevation="0dp">
+                        <ImageView
+                            android:src="@drawable/img_memo_10"
+                            android:id="@+id/imageOption10"
+                            android:adjustViewBounds="false"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"/>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"></Space>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="80dp"
+                        android:layout_height="60dp"
+                        android:layout_margin="8dp"
+                        app:cardCornerRadius="10dp"
+                        app:cardElevation="0dp">
+                        <ImageView
+                            android:src="@drawable/img_memo_11"
+                            android:id="@+id/imageOption11"
+                            android:adjustViewBounds="false"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"/>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"></Space>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="80dp"
+                        android:layout_height="60dp"
+                        android:layout_margin="8dp"
+                        app:cardCornerRadius="10dp"
+                        app:cardElevation="0dp">
+                        <ImageView
+                            android:src="@drawable/img_memo_12"
+                            android:id="@+id/imageOption12"
+                            android:adjustViewBounds="false"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"/>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"></Space>
+                    <!-- Повторите для всех изображений -->
+
+                </GridLayout>
+                <GridLayout
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_height="wrap_content"
+                    android:columnCount="7">
+
+                    <!-- Добавим ImageView для каждого изображения -->
+                    <Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"></Space>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="80dp"
+                        android:layout_height="60dp"
+                        android:layout_margin="8dp"
+                        app:cardCornerRadius="10dp"
+                        app:cardElevation="0dp">
+                        <ImageView
+                            android:src="@drawable/img_memo_13"
+                            android:id="@+id/imageOption13"
+                            android:adjustViewBounds="false"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"/>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"></Space>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="80dp"
+                        android:layout_height="60dp"
+                        android:layout_margin="8dp"
+                        app:cardCornerRadius="10dp"
+                        app:cardElevation="0dp">
+                        <ImageView
+                            android:src="@drawable/img_memo_14"
+                            android:id="@+id/imageOption14"
+                            android:adjustViewBounds="false"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"/>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"></Space>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="80dp"
+                        android:layout_height="60dp"
+                        android:layout_margin="8dp"
+                        app:cardCornerRadius="10dp"
+                        app:cardElevation="0dp">
+                        <ImageView
+                            android:src="@drawable/img_memo_15"
+                            android:id="@+id/imageOption15"
+                            android:adjustViewBounds="false"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"/>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"></Space>
+                    <!-- Повторите для всех изображений -->
+
+                </GridLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:orientation="vertical"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal">
+                <TextView
+                    android:fontFamily="@font/tilda_medium"
+                    android:textColor="@color/new_color_black"
+                    android:gravity="center_horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Космос"
+                    android:textSize="18sp"/>
+                <GridLayout
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_height="wrap_content"
+                    android:columnCount="7">
+
+                    <!-- Добавим ImageView для каждого изображения -->
+                    <Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"></Space>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="80dp"
+                        android:layout_height="60dp"
+                        android:layout_margin="8dp"
+                        app:cardCornerRadius="10dp"
+                        app:cardElevation="0dp">
+                        <ImageView
+                            android:src="@drawable/img_memo_16"
+                            android:id="@+id/imageOption16"
+                            android:adjustViewBounds="false"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"/>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"></Space>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="80dp"
+                        android:layout_height="60dp"
+                        android:layout_margin="8dp"
+                        app:cardCornerRadius="10dp"
+                        app:cardElevation="0dp">
+                        <ImageView
+                            android:src="@drawable/img_memo_17"
+                            android:id="@+id/imageOption17"
+                            android:adjustViewBounds="false"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"/>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"></Space>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="80dp"
+                        android:layout_height="60dp"
+                        android:layout_margin="8dp"
+                        app:cardCornerRadius="10dp"
+                        app:cardElevation="0dp">
+                        <ImageView
+                            android:src="@drawable/img_memo_18"
+                            android:id="@+id/imageOption18"
+                            android:adjustViewBounds="false"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"/>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"></Space>
+                    <!-- Повторите для всех изображений -->
+
+                </GridLayout>
+                <GridLayout
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_height="wrap_content"
+                    android:columnCount="7">
+
+                    <!-- Добавим ImageView для каждого изображения -->
+                    <Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"></Space>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="80dp"
+                        android:layout_height="60dp"
+                        android:layout_margin="8dp"
+                        app:cardCornerRadius="10dp"
+                        app:cardElevation="0dp">
+                        <ImageView
+                            android:src="@drawable/img_memo_19"
+                            android:id="@+id/imageOption19"
+                            android:adjustViewBounds="false"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"/>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"></Space>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="80dp"
+                        android:layout_height="60dp"
+                        android:layout_margin="8dp"
+                        app:cardCornerRadius="10dp"
+                        app:cardElevation="0dp">
+                        <ImageView
+                            android:src="@drawable/img_memo_20"
+                            android:id="@+id/imageOption20"
+                            android:adjustViewBounds="false"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"/>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"></Space>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="80dp"
+                        android:layout_height="60dp"
+                        android:layout_margin="8dp"
+                        app:cardCornerRadius="10dp"
+                        app:cardElevation="0dp">
+                        <ImageView
+                            android:src="@drawable/img_memo_21"
+                            android:id="@+id/imageOption21"
+                            android:adjustViewBounds="false"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"/>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"></Space>
+                    <!-- Повторите для всех изображений -->
+
+                </GridLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </com.example.memo_app.OneWayScrollView>
 </LinearLayout>

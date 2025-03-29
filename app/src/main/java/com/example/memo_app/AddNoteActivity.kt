@@ -395,40 +395,32 @@ class AddNoteActivity : ComponentActivity() {
         val bottomSheetDialog = BottomSheetDialog(this, R.style.RoundedBottomSheetDialog)
         bottomSheetDialog.setContentView(dialogView)
 
-        dialogView.findViewById<ImageView>(R.id.imageOption1).setOnClickListener {
-            handleLibraryImageSelection(R.drawable.img_memo_1) // Выбор изображения из библиотеки
-            bottomSheetDialog.dismiss()
-        }
-        dialogView.findViewById<ImageView>(R.id.imageOption2).setOnClickListener {
-            handleLibraryImageSelection(R.drawable.img_memo_2)
-            bottomSheetDialog.dismiss()
-        }
-        dialogView.findViewById<ImageView>(R.id.imageOption3).setOnClickListener {
-            handleLibraryImageSelection(R.drawable.img_memo_3)
-            bottomSheetDialog.dismiss()
-        }
-        dialogView.findViewById<ImageView>(R.id.imageOption4).setOnClickListener {
-            handleLibraryImageSelection(R.drawable.img_memo_4)
-            bottomSheetDialog.dismiss()
-        }
-        dialogView.findViewById<ImageView>(R.id.imageOption5).setOnClickListener {
-            handleLibraryImageSelection(R.drawable.img_memo_5)
-            bottomSheetDialog.dismiss()
-        }
-        dialogView.findViewById<ImageView>(R.id.imageOption6).setOnClickListener {
-            handleLibraryImageSelection(R.drawable.img_memo_6)
-            bottomSheetDialog.dismiss()
+        // Проходим по всем 24 кнопкам
+        for (i in 1..24) {
+            // Динамически получаем идентификатор ImageView, например "imageOption1", "imageOption2", ...
+            val imageViewId = resources.getIdentifier("imageOption$i", "id", packageName)
+            val imageView = dialogView.findViewById<ImageView>(imageViewId)
+
+            // Если ImageView найден, устанавливаем для него OnClickListener
+            imageView?.setOnClickListener {
+                // Получаем идентификатор drawable ресурса "img_memo_1", "img_memo_2", ...
+                val drawableResId = resources.getIdentifier("img_memo_$i", "drawable", packageName)
+                handleLibraryImageSelection(drawableResId)
+                bottomSheetDialog.dismiss()
+            }
         }
 
+        // Обработка кнопки выбора изображения из галереи
         dialogView.findViewById<Button>(R.id.buttonSelectFromGallery).setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK)
             intent.type = "image/*"
-            selectImageLauncher.launch(intent) // Обработка выбора изображения из галереи
+            selectImageLauncher.launch(intent)
             bottomSheetDialog.dismiss()
         }
 
         bottomSheetDialog.show()
     }
+
     private fun handleLibraryImageSelection(resId: Int) {
         try {
             // Декодируем изображение из ресурсов
@@ -472,15 +464,12 @@ class AddNoteActivity : ComponentActivity() {
         Log.d("saveSelectedImagePath", "Path and source saved: $path, $source")
     }
     private fun getRandomBackgroundResId(): Int {
-        val backgrounds = listOf(
-            R.drawable.img_memo_1,
-            R.drawable.img_memo_2,
-            R.drawable.img_memo_3,
-            R.drawable.img_memo_4,
-            R.drawable.img_memo_5,
-            R.drawable.img_memo_6
-        )
-        return backgrounds.random() // Возвращает случайный идентификатор ресурса
+        // Генерируем список идентификаторов ресурсов на основе последовательных названий
+        val backgrounds = (1..24).map { i ->
+            resources.getIdentifier("img_memo_$i", "drawable", packageName)
+        }
+        // Возвращаем случайный идентификатор ресурса из списка
+        return backgrounds.random()
     }
     fun animateButtonClick(block: FrameLayout) {
         // Анимация уменьшения кнопки
