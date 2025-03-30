@@ -2,8 +2,7 @@
 <resources>
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="android:colorPrimary">@color/background_color_dark</item>
-        <item name="android:colorPrimaryDark">@color/background_color_dark</item>
-        <item name="android:colorAccent">@color/text_color_for_other</item>
+        <item name="android:colorSecondary">@color/background_color_dark</item>
     </style>
     <style name="RoundedCornersOneSide">
         <item name="cornerFamily">rounded</item>

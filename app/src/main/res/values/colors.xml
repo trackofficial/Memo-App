@@ -46,4 +46,5 @@
     <color name="new_color_grey_for_imageblock">#1A444952</color>
     <color name="orange_for_calendar">#FF7C48</color>
     <color name="green_for_calendar">#56B530</color>
+    <color name="grey_for_darkmode">#19191A</color>
 </resources>

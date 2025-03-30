@@ -6,9 +6,9 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/memo_icon_svg"
         android:label="Memo"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/memo_icon_svg"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:targetApi="31">
