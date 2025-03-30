@@ -207,6 +207,13 @@ class HistoryActivity : ComponentActivity() {
                     noteImageView.visibility = View.GONE
                 }
 
+                // Добавляем обработчик клика для перехода в ViewNoteActivity
+                noteView.setOnClickListener {
+                    val intent = Intent(this, ViewNoteActivity::class.java)
+                    intent.putExtra("noteId", note.id) // Передаём ID заметки
+                    startActivity(intent)
+                }
+
                 // Добавляем блок в вертикальный контейнер
                 linearLayoutHistory.addView(noteView)
 
