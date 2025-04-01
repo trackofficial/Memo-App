@@ -12,7 +12,9 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 
 class NotificationHelper(private val context: Context) {
 
@@ -129,12 +131,44 @@ class NotificationHelper(private val context: Context) {
     fun schedulePlanNotifications(planTime: Long) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val currentTime = System.currentTimeMillis()
-        val dayMs = 24 * 60 * 60 * 1000L
 
         if (planTime <= currentTime) {
             Log.d("NotificationHelper", "Plan time is in the past. No notifications scheduled.")
             return
         }
+
+        // Проверяем, есть ли вообще заметки
+        val noteDao = NoteDao(context)
+        val allNotes = noteDao.getAllNotes()
+        if (allNotes.isEmpty()) {
+            Log.d("NotificationHelper", "No notes found. Notifications will not be scheduled.")
+            return
+        }
+
+        // Проверяем, есть ли заметки на конкретный день
+        val notes = allNotes.filter {
+            try {
+                val noteDateTime = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).parse(it.dateTime)
+                if (noteDateTime != null) {
+                    isSameDay(
+                        Calendar.getInstance().apply { timeInMillis = planTime },
+                        Calendar.getInstance().apply { time = noteDateTime }
+                    )
+                } else {
+                    false // Если noteDateTime == null, исключаем заметку из списка
+                }
+            } catch (e: Exception) {
+                Log.e("NotificationHelper", "Ошибка при парсинге даты: ${it.dateTime}", e)
+                false // Исключаем заметку, если произошла ошибка
+            }
+        }
+
+        if (notes.isEmpty()) {
+            Log.d("NotificationHelper", "No plans found for the specified date. No notifications scheduled.")
+            return
+        }
+
+        val dayMs = 24 * 60 * 60 * 1000L
 
         // Более 48 часов до плана: уведомления каждый день
         if (planTime - currentTime > 2 * dayMs) {
@@ -157,7 +191,7 @@ class NotificationHelper(private val context: Context) {
         // От 24 до 48 часов: уведомления утром и вечером
         else if (planTime - currentTime > dayMs) {
             var calendar = Calendar.getInstance()
-            calendar.timeInMillis = planTime - dayMs   // день до плана
+            calendar.timeInMillis = planTime - dayMs
             calendar.set(Calendar.HOUR_OF_DAY, 10)
             val morningTime = calendar.timeInMillis
             if (morningTime > currentTime) {
@@ -216,5 +250,9 @@ class NotificationHelper(private val context: Context) {
         )
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
         Log.d("NotificationHelper", "Scheduled single notification at $triggerTime with message: $message")
+    }
+    private fun isSameDay(cal1: Calendar, cal2: Calendar): Boolean {
+        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)
     }
 }
