@@ -97,83 +97,6 @@ class NotificationHelper(private val context: Context) {
      * • Если от 24 до 48 часов до плана: планируются два уведомления в день (например, в 10:00 и 16:00) за 1 день до плана.
      * • Если осталось менее 24 часов: уведомления будут приходить каждые 2 часа до наступления плана.
      */
-    fun schedulePlanNotifications(planTime: Long) {
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val currentTime = System.currentTimeMillis()
-        val dayMs = 24 * 60 * 60 * 1000L
-
-        if (planTime <= currentTime) {
-            Log.d("NotificationHelper", "Plan time is in the past. No notifications scheduled.")
-            return
-        }
-
-        // Более 48 часов до плана: уведомления каждый день в 9:00
-        if (planTime - currentTime > 2 * dayMs) {
-            var calendar = Calendar.getInstance().apply {
-                timeInMillis = currentTime
-                set(Calendar.HOUR_OF_DAY, 9)
-                set(Calendar.MINUTE, 0)
-                set(Calendar.SECOND, 0)
-            }
-            // Если сегодняшний 9:00 уже прошёл, переходим к следующему дню.
-            if (calendar.timeInMillis < currentTime) {
-                calendar.add(Calendar.DAY_OF_YEAR, 1)
-            }
-            // Планируем уведомления до момента, когда останется 48 часов до плана.
-            val endTime = planTime - 2 * dayMs
-            while (calendar.timeInMillis <= endTime) {
-                scheduleSingleNotification(alarmManager, calendar.timeInMillis, "Напоминание: у вас задача запланирована на будущее")
-                calendar.add(Calendar.DAY_OF_YEAR, 1)
-            }
-        }
-        // От 24 до 48 часов до плана: два уведомления за день (например, в 10:00 и 16:00)
-        else if (planTime - currentTime > dayMs) {
-            var calendar = Calendar.getInstance()
-            calendar.timeInMillis = planTime - dayMs   // день до плана
-            calendar.set(Calendar.HOUR_OF_DAY, 10)
-            calendar.set(Calendar.MINUTE, 0)
-            calendar.set(Calendar.SECOND, 0)
-            val firstTime = calendar.timeInMillis
-            if (firstTime > currentTime) {
-                scheduleSingleNotification(alarmManager, firstTime, "Напоминание: Остался 1 день до задачи")
-            }
-            calendar.set(Calendar.HOUR_OF_DAY, 16)
-            val secondTime = calendar.timeInMillis
-            if (secondTime > currentTime) {
-                scheduleSingleNotification(alarmManager, secondTime, "Напоминание: Остался 1 день до задачи")
-            }
-        }
-        // Менее 24 часов до плана: уведомления каждые 2 часа
-        else {
-            var nextTime = currentTime + 2 * 60 * 60 * 1000L // через 2 часа от текущего времени
-            while (nextTime < planTime) {
-                scheduleSingleNotification(alarmManager, nextTime, "Напоминание: задача сегодня!")
-                nextTime += 2 * 60 * 60 * 1000L
-            }
-        }
-        Log.d("NotificationHelper", "Plan notifications scheduled for planTime: $planTime")
-    }
-
-    // Планирование одного уведомления с указанным запуском (triggerTime) и сообщением.
-    private fun scheduleSingleNotification(
-        alarmManager: AlarmManager,
-        triggerTime: Long,
-        message: String
-    ) {
-        val intent = Intent(context, NotificationReceiver::class.java).apply {
-            putExtra("notification_message", message)
-        }
-        // Используем время запуска (в секундах) как уникальный requestCode.
-        val requestCode = (triggerTime / 1000).toInt()
-        val pendingIntent = PendingIntent.getBroadcast(
-            context,
-            requestCode,
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-        Log.d("NotificationHelper", "Scheduled single notification at $triggerTime with message: $message")
-    }
 
     // Старый метод планирования ежедневного уведомления (если требуется оставить)
     fun scheduleDailyNotification() {
@@ -201,5 +124,97 @@ class NotificationHelper(private val context: Context) {
             alarmIntent
         )
         Log.d("NotificationHelper", "Daily notification scheduled at 9:00 AM")
+    }
+    //.
+    fun schedulePlanNotifications(planTime: Long) {
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val currentTime = System.currentTimeMillis()
+        val dayMs = 24 * 60 * 60 * 1000L
+
+        if (planTime <= currentTime) {
+            Log.d("NotificationHelper", "Plan time is in the past. No notifications scheduled.")
+            return
+        }
+
+        // Более 48 часов до плана: уведомления каждый день
+        if (planTime - currentTime > 2 * dayMs) {
+            var calendar = Calendar.getInstance().apply {
+                timeInMillis = currentTime
+                set(Calendar.HOUR_OF_DAY, 9)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+            }
+            if (calendar.timeInMillis < currentTime) {
+                calendar.add(Calendar.DAY_OF_YEAR, 1)
+            }
+            val endTime = planTime - 2 * dayMs
+            while (calendar.timeInMillis <= endTime) {
+                scheduleSingleNotification(alarmManager, calendar.timeInMillis, "Напоминание: задача через несколько дней")
+                calendar.add(Calendar.DAY_OF_YEAR, 1)
+            }
+        }
+
+        // От 24 до 48 часов: уведомления утром и вечером
+        else if (planTime - currentTime > dayMs) {
+            var calendar = Calendar.getInstance()
+            calendar.timeInMillis = planTime - dayMs   // день до плана
+            calendar.set(Calendar.HOUR_OF_DAY, 10)
+            val morningTime = calendar.timeInMillis
+            if (morningTime > currentTime) {
+                scheduleSingleNotification(alarmManager, morningTime, "Напоминание: Остался 1 день до выполнения задачи")
+            }
+            calendar.set(Calendar.HOUR_OF_DAY, 18)
+            val eveningTime = calendar.timeInMillis
+            if (eveningTime > currentTime) {
+                scheduleSingleNotification(alarmManager, eveningTime, "Напоминание: Остался 1 день до выполнения задачи")
+            }
+        }
+
+        // Менее 24 часов: утром, в обед, и за час до выполнения
+        else {
+            val morningTime = calculateTimeForHour(planTime - dayMs, 8) // 8:00 утра
+            val noonTime = calculateTimeForHour(planTime - dayMs, 12)  // 12:00 дня
+            val hourBeforeTime = planTime - 60 * 60 * 1000L            // За час до плана
+
+            if (morningTime > currentTime) {
+                scheduleSingleNotification(alarmManager, morningTime, "Напоминание: задача сегодня утром!")
+            }
+
+            if (noonTime > currentTime) {
+                scheduleSingleNotification(alarmManager, noonTime, "Напоминание: задача сегодня в обед!")
+            }
+
+            if (hourBeforeTime > currentTime) {
+                scheduleSingleNotification(alarmManager, hourBeforeTime, "Напоминание: задача уже совсем скоро!")
+            }
+        }
+    }
+
+    private fun calculateTimeForHour(baseTime: Long, hour: Int): Long {
+        val calendar = Calendar.getInstance().apply {
+            timeInMillis = baseTime
+            set(Calendar.HOUR_OF_DAY, hour)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+        }
+        return calendar.timeInMillis
+    }
+
+    private fun scheduleSingleNotification(
+        alarmManager: AlarmManager,
+        triggerTime: Long,
+        message: String
+    ) {
+        val intent = Intent(context, NotificationReceiver::class.java).apply {
+            putExtra("notification_message", message)
+        }
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            (triggerTime / 1000).toInt(),
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+        Log.d("NotificationHelper", "Scheduled single notification at $triggerTime with message: $message")
     }
 }
