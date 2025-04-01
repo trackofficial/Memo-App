@@ -4,39 +4,19 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
 
 class NotificationReceiver : BroadcastReceiver() {
 
-    private val dateTimeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
-
     override fun onReceive(context: Context, intent: Intent) {
-        Log.d("NotificationReceiver", "Daily notification triggered")
-        val noteDao = NoteDao(context)
-        val today = Calendar.getInstance()
+        // Получаем сообщение, переданное через PendingIntent.
+        // Если оно не передано, используется значение по умолчанию.
+        val message = intent.getStringExtra("notification_message")
+            ?: "Напоминание: Проверьте свои планы"
 
-        val notes = noteDao.getAllNotes().filter {
-            val noteDate = dateTimeFormat.parse(it.dateTime)
-            isSameDay(today, Calendar.getInstance().apply { time = noteDate })
-        }
+        // Получаем экземпляр NotificationHelper и отправляем уведомление.
+        val notificationHelper = NotificationHelper(context)
+        notificationHelper.sendNotification("Напоминание", message)
 
-        if (notes.isNotEmpty()) {
-            val planDetails = notes.joinToString(separator = "\n") { it.content }
-
-            val notificationHelper = NotificationHelper(context)
-            notificationHelper.sendNotification(
-                "Похоже, у вас планы",
-                planDetails
-            )
-        } else {
-            Log.d("NotificationReceiver", "No plans found for today")
-        }
-    }
-
-    private fun isSameDay(cal1: Calendar, cal2: Calendar): Boolean {
-        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
-                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)
+        Log.d("NotificationReceiver", "Notification fired with message: $message")
     }
 }
