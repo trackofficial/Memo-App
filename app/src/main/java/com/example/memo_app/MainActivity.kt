@@ -444,16 +444,17 @@ class MainActivity : ComponentActivity() {
     }
 
     fun updateUI() {
-        val container1 = findViewById<LinearLayout>(R.id.linearLayoutSimpleNotes) // Первый контейнер
-        val container2 = findViewById<LinearLayout>(R.id.linearLayoutNotes)
-        val imageView = findViewById<LinearLayout>(R.id.block_with_image)
-        val lineView = findViewById<View>(R.id.lineView) // Линия, которую нужно скрыть
-        if (container1.childCount == 0 && container2.childCount == 0) {
-            imageView.visibility = View.VISIBLE
-            lineView.visibility = View.GONE
-        } else if (container1.childCount != 0 || container2.childCount != 0){
-            imageView.visibility = View.GONE
+        val container1 = findViewById<LinearLayout>(R.id.linearLayoutSimpleNotes) // Первый контейнер с маленькими блоками
+        val container2 = findViewById<LinearLayout>(R.id.linearLayoutNotes) // Второй контейнер
+        val imageView = findViewById<LinearLayout>(R.id.block_with_image) // Элемент с изображением
+        val lineView = findViewById<View>(R.id.lineView) // Линия, которую нужно скрыть или показать
+
+        if (container1.childCount > 0) { // Линия видима только если есть маленькие блоки
             lineView.visibility = View.VISIBLE
+            imageView.visibility = View.GONE
+        } else {
+            lineView.visibility = View.GONE // Скрываем линию, если нет маленьких блоков
+            imageView.visibility = if (container2.childCount == 0) View.VISIBLE else View.GONE
         }
     }
 }

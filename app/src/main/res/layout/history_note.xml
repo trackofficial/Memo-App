@@ -48,8 +48,6 @@
         android:id="@+id/scroll_for_block"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
         android:fadeScrollbars="false"
         android:scrollbars="none">
 
