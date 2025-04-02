@@ -127,100 +127,100 @@ class NotificationHelper(private val context: Context) {
         )
         Log.d("NotificationHelper", "Daily notification scheduled at 9:00 AM")
     }
-    //.
-    fun schedulePlanNotifications() {
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val currentTime = System.currentTimeMillis()
+     //.
+     fun schedulePlanNotifications() {
+         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+         val currentTime = System.currentTimeMillis()
 
-        // Получаем все заметки из базы
-        val noteDao = NoteDao(context)
-        val allNotes = noteDao.getAllNotes().filter { note ->
-            !note.isDeleted // Фильтруем только задачи, которые не удалены
-        }
+         // Получаем все заметки и фильтруем только активные (не удалённые)
+         val noteDao = NoteDao(context)
+         val activeNotes = noteDao.getAllNotes().filter { !it.isDeleted }
 
-        if (allNotes.isEmpty()) {
-            Log.d("NotificationHelper", "Нет активных заметок. Уведомления не запланированы.")
-            return
-        }
+         if (activeNotes.isEmpty()) {
+             Log.d("NotificationHelper", "Нет активных заметок. Уведомления не запланированы.")
+             cancelAllNotifications()  // Отменяем уже запланированные уведомления, если они существуют.
+             return
+         }
 
-        // Парсим дату из каждой заметки и выбираем только те, что в будущем
-        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
-        val futureTimes = allNotes.mapNotNull { note ->
-            try {
-                val noteDate = sdf.parse(note.dateTime)
-                val time = noteDate?.time
-                if (time != null && time > currentTime) time else null
-            } catch (e: Exception) {
-                Log.e("NotificationHelper", "Ошибка парсинга даты заметки: ${note.dateTime}", e)
-                null
-            }
-        }
+         // Парсим дату из каждой активной заметки и выбираем те, что в будущем
+         val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
+         val futureTimes = activeNotes.mapNotNull { note ->
+             try {
+                 val noteDate = sdf.parse(note.dateTime)
+                 val time = noteDate?.time
+                 if (time != null && time > currentTime) time else null
+             } catch (e: Exception) {
+                 Log.e("NotificationHelper", "Ошибка парсинга даты заметки: ${note.dateTime}", e)
+                 null
+             }
+         }
 
-        if (futureTimes.isEmpty()) {
-            Log.d("NotificationHelper", "Нет предстоящих задач. Уведомления не запланированы.")
-            return
-        }
+         if (futureTimes.isEmpty()) {
+             Log.d("NotificationHelper", "Нет предстоящих активных задач. Уведомления не запланированы.")
+             cancelAllNotifications()
+             return
+         }
 
-        // Выбираем ближайшее время плана
-        val planTime = futureTimes.minOrNull()!!
-        if (planTime <= currentTime) {
-            Log.d("NotificationHelper", "Время плана в прошлом. Уведомления не запланированы.")
-            return
-        }
+         // Выбираем ближайшее будущее время для плана
+         val planTime = futureTimes.minOrNull()!!
+         if (planTime <= currentTime) {
+             Log.d("NotificationHelper", "Время плана в прошлом. Уведомления не запланированы.")
+             cancelAllNotifications()
+             return
+         }
 
-        val dayMs = 24 * 60 * 60 * 1000L
+         val dayMs = 24 * 60 * 60 * 1000L
 
-        // Более 48 часов до плана: уведомления каждый день в 9:00
-        if (planTime - currentTime > 2 * dayMs) {
-            var calendar = Calendar.getInstance().apply {
-                timeInMillis = currentTime
-                set(Calendar.HOUR_OF_DAY, 9)
-                set(Calendar.MINUTE, 0)
-                set(Calendar.SECOND, 0)
-            }
-            if (calendar.timeInMillis < currentTime) {
-                calendar.add(Calendar.DAY_OF_YEAR, 1)
-            }
-            val endTime = planTime - 2 * dayMs
-            while (calendar.timeInMillis <= endTime) {
-                scheduleSingleNotification(alarmManager, calendar.timeInMillis, "Напоминание: задача через несколько дней")
-                calendar.add(Calendar.DAY_OF_YEAR, 1)
-            }
-        }
-        // Если оставшийся промежуток от 24 до 48 часов: уведомления утром и вечером
-        else if (planTime - currentTime > dayMs) {
-            var calendar = Calendar.getInstance()
-            calendar.timeInMillis = planTime - dayMs  // день до выполнения
-            calendar.set(Calendar.HOUR_OF_DAY, 10)
-            val morningTime = calendar.timeInMillis
-            if (morningTime > currentTime) {
-                scheduleSingleNotification(alarmManager, morningTime, "Напоминание: Остался 1 день до выполнения задачи")
-            }
-            calendar.set(Calendar.HOUR_OF_DAY, 18)
-            val eveningTime = calendar.timeInMillis
-            if (eveningTime > currentTime) {
-                scheduleSingleNotification(alarmManager, eveningTime, "Напоминание: Остался 1 день до выполнения задачи")
-            }
-        }
-        // Если до выполнения менее 24 часов: уведомления утром, в обед и за час до выполнения
-        else {
-            val morningTime = calculateTimeForHour(planTime - dayMs, 8) // 8:00 утра
-            val noonTime = calculateTimeForHour(planTime - dayMs, 12)  // 12:00 дня
-            val hourBeforeTime = planTime - 60 * 60 * 1000L            // За час до плана
+         // Если до плана более 48 часов: уведомления каждый день в 9:00
+         if (planTime - currentTime > 2 * dayMs) {
+             var calendar = Calendar.getInstance().apply {
+                 timeInMillis = currentTime
+                 set(Calendar.HOUR_OF_DAY, 9)
+                 set(Calendar.MINUTE, 0)
+                 set(Calendar.SECOND, 0)
+             }
+             if (calendar.timeInMillis < currentTime) {
+                 calendar.add(Calendar.DAY_OF_YEAR, 1)
+             }
+             val endTime = planTime - 2 * dayMs
+             while (calendar.timeInMillis <= endTime) {
+                 scheduleSingleNotification(alarmManager, calendar.timeInMillis, "Напоминание: задача через несколько дней")
+                 calendar.add(Calendar.DAY_OF_YEAR, 1)
+             }
+         }
+         // Если оставшийся промежуток от 24 до 48 часов: уведомления утром и вечером
+         else if (planTime - currentTime > dayMs) {
+             var calendar = Calendar.getInstance().apply { timeInMillis = planTime - dayMs }  // день до выполнения
+             calendar.set(Calendar.HOUR_OF_DAY, 10)
+             val morningTime = calendar.timeInMillis
+             if (morningTime > currentTime) {
+                 scheduleSingleNotification(alarmManager, morningTime, "Напоминание: Остался 1 день до выполнения задачи")
+             }
+             calendar.set(Calendar.HOUR_OF_DAY, 18)
+             val eveningTime = calendar.timeInMillis
+             if (eveningTime > currentTime) {
+                 scheduleSingleNotification(alarmManager, eveningTime, "Напоминание: Остался 1 день до выполнения задачи")
+             }
+         }
+         // Если до выполнения менее 24 часов: уведомления утром, в обед и за час до выполнения
+         else {
+             val morningTime = calculateTimeForHour(planTime - dayMs, 8) // 8:00 утра
+             val noonTime = calculateTimeForHour(planTime - dayMs, 12)  // 12:00 дня
+             val hourBeforeTime = planTime - 60 * 60 * 1000L            // За час до плана
 
-            if (morningTime > currentTime) {
-                scheduleSingleNotification(alarmManager, morningTime, "Напоминание: задача сегодня утром!")
-            }
-            if (noonTime > currentTime) {
-                scheduleSingleNotification(alarmManager, noonTime, "Напоминание: задача сегодня в обед!")
-            }
-            if (hourBeforeTime > currentTime) {
-                scheduleSingleNotification(alarmManager, hourBeforeTime, "Напоминание: задача уже совсем скоро!")
-            }
-        }
+             if (morningTime > currentTime) {
+                 scheduleSingleNotification(alarmManager, morningTime, "Напоминание: задача сегодня утром!")
+             }
+             if (noonTime > currentTime) {
+                 scheduleSingleNotification(alarmManager, noonTime, "Напоминание: задача сегодня в обед!")
+             }
+             if (hourBeforeTime > currentTime) {
+                 scheduleSingleNotification(alarmManager, hourBeforeTime, "Напоминание: задача уже совсем скоро!")
+             }
+         }
 
-        Log.d("NotificationHelper", "Уведомления запланированы для времени плана: $planTime")
-    }
+         Log.d("NotificationHelper", "Уведомления запланированы для времени плана: $planTime")
+     }
     private fun calculateTimeForHour(baseTime: Long, hour: Int): Long {
         val calendar = Calendar.getInstance().apply {
             timeInMillis = baseTime
@@ -235,7 +235,7 @@ class NotificationHelper(private val context: Context) {
         val intent = Intent(context, NotificationReceiver::class.java).apply {
             putExtra("notification_message", message)
         }
-        val requestCode = (triggerTime / 1000).toInt()
+        val requestCode = (triggerTime / 1000).toInt()  // Используем время (в секундах) для уникальности
         val pendingIntent = PendingIntent.getBroadcast(
             context,
             requestCode,
@@ -244,6 +244,26 @@ class NotificationHelper(private val context: Context) {
         )
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
         Log.d("NotificationHelper", "Запланировано уведомление на $triggerTime с сообщением: $message")
+    }
+
+    fun cancelAllNotifications() {
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        // Пробуем получить PendingIntent, созданные с разными requestCode. Если они существуют, отменяем их.
+        // Здесь можно хранить список всех запланированных requestCode, чтобы точно отменить весь набор.
+        // Ниже приведён пример отмены базового PendingIntent с requestCode = 0.
+        val intent = Intent(context, NotificationReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            0,
+            intent,
+            PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
+        )
+        if (pendingIntent != null) {
+            alarmManager.cancel(pendingIntent)
+            pendingIntent.cancel()
+            Log.d("NotificationHelper", "Все запланированные уведомления отменены.")
+        }
     }
 
 }
