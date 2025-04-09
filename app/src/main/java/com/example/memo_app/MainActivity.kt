@@ -6,6 +6,9 @@ import java.io.File
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.RelativeSizeSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -191,8 +194,8 @@ class MainActivity : ComponentActivity() {
             val simpleNoteTextView = simpleNoteView.findViewById<TextView>(R.id.noteTitleTextView)
             val simpleNoteImageView = simpleNoteView.findViewById<ImageView>(R.id.noteImageView)
 
-            // Устанавливаем название заметки
-            simpleNoteTextView.text = note.content
+            // Устанавливаем название заметки с уменьшением текста после 22 символов
+            simpleNoteTextView.text = formatTextWithReducedSize(note.content)
 
             // Устанавливаем изображение
             if (!note.imageUri.isNullOrEmpty()) {
@@ -229,13 +232,8 @@ class MainActivity : ComponentActivity() {
             val noteImageView = noteView.findViewById<ImageView>(R.id.noteImageView)
             val editButton = noteView.findViewById<ImageButton>(R.id.deleteButton)
 
-            // Функция для преобразования первой буквы в заглавную
-            fun capitalizeFirstLetter(text: String?): String {
-                return text?.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } ?: ""
-            }
-
-            // Преобразуем текст названия с заглавной буквы
-            noteTextView.text = capitalizeFirstLetter(note.content)
+            // Устанавливаем основной текст с уменьшением размера после 22 символов
+            noteTextView.text = formatTextWithReducedSize(note.content)
 
             // Преобразуем текст описания с заглавной буквы
             descriptionTextView.text = if (!note.description.isNullOrEmpty()) {
@@ -249,12 +247,12 @@ class MainActivity : ComponentActivity() {
                 "Нет описания"
             }
 
-            // Устанавливаем время заметки в формате без ведущих нулей
+            // Устанавливаем время заметки
             try {
                 val parsedDate = dateTimeFormat.parse(note.dateTime)
                 val calendar = Calendar.getInstance().apply { time = parsedDate!! }
                 val formattedTime = "${calendar.get(Calendar.HOUR_OF_DAY)}:${String.format("%02d", calendar.get(Calendar.MINUTE))}"
-                timeTextView.text = "$formattedTime"
+                timeTextView.text = formattedTime
             } catch (e: ParseException) {
                 Log.e("MainActivity", "Error parsing dateTime: ${note.dateTime}", e)
                 timeTextView.text = "Время: не указано"
@@ -295,6 +293,25 @@ class MainActivity : ComponentActivity() {
             Log.d("MainActivity", "Note added with time and capitalized title/description: ${note.content}")
         }
         updateUI()
+    }
+
+    // Функция для уменьшения текста после 22 символов
+    private fun formatTextWithReducedSize(content: String): Spannable {
+        val spannableString = SpannableString(content)
+        if (content.length > 23) {
+            spannableString.setSpan(
+                RelativeSizeSpan(0.8f), // Уменьшаем размер до 80% от оригинального
+                0,
+                content.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+        return spannableString
+    }
+
+    // Функция для преобразования первой буквы в заглавную
+    private fun capitalizeFirstLetter(text: String?): String {
+        return text?.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } ?: ""
     }
 
 
@@ -453,7 +470,7 @@ class MainActivity : ComponentActivity() {
             lineView.visibility = View.VISIBLE
             imageView.visibility = View.GONE
         } else {
-            lineView.visibility = View.GONE // Скрываем линию, если нет маленьких блоков
+              lineView.visibility = View.GONE // Скрываем линию, если нет маленьких блоков
             imageView.visibility = if (container2.childCount == 0) View.VISIBLE else View.GONE
         }
     }
