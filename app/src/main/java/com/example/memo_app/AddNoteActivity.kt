@@ -315,25 +315,26 @@ class AddNoteActivity : ComponentActivity() {
         } ?: Log.e("Activity", "Image path is null!")
     }
     private fun showBottomSheet() {
-        val bottomSheetDialog = BottomSheetDialog(this)
+        val bottomSheetDialog = BottomSheetDialog(this, R.style.RoundedBottomSheetDialog) // Используем стиль для закруглений
         val bottomSheetView = layoutInflater.inflate(R.layout.layout_bottom_sheet, null)
 
-        // Создаём MaterialShapeDrawable с закруглёнными углами
+        // Создаём MaterialShapeDrawable с закруглёнными углами для большей уверенности
         val shapeDrawable = MaterialShapeDrawable().apply {
             shapeAppearanceModel = ShapeAppearanceModel.Builder()
-                .setTopLeftCorner(CornerFamily.ROUNDED, 40f) // Радиус верхнего левого угла
-                .setTopRightCorner(CornerFamily.ROUNDED, 40f) // Радиус верхнего правого угла
+                .setTopLeftCorner(CornerFamily.ROUNDED, 80f) // Радиус верхнего левого угла
+                .setTopRightCorner(CornerFamily.ROUNDED, 80f) // Радиус верхнего правого угла
                 .build()
             fillColor = getColorStateList(R.color.white) // Цвет фона
         }
 
-        // Устанавливаем фон для корневого View BottomSheet
+        // Применяем фон с закруглениями
         bottomSheetView.background = shapeDrawable
 
         // Обработка кнопок
         val buttonSelectDate = bottomSheetView.findViewById<Button>(R.id.buttonSelectDate)
         val buttonSelectTime = bottomSheetView.findViewById<Button>(R.id.buttonSelectTime)
         val editTextTime = findViewById<EditText>(R.id.editTextTime)
+
         buttonSelectDate.setOnClickListener {
             selectDate()
             bottomSheetDialog.dismiss()
@@ -344,9 +345,11 @@ class AddNoteActivity : ComponentActivity() {
             bottomSheetDialog.dismiss()
         }
 
+        // Устанавливаем контент и показываем диалог
         bottomSheetDialog.setContentView(bottomSheetView)
         bottomSheetDialog.show()
     }
+
     private fun selectDate() {
         val calendar = Calendar.getInstance()
         val datePickerDialog = DatePickerDialog(this, { _, year, month, dayOfMonth ->

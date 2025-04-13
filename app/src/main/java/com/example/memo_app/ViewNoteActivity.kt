@@ -6,16 +6,18 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.animation.ScaleAnimation
+import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class ViewNoteActivity : ComponentActivity() {
-    private lateinit var buttonHome: ImageButton
+    private lateinit var buttonHome: Button
     private lateinit var textViewNoteContent: TextView
     private lateinit var textViewDescription: TextView
     private lateinit var textViewDateTime: TextView
@@ -28,21 +30,32 @@ class ViewNoteActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_view_note)
+
         buttonHome = findViewById(R.id.home_button)
         exitblock = findViewById(R.id.block_back)
+        val restoreButton = findViewById<ImageButton>(R.id.backblockbutton) // Кнопка восстановления
+        val restoreblock = findViewById<FrameLayout>(R.id.backblock) // Кнопка восстановления
         // Инициализация компонентов
         initializeViews()
+
         buttonHome.setOnClickListener {
             animateButtonClick(buttonHome)
             animateButtonClick(exitblock)
             startActivity(Intent(this, MainActivity::class.java))
         }
+
         // Получение ID заметки из intent
         val noteId = intent.getIntExtra("noteId", 0)
         Log.d("ViewNoteActivity", "Initializing with noteId: $noteId")
 
         // Загружаем заметку
         loadNote(noteId)
+
+        restoreButton.setOnClickListener {
+            animateButtonClick(restoreblock)
+            restoreNote(noteId)
+        }
+        updateRestoreButtonVisibility(noteId)
     }
 
     private fun initializeViews() {
@@ -55,21 +68,12 @@ class ViewNoteActivity : ComponentActivity() {
 
     private fun loadNote(noteId: Int) {
         val note = noteDao.getAllNotesIncludingDeleted().firstOrNull { it.id == noteId }
-
         if (note != null) {
             Log.d("ViewNoteActivity", "Note loaded: $note")
-
-            // Устанавливаем содержание заметки с заглавной буквой
             textViewNoteContent.text = capitalizeFirstLetter(note.content ?: "Без текста")
-
-            // Устанавливаем описание с заглавной буквой или заменяем текстом "Описание отсутствует"
             textViewDescription.text = capitalizeFirstLetter(note.description?.takeIf { it.isNotEmpty() }
                 ?: "Описание отсутствует")
-
-            // Обрабатываем дату и время
             setupDateTime(note.dateTime)
-
-            // Обрабатываем изображение
             setupImage(note.imageUri)
         } else {
             Log.d("ViewNoteActivity", "Note not found")
@@ -77,6 +81,29 @@ class ViewNoteActivity : ComponentActivity() {
             textViewDescription.visibility = View.GONE
             textViewDateTime.visibility = View.GONE
             imageViewNote.visibility = View.GONE
+        }
+    }
+
+    private fun updateRestoreButtonVisibility(noteId: Int) {
+        val note = noteDao.getAllNotesIncludingDeleted().firstOrNull { it.id == noteId }
+        val restoreblock = findViewById<FrameLayout>(R.id.backblock)
+        if (note != null && !note.isDeleted) {
+            restoreblock.visibility = View.GONE // Скрываем кнопку, если блок уже активен
+        } else {
+            restoreblock.visibility = View.VISIBLE // Показываем кнопку, если блок удалён
+        }
+    }
+
+    private fun restoreNote(noteId: Int) {
+        val note = noteDao.getAllNotesIncludingDeleted().firstOrNull { it.id == noteId }
+        val restoreButton = findViewById<ImageButton>(R.id.backblockbutton)
+        if (note != null && note.isDeleted) {
+            note.isDeleted = false
+            noteDao.update(note) // Обновляем в базе данных
+
+            Toast.makeText(this, "Блок восстановлен!", Toast.LENGTH_SHORT).show()
+            restoreButton.visibility = View.GONE // Скрываем кнопку после восстановления
+            finish() // Закрываем активность
         }
     }
 
@@ -116,12 +143,14 @@ class ViewNoteActivity : ComponentActivity() {
             imageViewNote.visibility = View.GONE
         }
     }
+
     private fun capitalizeFirstLetter(text: String): String {
         return text.replaceFirstChar {
             if (it.isLowerCase()) it.uppercaseChar() else it
         }
     }
-    fun animateButtonClick(button: ImageButton) {
+
+    fun animateButtonClick(button: Button) {
         // Анимация уменьшения кнопки
         val scaleDown = ScaleAnimation(
             1.0f, 0.9f,  // Уменьшение ширины

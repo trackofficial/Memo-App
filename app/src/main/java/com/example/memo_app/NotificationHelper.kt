@@ -90,17 +90,6 @@ class NotificationHelper(private val context: Context) {
         }
     }
 
-    /**
-     * Планирование уведомлений для задачи (плана) с заданным временем (planTime – в миллисекундах).
-     *
-     * Логика:
-     * • Если до плана более 48 часов: каждое утро в 9:00 изначально планируются уведомления (раз в день)
-     *   до момента, когда остаётся 48 часов.
-     * • Если от 24 до 48 часов до плана: планируются два уведомления в день (например, в 10:00 и 16:00) за 1 день до плана.
-     * • Если осталось менее 24 часов: уведомления будут приходить каждые 2 часа до наступления плана.
-     */
-
-    // Старый метод планирования ежедневного уведомления (если требуется оставить)
     fun scheduleDailyNotification() {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val alarmIntent = Intent(context, NotificationReceiver::class.java).let { intent ->

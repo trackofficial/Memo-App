@@ -8,11 +8,13 @@
     android:elevation="3dp"
     android:layout_marginTop="10dp"
     android:background="@drawable/backnone_for_simpleblock">
+
     <LinearLayout
         android:paddingBottom="4dp"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <FrameLayout
             android:layout_gravity="center_horizontal"
             android:layout_width="wrap_content"
@@ -21,8 +23,9 @@
             android:layout_marginTop="6sp"
             android:background="@drawable/for_image"
             android:layout_height="wrap_content">
+
             <androidx.cardview.widget.CardView
-                android:layout_width="140dp"
+                android:layout_width="150dp"
                 android:layout_height="100sp"
                 app:cardCornerRadius="15sp">
 
@@ -44,6 +47,7 @@
             android:layout_marginRight="16sp"
             android:orientation="vertical">
 
+            <!-- Ограничение текста для одной строки с обрезкой -->
             <TextView
                 android:id="@+id/noteTitleTextView"
                 android:layout_width="match_parent"
@@ -52,29 +56,34 @@
                 android:layout_marginTop="3sp"
                 android:fontFamily="@font/tilda_semibold"
                 android:textColor="@color/black"
-                android:textSize="19sp" />
+                android:textSize="19sp"
+                android:maxLines="1"
+                android:ellipsize="end" />
 
         </LinearLayout>
+
+        <!-- Кнопка с фиксированной позицией -->
         <FrameLayout
             android:layout_marginTop="2dp"
             android:layout_gravity="center_horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/form_for_button_simpleblock">
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="•••"
                 android:textColor="@color/background_color_light"
                 android:layout_gravity="center"
-                android:textSize="19dp">
-            </TextView>
+                android:textSize="19dp" />
+
             <Button
                 android:id="@+id/buttonsipleblock"
                 android:background="@color/color_none"
                 android:layout_width="100dp"
-                android:layout_height="24dp">
-            </Button>
+                android:layout_height="24dp"
+                android:layout_gravity="center" />
         </FrameLayout>
     </LinearLayout>
 
