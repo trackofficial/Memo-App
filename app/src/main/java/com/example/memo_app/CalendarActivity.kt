@@ -134,7 +134,7 @@ class CalendarActivity : AppCompatActivity() {
     }
 
     private fun applyStyle(textView: TextView, hasPlans: Boolean) {
-        val backgroundResource = if (hasPlans) R.drawable.form_for_calendar else R.color.new_color_black
+        val backgroundResource = if (hasPlans) R.drawable.form_for_calendar else R.color.color_for_block_noteitem
         textView.setBackgroundResource(backgroundResource)
 
         val textColor = if (hasPlans) Color.WHITE else Color.WHITE

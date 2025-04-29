@@ -12,26 +12,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingTop="20dp"
+        android:paddingTop="16dp"
         android:id="@+id/text_section">
-        <TextView
-            android:paddingLeft="17dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/tilda_semibold"
-            android:text="Notes"
-            android:textColor="@color/black"
-            android:textSize="24dp" />
         <HorizontalScrollView
             android:clipToPadding="false"
             android:padding="6dp"
             android:fadeScrollbars="false"
             android:scrollbars="none"
+            android:outlineAmbientShadowColor="@color/black"
             android:id="@+id/horizontalScrollView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clipChildren="false"
-            android:layout_marginTop="4dp">
+            android:layout_marginTop="6dp">
 
             <LinearLayout
                 android:id="@+id/linearLayoutSimpleNotes"
@@ -40,11 +33,12 @@
                 android:orientation="horizontal" />
         </HorizontalScrollView>
         <View
+            android:layout_marginTop="5dp"
             android:id="@+id/lineView"
             android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginLeft="8dp"
+            android:layout_height="1.5dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginLeft="0dp"
             android:background="@drawable/line_form" />
     </LinearLayout>
 

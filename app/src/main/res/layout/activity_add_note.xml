@@ -27,7 +27,7 @@
                     <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/noteImageView"
                         android:layout_width="match_parent"
-                        android:layout_height="210dp"
+                        android:layout_height="200dp"
                         android:scaleType="centerCrop"
                         app:shapeAppearanceOverlay="@style/RoundedCornersOneSide" />
                 </FrameLayout>
@@ -48,6 +48,7 @@
                 android:orientation="vertical"
                 android:id="@+id/block_for_edittext">
     <EditText
+        android:textColor="@color/white"
         android:fontFamily="@font/tilda_semibold"
         android:layout_marginLeft="14dp"
         android:layout_marginRight="14dp"
@@ -61,6 +62,7 @@
         android:gravity="top|start"
         android:layout_marginTop="5dp"/>
                 <EditText
+                    android:textColor="@color/white"
                     android:visibility="gone"
                     android:id="@+id/editTextTime"
                     android:hint="Введите время"
@@ -71,7 +73,7 @@
                     android:layout_marginBottom="5dp"
                     android:background="@drawable/form_for_new_edit_text"
                     android:layout_width="match_parent"
-                    android:textColorHint="@color/new_color_grey"
+                    android:textColorHint="@color/white_mid"
                     android:layout_height="wrap_content"
                     android:maxLength="5"
                     android:gravity="top|start"
@@ -88,6 +90,7 @@
                 android:gravity="top|start"
                 android:layout_marginTop="2dp">
                 <EditText
+                    android:textColor="@color/white"
                     android:id="@+id/editAddText"
                     android:hint="Введите описание"
                     android:inputType="textMultiLine"
@@ -139,7 +142,7 @@
                     android:layout_gravity="center"
                     android:text="Add Elements"
                     android:textSize="14dp"
-                    android:textColor="@color/background_color_light"
+                    android:textColor="@color/white"
                     android:fontFamily="@font/tilda_medium">
                 </TextView>
                 </LinearLayout>

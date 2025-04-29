@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/tilda_semibold"
             android:text="Statistics"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textSize="24dp" />
     </LinearLayout>
     <LinearLayout
@@ -35,7 +35,7 @@
         android:paddingBottom="12dp"
         android:orientation="vertical">
     <FrameLayout
-        android:background="@drawable/form_header_calendar"
+        android:background="@drawable/main_calendar_form"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="7dp"

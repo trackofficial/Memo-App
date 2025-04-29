@@ -192,7 +192,7 @@ class MainActivity : ComponentActivity() {
             // Если дата и время отсутствуют, используем упрощённый блок
             val simpleNoteView = inflater.inflate(R.layout.note_item_simple, linearLayoutNotes, false) as ViewGroup
             val simpleNoteTextView = simpleNoteView.findViewById<TextView>(R.id.noteTitleTextView)
-            val simpleNoteImageView = simpleNoteView.findViewById<ImageView>(R.id.noteImageView)
+            val simpleNoteImageView = simpleNoteView.findViewById<ImageButton>(R.id.noteImageView)
 
             // Устанавливаем название заметки с уменьшением текста после 22 символов
             simpleNoteTextView.text = formatTextWithReducedSize(note.content)
@@ -267,6 +267,7 @@ class MainActivity : ComponentActivity() {
                         .apply(RequestOptions.bitmapTransform(RoundedCorners(16)))
                         .into(noteImageView)
                     noteImageView.visibility = View.VISIBLE
+                    noteTextView.clipToOutline = true
                 } else {
                     val resourceId = resources.getIdentifier(note.imageUri, "drawable", packageName)
                     if (resourceId != 0) {
@@ -407,8 +408,7 @@ class MainActivity : ComponentActivity() {
         val inflater = LayoutInflater.from(this)
         val simpleNoteView = inflater.inflate(R.layout.note_item_simple, null) as ViewGroup
         val simpleNoteTextView = simpleNoteView.findViewById<TextView>(R.id.noteTitleTextView)
-        val simpleNoteImageView = simpleNoteView.findViewById<ImageView>(R.id.noteImageView)
-        val buttonEditNote = simpleNoteView.findViewById<Button>(R.id.buttonsipleblock)
+        val simpleNoteImageView = simpleNoteView.findViewById<ImageButton>(R.id.noteImageView)
 
         val params = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -444,7 +444,7 @@ class MainActivity : ComponentActivity() {
         }
 
         // Настройка кнопки для редактирования заметки
-        buttonEditNote.setOnClickListener {
+        simpleNoteImageView.setOnClickListener {
             val intent = Intent(this, EditNoteActivity::class.java)
             intent.putExtra("noteId", note.id)
             startActivity(intent)

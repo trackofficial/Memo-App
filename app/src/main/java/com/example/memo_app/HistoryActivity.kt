@@ -98,7 +98,7 @@ class HistoryActivity : ComponentActivity() {
 
                 val simpleNoteTextView = simpleNoteView.findViewById<TextView>(R.id.noteTitleTextView)
                 val simpleNoteImageView = simpleNoteView.findViewById<ImageView>(R.id.noteImageView)
-                val viewNoteButton = simpleNoteView.findViewById<Button>(R.id.buttonsipleblock) // Новая кнопка
+                val viewNoteButton = simpleNoteView.findViewById<ImageButton>(R.id.noteImageView) // Новая кнопка
 
                 // Устанавливаем отступ между блоками программно
                 val params = LinearLayout.LayoutParams(

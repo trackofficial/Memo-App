@@ -27,7 +27,7 @@
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/noteImageView"
             android:layout_width="match_parent"
-            android:layout_height="210dp"
+            android:layout_height="200dp"
             android:scaleType="centerCrop"
             app:shapeAppearanceOverlay="@style/RoundedCornersOneSide" />
     </FrameLayout>
@@ -67,18 +67,20 @@
                     android:hint="Введите заметку"
                     android:textColorHint="@color/background_color_for_hint"
                     android:gravity="top|start"
+                    android:textColor="@color/white"
                     android:layout_marginTop="5dp"/>
                 <EditText
                     android:id="@+id/editTextTime"
                     android:hint="Введите время"
                     android:inputType="time"
+                    android:textColor="@color/white"
                     android:fontFamily="@font/tilda_medium"
                     android:layout_marginLeft="15dp"
                     android:layout_marginRight="15dp"
                     android:layout_marginBottom="5dp"
                     android:background="@drawable/form_for_new_edit_text"
                     android:layout_width="match_parent"
-                    android:textColorHint="@color/new_color_grey"
+                    android:textColorHint="@color/background_color_for_hint"
                     android:layout_height="wrap_content"
                     android:maxLength="5"
                     android:gravity="top|start"
@@ -98,6 +100,7 @@
                     android:id="@+id/editAddText"
                     android:hint="Введите описание"
                     android:inputType="textMultiLine"
+                    android:textColor="@color/white"
                     android:background="@drawable/form_for_new_edit_text"
                     android:textColorHint="@color/background_color_for_hint"
                     android:layout_width="wrap_content"

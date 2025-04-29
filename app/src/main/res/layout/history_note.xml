@@ -11,7 +11,7 @@
 
     <LinearLayout
         android:background="@color/background_color_light"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -35,11 +35,12 @@
                 android:orientation="horizontal" />
         </HorizontalScrollView>
         <View
+            android:layout_marginTop="5dp"
             android:id="@+id/lineView"
             android:layout_width="match_parent"
-            android:layout_height="3dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginLeft="8dp"
+            android:layout_height="1.5dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginLeft="0dp"
             android:background="@drawable/line_form" />
     </LinearLayout>
 
@@ -84,21 +85,22 @@
             android:fontFamily="@font/tilda_semibold">
         </TextView>
     </LinearLayout>
+
     <TextView
-        android:background="@drawable/form_for_navigation_bar"
         android:id="@+id/overlayTextView"
-        android:paddingTop="2dp"
-        android:paddingBottom="2dp"
-        android:paddingLeft="15dp"
-        android:paddingRight="15dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|top"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/form_for_navigation_bar"
         android:fontFamily="@font/tilda_semibold"
-        android:text="История"
-        android:textColor="@color/background_color_light"
-        android:textSize="20dp"
-        android:layout_marginTop="20dp" />
+        android:paddingLeft="15dp"
+        android:paddingTop="2dp"
+        android:paddingRight="15dp"
+        android:paddingBottom="2dp"
+        android:text="History"
+        android:textColor="@color/white"
+        android:textSize="20dp" />
 
     <!-- Блок с кнопками, наложенный поверх ScrollView -->
     <LinearLayout

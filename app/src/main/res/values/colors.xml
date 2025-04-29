@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="button_main_color">#CCD3FF</color>
-    <color name="background_color_dark">#060815</color>
+    <color name="background_color_dark">#131314</color>
     <color name="color_for_block">#EEEFFC</color>
     <color name="color_for_block_dark">#ECEDF4</color>
     <color name="block_color_light">#6570B3</color>
@@ -9,7 +9,6 @@
     <color name="text_color_light_ver_2">#495185</color>
     <color name="black">#FF000000</color>
     <color name="color_for_bottom_bar">#EBEDFF</color>
-    <color name="white">#FFFFFFFF</color>
     <color name="color_for_splash_screen">#5E73FF</color>
 
     <!--Цвета для редизайна-->
@@ -29,22 +28,28 @@
     <color name="color_for_back_3">#6399FF</color>
     <color name="color_for_back_4">#7CDF54</color>
     <color name="color_none">#007CDF54</color>
-
+    <color name="for_little_button_simple_block">#B31E1E1E</color>
+    <color name="color_for_block_noteitem">#1E1E1E</color>
     <!--Цвета для редизайна блока-->
     <color name="color_block">#F5F6FF</color>
     <color name="stroke_block">#4D44516C</color>
     <color name="none">#00F5F6FF</color>
-
-    <color name="background_color_light">#FDFEFF</color>
+    <color name="for_button">#F8F9FF</color>
+    <color name="white">#F8F9FF</color>
+    <color name="white_mid">#85F8F9FF</color>
+    <color name="background_color_light">#141415</color><!--Теперь черный фон-->
     <color name="background_color_for_hint">#D5D7DA</color>
-    <color name="new_color_for_navigatebar">#FC131314</color>
-    <color name="new_color_black">#131314</color>
+    <color name="new_color_for_navigatebar">#F01E1F20</color>
+    <color name="new_color_black">#0C0C0C</color>
     <color name="new_color_black_for_timeblock">#E1131314</color>
     <color name="new_color_grey">#4A131314</color>
-    <color name="new_grey_3">#0F131314</color>
+    <color name="new_grey_3">#0AF8F9FF</color>
     <color name="new_color_grey_2">#7D7E85</color>
     <color name="new_color_grey_for_imageblock">#1A444952</color>
     <color name="orange_for_calendar">#FF7C48</color>
     <color name="green_for_calendar">#56B530</color>
     <color name="grey_for_darkmode">#19191A</color>
+    
+    <color name="color_for_stroke">#0AF8F9FF</color>
+    <color name="color_for_note_item">#131314</color>
 </resources>

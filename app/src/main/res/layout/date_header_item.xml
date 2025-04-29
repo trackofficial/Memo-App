@@ -16,10 +16,10 @@
         android:paddingRight="10dp"
         android:paddingLeft="10dp"
         android:layout_height="wrap_content"
-        android:textSize="16dp"
+        android:textSize="15dp"
         android:paddingBottom="2dp"
         android:paddingTop="2dp"
         android:fontFamily="@font/tilda_medium"
         android:background="@drawable/form_for_block_date"
-        android:textColor="@color/background_color_light"/>
+        android:textColor="@color/white"/>
 </LinearLayout>
