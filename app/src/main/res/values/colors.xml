@@ -37,7 +37,7 @@
     <color name="for_button">#F8F9FF</color>
     <color name="white">#F8F9FF</color>
     <color name="white_mid">#85F8F9FF</color>
-    <color name="background_color_light">#141415</color><!--Теперь черный фон-->
+    <color name="background_color_light">#111112</color><!--Теперь черный фон-->
     <color name="background_color_for_hint">#D5D7DA</color>
     <color name="new_color_for_navigatebar">#F01E1F20</color>
     <color name="new_color_black">#0C0C0C</color>
@@ -52,4 +52,5 @@
     
     <color name="color_for_stroke">#0AF8F9FF</color>
     <color name="color_for_note_item">#131314</color>
+    <color name="black_77">#C4131314</color>
 </resources>

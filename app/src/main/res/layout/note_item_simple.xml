@@ -1,63 +1,65 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginTop="10dp"
     android:background="@drawable/backnone_for_simpleblock">
 
     <FrameLayout
-        android:orientation="vertical"
-        android:padding="6dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="6dp">
 
         <FrameLayout
-            android:layout_gravity="center_horizontal"
             android:layout_width="wrap_content"
-            android:background="@drawable/for_image"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/for_image">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="155dp"
-                android:layout_height="105sp"
-                app:cardCornerRadius="12sp">
+                android:layout_height="105dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@android:color/transparent"
+                app:cardPreventCornerOverlap="true"
+                app:cardUseCompatPadding="false"
+                android:clipToOutline="true">
 
                 <ImageButton
-                    android:background="@drawable/backnone_for_simpleblock"
                     android:id="@+id/noteImageView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="false"
-                    android:scaleType="centerCrop" />
+                    android:scaleType="centerCrop"
+                    android:background="@android:color/transparent" />
             </androidx.cardview.widget.CardView>
         </FrameLayout>
 
         <LinearLayout
-            android:gravity="center_horizontal"
+            android:layout_gravity="bottom|left"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
             android:layout_marginBottom="5dp"
-            android:layout_marginLeft="8sp"
-            android:layout_marginRight="16sp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="16dp"
             android:orientation="vertical">
 
-            <!-- Ограничение текста для одной строки с обрезкой -->
+            <!-- ВЕРНУЛ ГРАВИТАЦИЮ И ПЕРЕДВИЖЕНИЕ ТЕКСТА -->
             <TextView
                 android:id="@+id/noteTitleTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="3sp"
+                android:layout_marginTop="3dp"
                 android:fontFamily="@font/tilda_semibold"
                 android:textColor="@color/white"
                 android:textSize="17.5sp"
                 android:maxLines="1"
-                android:ellipsize="end" />
-
+                android:ellipsize="end"
+                android:gravity="left"/>
         </LinearLayout>
     </FrameLayout>
-
 </LinearLayout>

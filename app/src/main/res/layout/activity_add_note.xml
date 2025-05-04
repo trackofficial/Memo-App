@@ -27,20 +27,26 @@
                     <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/noteImageView"
                         android:layout_width="match_parent"
-                        android:layout_height="200dp"
+                        android:layout_height="205dp"
                         android:scaleType="centerCrop"
                         app:shapeAppearanceOverlay="@style/RoundedCornersOneSide" />
                 </FrameLayout>
-                <ImageButton
-                    android:layout_width="22dp"
-                    android:background="@drawable/export_image_pin"
-                    android:layout_height="22dp"
+                <FrameLayout
+                    android:layout_width="34dp"
+                    android:background="@drawable/form_for_minibutton"
+                    android:layout_height="34dp"
                     android:layout_gravity="bottom|end"
-                    android:layout_marginRight="28dp"
-                    android:layout_marginBottom="14dp"
+                    android:layout_marginRight="21dp"
+                    android:layout_marginBottom="7dp">
+                <ImageButton
+                    android:layout_marginLeft="0.25dp"
+                    android:layout_gravity="center"
+                    android:layout_width="18dp"
+                    android:background="@drawable/export_image_pin"
+                    android:layout_height="18dp"
                     android:id="@+id/buttonSelectImage">
                 </ImageButton>
-
+                </FrameLayout>
             </FrameLayout>
             <LinearLayout
                 android:layout_width="match_parent"
