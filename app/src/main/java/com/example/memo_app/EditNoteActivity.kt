@@ -1,5 +1,6 @@
 package com.example.memo_app
 
+import android.animation.ObjectAnimator
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Intent
@@ -20,6 +21,8 @@ import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.ScrollView
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import com.bumptech.glide.Glide
@@ -30,6 +33,9 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.util.Calendar
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.shape.CornerFamily
+import com.google.android.material.shape.MaterialShapeDrawable
+import com.google.android.material.shape.ShapeAppearanceModel
 
 class EditNoteActivity : ComponentActivity() {
 
@@ -38,7 +44,6 @@ class EditNoteActivity : ComponentActivity() {
     private lateinit var editTextTime: EditText
     private lateinit var buttonDeleteNote: ImageButton
     private lateinit var buttonSaveNote: Button
-    private lateinit var buttonSelectDate: ImageButton
     private lateinit var buttonSelectImage: ImageButton
     private lateinit var exitbutton: ImageButton
     private lateinit var imageViewNote: ImageView
@@ -49,6 +54,8 @@ class EditNoteActivity : ComponentActivity() {
     private lateinit var blockmainbutton: FrameLayout
     private lateinit var blockexitbutton: FrameLayout
     private lateinit var blockdeletebutton: FrameLayout
+    private lateinit var buttonelement: Button
+    private lateinit var blockelement: FrameLayout
 
     private val selectImageLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -89,12 +96,13 @@ class EditNoteActivity : ComponentActivity() {
         editTextTime = findViewById(R.id.editTextTime)
         buttonSaveNote = findViewById(R.id.buttonSaveNote)
         buttonDeleteNote = findViewById(R.id.buttonDeleteNote)
-        buttonSelectDate = findViewById(R.id.buttonSelectDateTime)
         buttonSelectImage = findViewById(R.id.buttonSelectImage)
         imageViewNote = findViewById(R.id.noteImageView)
         blockexitbutton = findViewById(R.id.block_createblock)
         blockmainbutton = findViewById(R.id.block_createblock_main)
         blockdeletebutton = findViewById(R.id.block_delete)
+        buttonelement = findViewById(R.id.buttonshowbaroptions)
+        blockelement = findViewById(R.id.blockelement)
 
         noteDao = NoteDao(this)
         noteId = intent.getIntExtra("noteId", 0)
@@ -168,15 +176,13 @@ class EditNoteActivity : ComponentActivity() {
             }
         }
 
-        // Обработка остальных кнопок
-        buttonSelectDate.setOnClickListener {
-            selectDate()
-        }
-
         buttonSelectImage.setOnClickListener {
             showImageSelectionDialog()
         }
-
+        buttonelement.setOnClickListener {
+            animateButtonClick(blockelement)
+            showBottomSheet()
+        }
         // Обработка времени
         editTextTime.addTextChangedListener(object : TextWatcher {
             private var isUpdating: Boolean = false
@@ -278,10 +284,39 @@ class EditNoteActivity : ComponentActivity() {
                 }
             }
         }
+
         exitbutton.setOnClickListener {
             animateButtonClick(blockexitbutton)
             startActivity(Intent(this, MainActivity::class.java))
         }
+
+        val scrollView = findViewById<ScrollView>(R.id.scrollView)
+        val scrollIndicator = findViewById<View>(R.id.scrollIndicator)
+        val buttonBlock = findViewById<LinearLayout>(R.id.buttonBlock)
+
+        var isButtonBlockVisible = true
+
+        scrollView.viewTreeObserver.addOnScrollChangedListener {
+            val scrollY = scrollView.scrollY
+
+            if (scrollY > 10 && isButtonBlockVisible) { // Если скроллим вниз и кнопки видны
+                animateTranslation(buttonBlock, false)
+                animateTranslation(scrollIndicator, true)
+                isButtonBlockVisible = false
+            } else if (scrollY < 5 && !isButtonBlockVisible) { // Если скроллим вверх и кнопки скрыты
+                animateTranslation(buttonBlock, true)
+                animateTranslation(scrollIndicator, false)
+                isButtonBlockVisible = true
+            }
+        }
+
+        // При нажатии на ползунок блок возвращается
+        scrollIndicator.setOnClickListener {
+            animateTranslation(buttonBlock, true)
+            animateTranslation(scrollIndicator, false)
+            isButtonBlockVisible = true
+        }
+
     }
 
     private fun displayImageWithGlide(imagePath: String?) {
@@ -432,5 +467,53 @@ class EditNoteActivity : ComponentActivity() {
         })
 
         block.startAnimation(scaleDown) // Запуск первой анимации
+    }
+
+    private fun showBottomSheet() {
+        val bottomSheetDialog = BottomSheetDialog(this, R.style.RoundedBottomSheetDialog) // Используем стиль для закруглений
+        val bottomSheetView = layoutInflater.inflate(R.layout.layout_bottom_sheet, null)
+
+        // Создаём MaterialShapeDrawable с закруглёнными углами для большей уверенности
+        val shapeDrawable = MaterialShapeDrawable().apply {
+            shapeAppearanceModel = ShapeAppearanceModel.Builder()
+                .setTopLeftCorner(CornerFamily.ROUNDED, 80f) // Радиус верхнего левого угла
+                .setTopRightCorner(CornerFamily.ROUNDED, 80f) // Радиус верхнего правого угла
+                .build()
+            fillColor = getColorStateList(R.color.background_color_light) // Цвет фона
+        }
+
+        // Применяем фон с закруглениями
+        bottomSheetView.background = shapeDrawable
+
+        // Обработка кнопок
+        val buttonSelectDate = bottomSheetView.findViewById<Button>(R.id.buttonSelectDate)
+        val buttonSelectTime = bottomSheetView.findViewById<Button>(R.id.buttonSelectTime)
+        val editTextTime = findViewById<EditText>(R.id.editTextTime)
+
+        buttonSelectDate.setOnClickListener {
+            selectDate()
+            bottomSheetDialog.dismiss()
+        }
+
+        buttonSelectTime.setOnClickListener {
+            editTextTime.visibility = View.VISIBLE
+            bottomSheetDialog.dismiss()
+        }
+
+        // Устанавливаем контент и показываем диалог
+        bottomSheetDialog.setContentView(bottomSheetView)
+        bottomSheetDialog.show()
+    }
+
+    private fun animateTranslation(view: View, isVisible: Boolean) {
+        val translationY = if (isVisible) 0f else view.height.toFloat()
+        val alpha = if (isVisible) 1f else 0f
+        val duration = 400L // Длительность анимации
+
+        view.animate()
+            .translationY(translationY)
+            .alpha(alpha)
+            .setDuration(duration)
+            .start()
     }
 }

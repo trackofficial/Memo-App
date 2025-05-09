@@ -90,16 +90,18 @@
             </LinearLayout>
 
             <ScrollView
+                android:id="@+id/scrollView"
                 android:layout_marginLeft="15dp"
                 android:fadeScrollbars="false"
                 android:scrollbars="none"
                 android:layout_marginRight="15dp"
                 android:layout_width="match_parent"
                 android:background="@drawable/form_for_new_edit_text"
-                android:layout_height="280dp"
+                android:layout_height="wrap_content"
                 android:gravity="top|start"
                 android:layout_marginTop="2dp">
                 <EditText
+                    android:paddingBottom="30dp"
                     android:textColor="@color/white"
                     android:id="@+id/editAddText"
                     android:hint="Введите описание"
@@ -111,6 +113,18 @@
                     android:layout_height="wrap_content"/>
             </ScrollView>
         </LinearLayout>
+
+        <View
+            android:id="@+id/scrollIndicator"
+            android:layout_width="100dp"
+            android:layout_height="8dp"
+            android:visibility="gone"
+            android:layout_marginLeft="17dp"
+            android:layout_marginRight="17dp"
+            android:layout_marginBottom="24dp"
+            android:gravity="center"
+            android:layout_gravity="bottom|center"
+            android:background="@drawable/form_for_navigation_bar"></View>
         <LinearLayout
             android:id="@+id/navigate_block"
             android:orientation="vertical"

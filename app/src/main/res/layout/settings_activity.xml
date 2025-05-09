@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/background_color_light"
     android:padding="16dp">
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,7 +17,7 @@
             android:layout_height="wrap_content"
             android:text="Settings"
             android:fontFamily="@font/tilda_semibold"
-            android:textColor="@color/new_color_black"
+            android:textColor="@color/white"
             android:textSize="24dp">
         </TextView>
 
@@ -29,7 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Очистить историю"
-        android:textColor="@color/background_color_light"
+        android:textColor="@color/white"
         android:background="@drawable/form_for_navigation_bar"
         android:layout_marginBottom="0dp"
         android:shadowDy="0"/>

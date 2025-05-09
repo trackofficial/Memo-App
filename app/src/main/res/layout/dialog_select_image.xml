@@ -16,7 +16,7 @@
     <TextView
         android:layout_marginTop="10dp"
         android:fontFamily="@font/tilda_semibold"
-        android:textColor="@color/new_color_black"
+        android:textColor="@color/white"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -28,7 +28,7 @@
         android:id="@+id/buttonSelectFromGallery"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/background_color_light"
+        android:textColor="@color/white"
         android:background="@drawable/form_for_navigation_bar"
         android:layout_marginBottom="0dp"
         android:shadowDy="0"
@@ -53,7 +53,7 @@
     <TextView
 
         android:fontFamily="@font/tilda_medium"
-        android:textColor="@color/new_color_black"
+        android:textColor="@color/white"
         android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -222,7 +222,7 @@
         android:layout_gravity="center_horizontal">
         <TextView
             android:fontFamily="@font/tilda_medium"
-            android:textColor="@color/new_color_black"
+            android:textColor="@color/white"
             android:gravity="center_horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -391,7 +391,7 @@
                 android:layout_gravity="center_horizontal">
                 <TextView
                     android:fontFamily="@font/tilda_medium"
-                    android:textColor="@color/new_color_black"
+                    android:textColor="@color/white"
                     android:gravity="center_horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -560,7 +560,7 @@
                 android:layout_gravity="center_horizontal">
                 <TextView
                     android:fontFamily="@font/tilda_medium"
-                    android:textColor="@color/new_color_black"
+                    android:textColor="@color/white"
                     android:gravity="center_horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
