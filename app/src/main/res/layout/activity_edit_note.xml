@@ -56,19 +56,19 @@
                 android:orientation="vertical"
                 android:id="@+id/block_for_edittext">
                 <EditText
-                    android:fontFamily="@font/tilda_semibold"
-                    android:layout_marginLeft="14dp"
-                    android:layout_marginRight="14dp"
-                    android:textSize="26dp"
-                    android:background="@drawable/form_for_new_edit_text"
                     android:id="@+id/editTextNoteContent"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Введите заметку"
-                    android:textColorHint="@color/background_color_for_hint"
+                    android:layout_marginLeft="14dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="14dp"
+                    android:background="@drawable/form_for_new_edit_text"
+                    android:fontFamily="@font/tilda_semibold"
                     android:gravity="top|start"
+                    android:hint="Введите заметку"
                     android:textColor="@color/white"
-                    android:layout_marginTop="5dp"/>
+                    android:textColorHint="@color/background_color_for_hint"
+                    android:textSize="26dp" />
                 <EditText
                     android:visibility="gone"
                     android:id="@+id/editTextTime"

@@ -362,7 +362,6 @@ class AddNoteActivity : ComponentActivity() {
         val buttonSelectTime = bottomSheetView.findViewById<Button>(R.id.buttonSelectTime)
         val bulletButton = bottomSheetView.findViewById<Button>(R.id.buttonBullet)
         val numberButton = bottomSheetView.findViewById<Button>(R.id.buttonNumber)
-        val checkButton = bottomSheetView.findViewById<Button>(R.id.buttonCheck)
         val editAddText = findViewById<EditText>(R.id.editAddText)
 
         buttonSelectDate.setOnClickListener {
@@ -382,11 +381,6 @@ class AddNoteActivity : ComponentActivity() {
 
         numberButton.setOnClickListener {
             addListItem(editAddText, "${getNextNumber(editAddText)}. ")
-            bottomSheetDialog.dismiss()
-        }
-
-        checkButton.setOnClickListener {
-            toggleCheckItem(editAddText)
             bottomSheetDialog.dismiss()
         }
 
@@ -435,21 +429,6 @@ class AddNoteActivity : ComponentActivity() {
 
         if (newPrefix.isNotEmpty()) {
             lines[lines.lastIndex] = newPrefix
-            val newText = lines.joinToString("\n")
-            editText.setText(newText)
-            editText.setSelection(newText.length)
-        }
-    }
-    private fun toggleCheckItem(editText: EditText) {
-        val lines = editText.text.toString().split("\n").toMutableList()
-        if (lines.isNotEmpty()) {
-            val lastLine = lines.last()
-            val updatedLine = when {
-                lastLine.startsWith("☐") -> lastLine.replaceFirst("☐", "✅")
-                lastLine.startsWith("✅") -> lastLine.replaceFirst("✅", "☐")
-                else -> "☐ $lastLine"
-            }
-            lines[lines.lastIndex] = updatedLine
             val newText = lines.joinToString("\n")
             editText.setText(newText)
             editText.setSelection(newText.length)
