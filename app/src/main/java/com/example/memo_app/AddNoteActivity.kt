@@ -14,9 +14,11 @@ import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.animation.ScaleAnimation
+import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
 import android.widget.FrameLayout
@@ -307,7 +309,7 @@ class AddNoteActivity : ComponentActivity() {
 
         val scrollView = findViewById<ScrollView>(R.id.scrollView)
         val scrollIndicator = findViewById<View>(R.id.scrollIndicator)
-        val buttonBlock = findViewById<LinearLayout>(R.id.buttonBlock)
+        val buttonBlock = findViewById<LinearLayout>(R.id.navigate_block)
 
         var isButtonBlockVisible = true
 
@@ -342,26 +344,26 @@ class AddNoteActivity : ComponentActivity() {
             imageViewNote.visibility = View.VISIBLE
         } ?: Log.e("Activity", "Image path is null!")
     }
+
     private fun showBottomSheet() {
-        val bottomSheetDialog = BottomSheetDialog(this, R.style.RoundedBottomSheetDialog) // Используем стиль для закруглений
+        val bottomSheetDialog = BottomSheetDialog(this, R.style.RoundedBottomSheetDialog)
         val bottomSheetView = layoutInflater.inflate(R.layout.layout_bottom_sheet, null)
 
-        // Создаём MaterialShapeDrawable с закруглёнными углами для большей уверенности
         val shapeDrawable = MaterialShapeDrawable().apply {
             shapeAppearanceModel = ShapeAppearanceModel.Builder()
-                .setTopLeftCorner(CornerFamily.ROUNDED, 80f) // Радиус верхнего левого угла
-                .setTopRightCorner(CornerFamily.ROUNDED, 80f) // Радиус верхнего правого угла
+                .setTopLeftCorner(CornerFamily.ROUNDED, 80f)
+                .setTopRightCorner(CornerFamily.ROUNDED, 80f)
                 .build()
-            fillColor = getColorStateList(R.color.white) // Цвет фона
+            fillColor = getColorStateList(R.color.background_color_light)
         }
-
-        // Применяем фон с закруглениями
         bottomSheetView.background = shapeDrawable
 
-        // Обработка кнопок
         val buttonSelectDate = bottomSheetView.findViewById<Button>(R.id.buttonSelectDate)
         val buttonSelectTime = bottomSheetView.findViewById<Button>(R.id.buttonSelectTime)
-        val editTextTime = findViewById<EditText>(R.id.editTextTime)
+        val bulletButton = bottomSheetView.findViewById<Button>(R.id.buttonBullet)
+        val numberButton = bottomSheetView.findViewById<Button>(R.id.buttonNumber)
+        val checkButton = bottomSheetView.findViewById<Button>(R.id.buttonCheck)
+        val editAddText = findViewById<EditText>(R.id.editAddText)
 
         buttonSelectDate.setOnClickListener {
             selectDate()
@@ -369,13 +371,89 @@ class AddNoteActivity : ComponentActivity() {
         }
 
         buttonSelectTime.setOnClickListener {
-            editTextTime.visibility = View.VISIBLE
+            findViewById<EditText>(R.id.editTextTime).visibility = View.VISIBLE
             bottomSheetDialog.dismiss()
         }
 
-        // Устанавливаем контент и показываем диалог
+        bulletButton.setOnClickListener {
+            addListItem(editAddText, "• ")
+            bottomSheetDialog.dismiss()
+        }
+
+        numberButton.setOnClickListener {
+            addListItem(editAddText, "${getNextNumber(editAddText)}. ")
+            bottomSheetDialog.dismiss()
+        }
+
+        checkButton.setOnClickListener {
+            toggleCheckItem(editAddText)
+            bottomSheetDialog.dismiss()
+        }
+
+        editAddText.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {}
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                s?.let {
+                    if (before == 0 && count == 1 && it.getOrNull(start) == '\n') {
+                        autoContinueList(editAddText)
+                    }
+                }
+            }
+        })
+
         bottomSheetDialog.setContentView(bottomSheetView)
         bottomSheetDialog.show()
+    }
+
+    private fun addListItem(editText: EditText, prefix: String) {
+        val currentText = editText.text.toString()
+        val newText = if (currentText.isEmpty()) "$prefix" else "$currentText\n$prefix"
+        editText.setText(newText)
+        editText.setSelection(newText.length)
+    }
+
+    private fun getNextNumber(editText: EditText): Int {
+        val lines = editText.text.toString().split("\n")
+        val lastNumberedLine = lines.lastOrNull { it.matches(Regex("\\d+\\. .*")) }
+        return lastNumberedLine?.substringBefore('.')?.toIntOrNull()?.plus(1) ?: 1
+    }
+
+    private fun autoContinueList(editText: EditText) {
+        val text = editText.text.toString()
+        val lines = text.split("\n").toMutableList()
+
+        if (lines.isEmpty() || lines.last().isNotEmpty()) return
+
+        val previousLine = lines.asReversed().firstOrNull { it.isNotEmpty() } ?: ""
+        val newPrefix = when {
+            previousLine.startsWith("•") -> "• "
+            previousLine.matches(Regex("\\d+\\. .*")) -> "${getNextNumber(editText)}. "
+            previousLine.startsWith("☐") || previousLine.startsWith("✅") -> "☐ "
+            else -> ""
+        }
+
+        if (newPrefix.isNotEmpty()) {
+            lines[lines.lastIndex] = newPrefix
+            val newText = lines.joinToString("\n")
+            editText.setText(newText)
+            editText.setSelection(newText.length)
+        }
+    }
+    private fun toggleCheckItem(editText: EditText) {
+        val lines = editText.text.toString().split("\n").toMutableList()
+        if (lines.isNotEmpty()) {
+            val lastLine = lines.last()
+            val updatedLine = when {
+                lastLine.startsWith("☐") -> lastLine.replaceFirst("☐", "✅")
+                lastLine.startsWith("✅") -> lastLine.replaceFirst("✅", "☐")
+                else -> "☐ $lastLine"
+            }
+            lines[lines.lastIndex] = updatedLine
+            val newText = lines.joinToString("\n")
+            editText.setText(newText)
+            editText.setSelection(newText.length)
+        }
     }
 
     private fun selectDate() {
@@ -393,6 +471,7 @@ class AddNoteActivity : ComponentActivity() {
 
         datePickerDialog.show()
     }
+
     private fun displaySelectedImageResource(resId: Int) {
         imageViewNote.visibility = View.VISIBLE
         imageViewNote.setImageResource(resId)
@@ -421,6 +500,7 @@ class AddNoteActivity : ComponentActivity() {
         }
         return file
     }
+
     private fun showImageSelectionDialog() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_select_image, null)
         val bottomSheetDialog = BottomSheetDialog(this, R.style.RoundedBottomSheetDialog)
@@ -481,6 +561,7 @@ class AddNoteActivity : ComponentActivity() {
             Log.e("handleLibraryImageSelection", "Error in handling library image: ${e.message}", e)
         }
     }
+
     private fun saveSelectedImagePath(context: Context, path: String?, source: String?) {
         if (path.isNullOrEmpty() || source.isNullOrEmpty()) {
             Log.e("saveSelectedImagePath", "Path or source is null or empty!")
@@ -494,6 +575,7 @@ class AddNoteActivity : ComponentActivity() {
             .apply()
         Log.d("saveSelectedImagePath", "Path and source saved: $path, $source")
     }
+
     private fun getRandomBackgroundResId(): Int {
         // Генерируем список идентификаторов ресурсов на основе последовательных названий
         val backgrounds = (1..24).map { i ->
@@ -502,6 +584,7 @@ class AddNoteActivity : ComponentActivity() {
         // Возвращаем случайный идентификатор ресурса из списка
         return backgrounds.random()
     }
+
     fun animateButtonClick(block: FrameLayout) {
         // Анимация уменьшения кнопки
         val scaleDown = ScaleAnimation(

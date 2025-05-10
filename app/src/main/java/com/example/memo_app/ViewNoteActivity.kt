@@ -10,6 +10,8 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -56,6 +58,33 @@ class ViewNoteActivity : ComponentActivity() {
             restoreNote(noteId)
         }
         updateRestoreButtonVisibility(noteId)
+
+        val scrollView = findViewById<ScrollView>(R.id.scrollView)
+        val scrollIndicator = findViewById<View>(R.id.scrollIndicator)
+        val buttonBlock = findViewById<LinearLayout>(R.id.buttonBlock)
+
+        var isButtonBlockVisible = true
+
+        scrollView.viewTreeObserver.addOnScrollChangedListener {
+            val scrollY = scrollView.scrollY
+
+            if (scrollY > 10 && isButtonBlockVisible) { // Если скроллим вниз и кнопки видны
+                animateTranslation(buttonBlock, false)
+                animateTranslation(scrollIndicator, true)
+                isButtonBlockVisible = false
+            } else if (scrollY < 5 && !isButtonBlockVisible) { // Если скроллим вверх и кнопки скрыты
+                animateTranslation(buttonBlock, true)
+                animateTranslation(scrollIndicator, false)
+                isButtonBlockVisible = true
+            }
+        }
+
+        // При нажатии на ползунок блок возвращается
+        scrollIndicator.setOnClickListener {
+            animateTranslation(buttonBlock, true)
+            animateTranslation(scrollIndicator, false)
+            isButtonBlockVisible = true
+        }
     }
 
     private fun initializeViews() {
@@ -211,5 +240,16 @@ class ViewNoteActivity : ComponentActivity() {
         })
 
         block.startAnimation(scaleDown) // Запуск первой анимации
+    }
+    private fun animateTranslation(view: View, isVisible: Boolean) {
+        val translationY = if (isVisible) 0f else view.height.toFloat()
+        val alpha = if (isVisible) 1f else 0f
+        val duration = 400L // Длительность анимации
+
+        view.animate()
+            .translationY(translationY)
+            .alpha(alpha)
+            .setDuration(duration)
+            .start()
     }
 }

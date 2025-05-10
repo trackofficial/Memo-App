@@ -52,14 +52,16 @@
         android:gravity="top|start"
         android:layout_marginTop="2dp"/>
         <ScrollView
+            android:id="@+id/scrollView"
             android:fadeScrollbars="false"
             android:scrollbars="none"
             android:layout_width="match_parent"
             android:background="@drawable/form_for_new_edit_text"
-            android:layout_height="320dp"
+            android:layout_height="wrap_content"
             android:gravity="top|start"
             android:layout_marginTop="2dp">
     <TextView
+        android:paddingBottom="20dp"
         android:id="@+id/textViewDescription"
         android:textColor="@color/white"
         android:layout_marginLeft="16dp"
@@ -73,7 +75,21 @@
         android:layout_marginTop="4dp"/>
         </ScrollView>
     </LinearLayout>
+
+    <View
+        android:id="@+id/scrollIndicator"
+        android:layout_width="100dp"
+        android:layout_height="8dp"
+        android:visibility="gone"
+        android:layout_marginLeft="17dp"
+        android:layout_marginRight="17dp"
+        android:layout_marginBottom="24dp"
+        android:gravity="center"
+        android:layout_gravity="bottom|center"
+        android:background="@drawable/form_for_navigation_bar"></View>
+
     <LinearLayout
+        android:id="@+id/buttonBlock"
         android:layout_width="wrap_content"
         android:layout_height="55dp"
         android:layout_gravity="center|bottom"
