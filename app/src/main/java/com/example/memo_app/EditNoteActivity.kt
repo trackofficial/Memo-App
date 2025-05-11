@@ -12,6 +12,8 @@ import android.app.AlertDialog
 import android.content.Context
 import android.widget.Button
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -19,6 +21,7 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.animation.ScaleAnimation
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageButton
@@ -319,6 +322,8 @@ class EditNoteActivity : ComponentActivity() {
             isButtonBlockVisible = true
         }
 
+
+
     }
 
     private fun displayImageWithGlide(imagePath: String?) {
@@ -496,7 +501,17 @@ class EditNoteActivity : ComponentActivity() {
         }
 
         buttonSelectTime.setOnClickListener {
-            findViewById<EditText>(R.id.editTextTime).visibility = View.VISIBLE
+            val editTextTime = findViewById<EditText>(R.id.editTextTime)
+            editTextTime.visibility = View.VISIBLE
+
+            // Ожидаем 200 мс, затем устанавливаем фокус и открываем клавиатуру
+            Handler(Looper.getMainLooper()).postDelayed({
+                editTextTime.requestFocus()
+
+                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.showSoftInput(editTextTime, InputMethodManager.SHOW_IMPLICIT)
+            }, 200)
+
             bottomSheetDialog.dismiss()
         }
 
@@ -571,5 +586,15 @@ class EditNoteActivity : ComponentActivity() {
             .alpha(alpha)
             .setDuration(duration)
             .start()
+    }
+    override fun onResume() {
+        super.onResume()
+        val editTextTime = findViewById<EditText>(R.id.editTextTime)
+
+        if (!editTextTime.text.isNullOrEmpty()) {
+            editTextTime.visibility = View.VISIBLE
+        } else {
+            editTextTime.visibility = View.GONE
+        }
     }
 }
