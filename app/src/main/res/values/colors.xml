@@ -53,4 +53,5 @@
     <color name="color_for_stroke">#0AF8F9FF</color>
     <color name="color_for_note_item">#131314</color>
     <color name="black_77">#C4131314</color>
+    <color name="for_action">#242528</color>
 </resources>

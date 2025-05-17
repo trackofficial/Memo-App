@@ -28,6 +28,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ScrollView
+import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import com.bumptech.glide.Glide
@@ -336,12 +337,22 @@ class EditNoteActivity : ComponentActivity() {
             imageViewNote.visibility = View.VISIBLE
         } ?: Log.e("Activity", "Image path is null!")
     }
-    private fun selectDate() {
+
+    private fun selectDate(callback: (String) -> Unit) {
         val calendar = Calendar.getInstance()
         val datePickerDialog = DatePickerDialog(this, { _, year, month, dayOfMonth ->
-            selectedDate = "$year-${month + 1}-$dayOfMonth"
-            Log.d("EditNoteActivity", "Selected date: $selectedDate")
+            val months = arrayOf("янв.", "фев.", "мар.", "апр.", "мая", "июн.", "июл.", "авг.", "сен.", "окт.", "ноя.", "дек.")
+            val selectedDate = String.format("%02d %s %d", dayOfMonth, months[month], year)
+
+            Log.d("AddNoteActivity", "Selected date: $selectedDate")
+            callback(selectedDate) // Передаём дату в TextView
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+
+        datePickerDialog.setOnCancelListener {
+            callback("") // Если отменили выбор, оставляем стандартный текст
+            Log.d("AddNoteActivity", "Date selection canceled")
+        }
+
         datePickerDialog.show()
     }
 
@@ -494,9 +505,18 @@ class EditNoteActivity : ComponentActivity() {
         val bulletButton = bottomSheetView.findViewById<Button>(R.id.buttonBullet)
         val numberButton = bottomSheetView.findViewById<Button>(R.id.buttonNumber)
         val editAddText = findViewById<EditText>(R.id.editAddText)
+        val textViewSelectedDate = findViewById<TextView>(R.id.textViewSelectedDate)
+        val sharedPref = getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
+        val savedDate = sharedPref.getString("selected_date", "Выберите дату")
+        textViewSelectedDate.text = savedDate
 
+        // Открываем календарь и обновляем `TextViewSelectedDate`
         buttonSelectDate.setOnClickListener {
-            selectDate()
+            selectDate { selectedDate ->
+                textViewSelectedDate.text = selectedDate
+                textViewSelectedDate.visibility = View.VISIBLE
+                sharedPref.edit().putString("selected_date", selectedDate).apply()
+            }
             bottomSheetDialog.dismiss()
         }
 

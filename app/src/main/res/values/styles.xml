@@ -3,6 +3,8 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="android:colorPrimary">@color/background_color_light</item>
         <item name="android:colorSecondary">@color/background_color_light</item>
+        <item name="android:statusBarColor">@color/background_color_light</item>
+        <item name="materialCalendarStyle">@color/background_color_light</item>
     </style>
     <style name="RoundedCornersOneSide">
         <item name="cornerFamily">rounded</item>
@@ -17,5 +19,16 @@
 
     <style name="RoundedBottomSheet" parent="Widget.Design.BottomSheet.Modal">
         <item name="android:background">@drawable/form_for_select_block</item>
+    </style>
+    <style name="CustomDatePickerDialog" parent="Theme.AppCompat.Dialog">
+        <item name="android:datePickerStyle">@style/CustomDatePicker</item>
+    </style>
+
+    <style name="CustomDatePicker" parent="@android:style/Widget.Material.Light.DatePicker">
+        <item name="colorAccent">@color/background_color_light</item>
+        <item name="android:background">@color/background_color_light</item>
+        <item name="android:headerBackground">@color/background_color_light</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/white</item>
     </style>
 </resources>

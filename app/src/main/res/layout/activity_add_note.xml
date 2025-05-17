@@ -30,6 +30,73 @@
                         android:layout_height="205dp"
                         android:scaleType="centerCrop"
                         app:shapeAppearanceOverlay="@style/RoundedCornersOneSide" />
+                    <LinearLayout
+                        android:layout_marginBottom="7dp"
+                        android:gravity="center_vertical"
+                        android:paddingRight="6dp"
+                        android:paddingLeft="6dp"
+                        android:paddingTop="4dp"
+                        android:paddingBottom="2dp"
+                        android:layout_marginLeft="4dp"
+                        android:layout_gravity="bottom"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <EditText
+                            android:visibility="gone"
+                            android:id="@+id/editTextTime"
+                            android:hint=""
+                            android:inputType="time"
+                            android:textColor="@color/white"
+                            android:fontFamily="@font/tilda_medium"
+                            android:paddingRight="6dp"
+                            android:paddingLeft="6dp"
+                            android:paddingTop="2dp"
+                            android:paddingBottom="2dp"
+                            android:background="@drawable/form_for_minibutton"
+                            android:layout_width="wrap_content"
+                            android:textColorHint="@color/background_color_for_hint"
+                            android:layout_height="wrap_content"
+                            android:maxLength="5"
+                            android:textSize="15dp"
+                            android:layout_gravity="center"/>
+                        <FrameLayout
+                            android:visibility="visible"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginLeft="6dp"
+                            android:background="@drawable/form_for_minibutton">
+                            <!-- Текст с выбранной датой -->
+                            <TextView
+                                android:layout_gravity="center_vertical"
+                                android:paddingRight="6dp"
+                                android:paddingLeft="6dp"
+                                android:paddingTop="4dp"
+                                android:paddingBottom="2dp"
+                                android:visibility="gone"
+                                android:id="@+id/textViewSelectedDate"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text=""
+                                android:fontFamily="@font/tilda_medium"
+                                android:textSize="15dp"
+                                android:textColor="@color/white"
+
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:background="?android:attr/selectableItemBackground"/>
+
+                            <!-- Кнопка вызова календаря (если нужна) -->
+                            <ImageButton
+                                android:id="@+id/buttonOpenCalendar"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/back_none"
+                                android:background="@null" />
+                        </FrameLayout>
+                    </LinearLayout>
                 </FrameLayout>
                 <FrameLayout
                     android:layout_width="34dp"
@@ -69,24 +136,6 @@
                     android:textColor="@color/white"
                     android:textColorHint="@color/background_color_for_hint"
                     android:textSize="26dp" />
-
-                <EditText
-                    android:id="@+id/editTextTime"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginRight="15dp"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/form_for_new_edit_text"
-                    android:fontFamily="@font/tilda_medium"
-                    android:gravity="top|start"
-                    android:hint="Введите время"
-                    android:inputType="time"
-                    android:maxLength="5"
-                    android:textColor="@color/white"
-                    android:textColorHint="@color/white_mid"
-                    android:visibility="gone" />
             </LinearLayout>
 
             <ScrollView

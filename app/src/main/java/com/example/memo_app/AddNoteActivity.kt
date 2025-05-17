@@ -10,6 +10,8 @@ import android.graphics.BitmapFactory
 import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
@@ -19,6 +21,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.animation.ScaleAnimation
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.FrameLayout
@@ -26,6 +29,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ScrollView
+import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
@@ -275,6 +279,7 @@ class AddNoteActivity : ComponentActivity() {
                     Log.d("AddNoteActivity", "Time is empty (optional)")
                 }
             }
+
         }
 
         fun selectDate() {
@@ -343,6 +348,7 @@ class AddNoteActivity : ComponentActivity() {
                 .into(imageViewNote)
             imageViewNote.visibility = View.VISIBLE
         } ?: Log.e("Activity", "Image path is null!")
+
     }
 
     private fun showBottomSheet() {
@@ -363,14 +369,33 @@ class AddNoteActivity : ComponentActivity() {
         val bulletButton = bottomSheetView.findViewById<Button>(R.id.buttonBullet)
         val numberButton = bottomSheetView.findViewById<Button>(R.id.buttonNumber)
         val editAddText = findViewById<EditText>(R.id.editAddText)
+        val textViewSelectedDate = findViewById<TextView>(R.id.textViewSelectedDate)
+        val sharedPref = getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
+        val savedDate = sharedPref.getString("selected_date", "Выберите дату")
+        textViewSelectedDate.text = savedDate
 
+        // Открываем календарь и обновляем `TextViewSelectedDate`
         buttonSelectDate.setOnClickListener {
-            selectDate()
+            selectDate { selectedDate ->
+                textViewSelectedDate.text = selectedDate
+                textViewSelectedDate.visibility = View.VISIBLE
+                sharedPref.edit().putString("selected_date", selectedDate).apply()
+            }
             bottomSheetDialog.dismiss()
         }
 
         buttonSelectTime.setOnClickListener {
-            findViewById<EditText>(R.id.editTextTime).visibility = View.VISIBLE
+            val editTextTime = findViewById<EditText>(R.id.editTextTime)
+            editTextTime.visibility = View.VISIBLE
+
+            // Ожидаем 200 мс, затем устанавливаем фокус и открываем клавиатуру
+            Handler(Looper.getMainLooper()).postDelayed({
+                editTextTime.requestFocus()
+
+                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.showSoftInput(editTextTime, InputMethodManager.SHOW_IMPLICIT)
+            }, 200)
+
             bottomSheetDialog.dismiss()
         }
 
@@ -435,16 +460,18 @@ class AddNoteActivity : ComponentActivity() {
         }
     }
 
-    private fun selectDate() {
+    private fun selectDate(callback: (String) -> Unit) {
         val calendar = Calendar.getInstance()
         val datePickerDialog = DatePickerDialog(this, { _, year, month, dayOfMonth ->
-            selectedDate = "$year-${month + 1}-$dayOfMonth"
+            val months = arrayOf("янв.", "фев.", "мар.", "апр.", "май", "июн.", "июл.", "авг.", "сен.", "окт.", "ноя.", "дек.")
+            val selectedDate = String.format("%02d %s %d", dayOfMonth, months[month], year)
+
             Log.d("AddNoteActivity", "Selected date: $selectedDate")
+            callback(selectedDate) // Передаём дату в TextView
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
 
-        // Настраиваем кнопку отмены, чтобы дата оставалась необязательной
         datePickerDialog.setOnCancelListener {
-            selectedDate = "" // Очищаем выбранную дату, если пользователь отменил выбор
+            callback("") // Если отменили выбор, оставляем стандартный текст
             Log.d("AddNoteActivity", "Date selection canceled")
         }
 
@@ -606,5 +633,16 @@ class AddNoteActivity : ComponentActivity() {
             .alpha(alpha)
             .setDuration(duration)
             .start()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val editTextTime = findViewById<EditText>(R.id.editTextTime)
+
+        if (!editTextTime.text.isNullOrEmpty()) {
+            editTextTime.visibility = View.VISIBLE
+        } else {
+            editTextTime.visibility = View.GONE
+        }
     }
 }
