@@ -20,8 +20,8 @@
             android:background="@drawable/for_image">
 
             <androidx.cardview.widget.CardView
-                android:layout_width="155dp"
-                android:layout_height="105dp"
+                android:layout_width="160dp"
+                android:layout_height="110dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="@android:color/transparent"

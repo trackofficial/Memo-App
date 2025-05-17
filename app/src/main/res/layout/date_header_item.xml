@@ -20,6 +20,6 @@
         android:paddingBottom="2dp"
         android:paddingTop="2dp"
         android:fontFamily="@font/tilda_medium"
-        android:background="@drawable/form_for_block_date"
+        android:background="@drawable/backnone_for_simpleblock"
         android:textColor="@color/white"/>
 </LinearLayout>
