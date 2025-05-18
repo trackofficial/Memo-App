@@ -4,14 +4,36 @@
     android:layout_height="match_parent"
     android:background="@color/background_color_light"
     android:id="@+id/historynotescreen">
+
 <LinearLayout
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-
+    <LinearLayout
+        android:layout_marginLeft="14dp"
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+        <ImageView
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:src="@drawable/icon_for_screen">
+        </ImageView>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="История"
+            android:fontFamily="@font/tilda_semibold"
+            android:textSize="18dp"
+            android:textColor="@color/white"
+            android:layout_marginLeft="8dp">
+        </TextView>
+    </LinearLayout>
     <LinearLayout
         android:background="@color/background_color_light"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="0dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -85,22 +107,6 @@
             android:fontFamily="@font/tilda_semibold">
         </TextView>
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/overlayTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|top"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/form_for_navigation_bar"
-        android:fontFamily="@font/tilda_semibold"
-        android:paddingLeft="15dp"
-        android:paddingTop="2dp"
-        android:paddingRight="15dp"
-        android:paddingBottom="2dp"
-        android:text="History"
-        android:textColor="@color/white"
-        android:textSize="20dp" />
 
     <!-- Блок с кнопками, наложенный поверх ScrollView -->
     <LinearLayout

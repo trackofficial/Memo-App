@@ -42,7 +42,6 @@ class HistoryActivity : ComponentActivity() {
 
         buttonHome = findViewById(R.id.home_button)
         linearLayoutHistory = findViewById(R.id.linearLayoutNotes)
-        overlayTextView = findViewById(R.id.overlayTextView) // Связываем TextView
         scrollView = findViewById(R.id.scroll_for_block) // Связываем ScrollView
         noteDao = NoteDao(this)
         exitblock = findViewById(R.id.block_back)
@@ -54,17 +53,6 @@ class HistoryActivity : ComponentActivity() {
             animateButtonClick(buttonHome)
             animateButtonClick(exitblock)
             startActivity(Intent(this, MainActivity::class.java))
-        }
-
-        // Слушатель прокрутки
-        scrollView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
-            if (scrollY < 100 && !isTextVisible) {
-                // Когда почти достигли начала -> показываем текст
-                showText(overlayTextView)
-            } else if (scrollY > 100 && isTextVisible) {
-                // Прокрутка вниз дальше порога -> скрываем текст
-                hideText(overlayTextView)
-            }
         }
     }
 
