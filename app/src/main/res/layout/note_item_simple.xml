@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:layout_marginTop="10dp"
+    android:layout_marginRight="6dp"
     android:background="@drawable/backnone_for_simpleblock">
 
     <FrameLayout
@@ -20,7 +21,7 @@
             android:background="@drawable/for_image">
 
             <androidx.cardview.widget.CardView
-                android:layout_width="160dp"
+                android:layout_width="156dp"
                 android:layout_height="110dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp"
