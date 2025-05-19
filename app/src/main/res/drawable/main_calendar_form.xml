@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="@color/color_for_block_noteitem"></solid>
+    <solid android:color="@color/for_action"></solid>
     <corners
         android:radius="28dp">
     </corners>

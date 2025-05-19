@@ -18,8 +18,8 @@
             android:orientation="horizontal"
             android:gravity="center_vertical">
             <ImageView
-                android:layout_width="42dp"
-                android:layout_height="42dp"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
                 android:src="@drawable/icon_for_screen">
             </ImageView>
             <TextView
