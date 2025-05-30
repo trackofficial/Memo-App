@@ -12,23 +12,17 @@ import android.app.AlertDialog
 import android.content.Context
 import android.widget.Button
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.KeyEvent
 import android.view.View
 import android.view.animation.ScaleAnimation
-import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ScrollView
-import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import com.bumptech.glide.Glide
@@ -323,8 +317,6 @@ class EditNoteActivity : ComponentActivity() {
             isButtonBlockVisible = true
         }
 
-
-
     }
 
     private fun displayImageWithGlide(imagePath: String?) {
@@ -337,22 +329,12 @@ class EditNoteActivity : ComponentActivity() {
             imageViewNote.visibility = View.VISIBLE
         } ?: Log.e("Activity", "Image path is null!")
     }
-
-    private fun selectDate(callback: (String) -> Unit) {
+    private fun selectDate() {
         val calendar = Calendar.getInstance()
         val datePickerDialog = DatePickerDialog(this, { _, year, month, dayOfMonth ->
-            val months = arrayOf("янв.", "фев.", "мар.", "апр.", "мая", "июн.", "июл.", "авг.", "сен.", "окт.", "ноя.", "дек.")
-            val selectedDate = String.format("%02d %s %d", dayOfMonth, months[month], year)
-
-            Log.d("AddNoteActivity", "Selected date: $selectedDate")
-            callback(selectedDate) // Передаём дату в TextView
+            selectedDate = "$year-${month + 1}-$dayOfMonth"
+            Log.d("EditNoteActivity", "Selected date: $selectedDate")
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
-
-        datePickerDialog.setOnCancelListener {
-            callback("") // Если отменили выбор, оставляем стандартный текст
-            Log.d("AddNoteActivity", "Date selection canceled")
-        }
-
         datePickerDialog.show()
     }
 
@@ -488,112 +470,39 @@ class EditNoteActivity : ComponentActivity() {
     }
 
     private fun showBottomSheet() {
-        val bottomSheetDialog = BottomSheetDialog(this, R.style.RoundedBottomSheetDialog)
+        val bottomSheetDialog = BottomSheetDialog(this, R.style.RoundedBottomSheetDialog) // Используем стиль для закруглений
         val bottomSheetView = layoutInflater.inflate(R.layout.layout_bottom_sheet, null)
 
+        // Создаём MaterialShapeDrawable с закруглёнными углами для большей уверенности
         val shapeDrawable = MaterialShapeDrawable().apply {
             shapeAppearanceModel = ShapeAppearanceModel.Builder()
-                .setTopLeftCorner(CornerFamily.ROUNDED, 80f)
-                .setTopRightCorner(CornerFamily.ROUNDED, 80f)
+                .setTopLeftCorner(CornerFamily.ROUNDED, 80f) // Радиус верхнего левого угла
+                .setTopRightCorner(CornerFamily.ROUNDED, 80f) // Радиус верхнего правого угла
                 .build()
-            fillColor = getColorStateList(R.color.background_color_light)
+            fillColor = getColorStateList(R.color.background_color_light) // Цвет фона
         }
+
+        // Применяем фон с закруглениями
         bottomSheetView.background = shapeDrawable
 
+        // Обработка кнопок
         val buttonSelectDate = bottomSheetView.findViewById<Button>(R.id.buttonSelectDate)
         val buttonSelectTime = bottomSheetView.findViewById<Button>(R.id.buttonSelectTime)
-        val bulletButton = bottomSheetView.findViewById<Button>(R.id.buttonBullet)
-        val numberButton = bottomSheetView.findViewById<Button>(R.id.buttonNumber)
-        val editAddText = findViewById<EditText>(R.id.editAddText)
-        val textViewSelectedDate = findViewById<TextView>(R.id.textViewSelectedDate)
-        val sharedPref = getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
-        val savedDate = sharedPref.getString("selected_date", "Выберите дату")
-        textViewSelectedDate.text = savedDate
+        val editTextTime = findViewById<EditText>(R.id.editTextTime)
 
-        // Открываем календарь и обновляем `TextViewSelectedDate`
         buttonSelectDate.setOnClickListener {
-            selectDate { selectedDate ->
-                textViewSelectedDate.text = selectedDate
-                textViewSelectedDate.visibility = View.VISIBLE
-                sharedPref.edit().putString("selected_date", selectedDate).apply()
-            }
+            selectDate()
             bottomSheetDialog.dismiss()
         }
 
         buttonSelectTime.setOnClickListener {
-            val editTextTime = findViewById<EditText>(R.id.editTextTime)
             editTextTime.visibility = View.VISIBLE
-
-            // Ожидаем 200 мс, затем устанавливаем фокус и открываем клавиатуру
-            Handler(Looper.getMainLooper()).postDelayed({
-                editTextTime.requestFocus()
-
-                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                imm.showSoftInput(editTextTime, InputMethodManager.SHOW_IMPLICIT)
-            }, 200)
-
             bottomSheetDialog.dismiss()
         }
 
-        bulletButton.setOnClickListener {
-            addListItem(editAddText, "• ")
-            bottomSheetDialog.dismiss()
-        }
-
-        numberButton.setOnClickListener {
-            addListItem(editAddText, "${getNextNumber(editAddText)}. ")
-            bottomSheetDialog.dismiss()
-        }
-
-        editAddText.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {}
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                s?.let {
-                    if (before == 0 && count == 1 && it.getOrNull(start) == '\n') {
-                        autoContinueList(editAddText)
-                    }
-                }
-            }
-        })
-
+        // Устанавливаем контент и показываем диалог
         bottomSheetDialog.setContentView(bottomSheetView)
         bottomSheetDialog.show()
-    }
-
-    private fun addListItem(editText: EditText, prefix: String) {
-        val currentText = editText.text.toString()
-        val newText = if (currentText.isEmpty()) "$prefix" else "$currentText\n$prefix"
-        editText.setText(newText)
-        editText.setSelection(newText.length)
-    }
-
-    private fun getNextNumber(editText: EditText): Int {
-        val lines = editText.text.toString().split("\n")
-        val lastNumberedLine = lines.lastOrNull { it.matches(Regex("\\d+\\. .*")) }
-        return lastNumberedLine?.substringBefore('.')?.toIntOrNull()?.plus(1) ?: 1
-    }
-
-    private fun autoContinueList(editText: EditText) {
-        val text = editText.text.toString()
-        val lines = text.split("\n").toMutableList()
-
-        if (lines.isEmpty() || lines.last().isNotEmpty()) return
-
-        val previousLine = lines.asReversed().firstOrNull { it.isNotEmpty() } ?: ""
-        val newPrefix = when {
-            previousLine.startsWith("•") -> "• "
-            previousLine.matches(Regex("\\d+\\. .*")) -> "${getNextNumber(editText)}. "
-            previousLine.startsWith("☐") || previousLine.startsWith("✅") -> "☐ "
-            else -> ""
-        }
-
-        if (newPrefix.isNotEmpty()) {
-            lines[lines.lastIndex] = newPrefix
-            val newText = lines.joinToString("\n")
-            editText.setText(newText)
-            editText.setSelection(newText.length)
-        }
     }
 
     private fun animateTranslation(view: View, isVisible: Boolean) {
@@ -606,15 +515,5 @@ class EditNoteActivity : ComponentActivity() {
             .alpha(alpha)
             .setDuration(duration)
             .start()
-    }
-    override fun onResume() {
-        super.onResume()
-        val editTextTime = findViewById<EditText>(R.id.editTextTime)
-
-        if (!editTextTime.text.isNullOrEmpty()) {
-            editTextTime.visibility = View.VISIBLE
-        } else {
-            editTextTime.visibility = View.GONE
-        }
     }
 }

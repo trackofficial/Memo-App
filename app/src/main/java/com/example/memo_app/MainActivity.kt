@@ -130,9 +130,11 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun loadNotes() {
-        linearLayoutNotes.removeAllViews() // Очищаем основной контейнер
+        // Очищаем основной контейнер
+        linearLayoutNotes.removeAllViews()
+        // Очищаем контейнер горизонтального ScrollView
         val horizontalContainer = findViewById<LinearLayout>(R.id.linearLayoutSimpleNotes)
-        horizontalContainer.removeAllViews() // Очищаем контейнер горизонтального ScrollView
+        horizontalContainer.removeAllViews()
 
         val notes = noteDao.getAllNotes()
         var currentDate = ""
@@ -153,12 +155,10 @@ class MainActivity : ComponentActivity() {
                         isSameDay(calNoteDate, tomorrow) -> "Завтра"
                         else -> "$noteDate"
                     }
-
                     if (dateLabel != currentDate) {
                         addDateHeaderToLayout(dateLabel)
                         currentDate = dateLabel
                     }
-
                     addNoteToLayout(note)
                 } catch (e: ParseException) {
                     Log.e("MainActivity", "Error parsing date: ${note.dateTime}", e)
@@ -166,7 +166,6 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-
         // Вызов функции для обновления UI после всех операций
         updateUI()
     }
@@ -194,7 +193,7 @@ class MainActivity : ComponentActivity() {
             val simpleNoteTextView = simpleNoteView.findViewById<TextView>(R.id.noteTitleTextView)
             val simpleNoteImageView = simpleNoteView.findViewById<ImageButton>(R.id.noteImageView)
 
-            // Устанавливаем название заметки с уменьшением текста после 22 символов
+            // Устанавливаем название заметки с уменьшением текста (например, после 22 символов)
             simpleNoteTextView.text = formatTextWithReducedSize(note.content)
 
             // Устанавливаем изображение
@@ -223,6 +222,7 @@ class MainActivity : ComponentActivity() {
             // Добавляем упрощённый блок в макет
             linearLayoutNotes.addView(simpleNoteView)
             Log.d("MainActivity", "Simple note added: ${note.content}")
+
         } else {
             // Если дата и время указаны, используем обычный блок
             val noteView = inflater.inflate(R.layout.note_item, linearLayoutNotes, false) as ViewGroup
@@ -232,10 +232,10 @@ class MainActivity : ComponentActivity() {
             val noteImageView = noteView.findViewById<ImageView>(R.id.noteImageView)
             val editButton = noteView.findViewById<ImageButton>(R.id.deleteButton)
 
-            // Устанавливаем основной текст с уменьшением размера после 22 символов
+            // Устанавливаем основной текст заметки (с сокращением, если длина превышает порог)
             noteTextView.text = formatTextWithReducedSize(note.content)
 
-            // Преобразуем текст описания с заглавной буквы
+            // Преобразуем текст описания (первая буква заглавная и усечение, если длина > 40)
             descriptionTextView.text = if (!note.description.isNullOrEmpty()) {
                 val processedDescription = capitalizeFirstLetter(note.description)
                 if (processedDescription.length > 40) {
@@ -247,10 +247,12 @@ class MainActivity : ComponentActivity() {
                 "Нет описания"
             }
 
-            // Устанавливаем время заметки
+            // Устанавливаем время заметки, используя наш формат "yyyy-MM-dd HH:mm"
             try {
+                Log.d("MainActivity", "Parsing dateTime: ${note.dateTime}")
                 val parsedDate = dateTimeFormat.parse(note.dateTime)
                 val calendar = Calendar.getInstance().apply { time = parsedDate!! }
+                // Форматируем время, например, "9:05"
                 val formattedTime = "${calendar.get(Calendar.HOUR_OF_DAY)}:${String.format("%02d", calendar.get(Calendar.MINUTE))}"
                 timeTextView.text = formattedTime
             } catch (e: ParseException) {
@@ -258,7 +260,7 @@ class MainActivity : ComponentActivity() {
                 timeTextView.text = "Время: не указано"
             }
 
-            // Устанавливаем изображение
+            // Устанавливаем изображение заметки, если оно указано
             if (!note.imageUri.isNullOrEmpty()) {
                 val imageFile = File(note.imageUri)
                 if (imageFile.exists()) {
@@ -282,7 +284,7 @@ class MainActivity : ComponentActivity() {
                 noteImageView.visibility = View.GONE
             }
 
-            // Слушатель на кнопку редактирования
+            // Слушатель для кнопки редактирования – переход в EditNoteActivity
             editButton.setOnClickListener {
                 val intent = Intent(this, EditNoteActivity::class.java)
                 intent.putExtra("noteId", note.id)
@@ -293,6 +295,7 @@ class MainActivity : ComponentActivity() {
             linearLayoutNotes.addView(noteView)
             Log.d("MainActivity", "Note added with time and capitalized title/description: ${note.content}")
         }
+
         updateUI()
     }
 

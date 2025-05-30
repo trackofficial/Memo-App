@@ -16,11 +16,9 @@ import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.animation.ScaleAnimation
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
@@ -279,7 +277,6 @@ class AddNoteActivity : ComponentActivity() {
                     Log.d("AddNoteActivity", "Time is empty (optional)")
                 }
             }
-
         }
 
         fun selectDate() {
@@ -348,11 +345,9 @@ class AddNoteActivity : ComponentActivity() {
                 .into(imageViewNote)
             imageViewNote.visibility = View.VISIBLE
         } ?: Log.e("Activity", "Image path is null!")
-
     }
-
     private fun showBottomSheet() {
-        val bottomSheetDialog = BottomSheetDialog(this, R.style.RoundedBottomSheetDialog)
+        val bottomSheetDialog = BottomSheetDialog(this, R.style.RoundedBottomSheetDialog) // Используем стиль для закруглений
         val bottomSheetView = layoutInflater.inflate(R.layout.layout_bottom_sheet, null)
 
         val shapeDrawable = MaterialShapeDrawable().apply {
@@ -374,13 +369,20 @@ class AddNoteActivity : ComponentActivity() {
         val savedDate = sharedPref.getString("selected_date", "Выберите дату")
         textViewSelectedDate.text = savedDate
 
-        // Открываем календарь и обновляем `TextViewSelectedDate`
         buttonSelectDate.setOnClickListener {
-            selectDate { selectedDate ->
-                textViewSelectedDate.text = selectedDate
-                textViewSelectedDate.visibility = View.VISIBLE
-                sharedPref.edit().putString("selected_date", selectedDate).apply()
-            }
+            textViewSelectedDate.text = selectedDate
+            textViewSelectedDate.visibility = View.VISIBLE
+            selectDate()
+            bottomSheetDialog.dismiss()
+        }
+
+        bulletButton.setOnClickListener {
+            addListItem(editAddText, "• ")
+            bottomSheetDialog.dismiss()
+        }
+
+        numberButton.setOnClickListener {
+            addListItem(editAddText, "${getNextNumber(editAddText)}. ")
             bottomSheetDialog.dismiss()
         }
 
@@ -398,17 +400,6 @@ class AddNoteActivity : ComponentActivity() {
 
             bottomSheetDialog.dismiss()
         }
-
-        bulletButton.setOnClickListener {
-            addListItem(editAddText, "• ")
-            bottomSheetDialog.dismiss()
-        }
-
-        numberButton.setOnClickListener {
-            addListItem(editAddText, "${getNextNumber(editAddText)}. ")
-            bottomSheetDialog.dismiss()
-        }
-
         editAddText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {}
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -421,21 +412,10 @@ class AddNoteActivity : ComponentActivity() {
             }
         })
 
+
+        // Устанавливаем контент и показываем диалог
         bottomSheetDialog.setContentView(bottomSheetView)
         bottomSheetDialog.show()
-    }
-
-    private fun addListItem(editText: EditText, prefix: String) {
-        val currentText = editText.text.toString()
-        val newText = if (currentText.isEmpty()) "$prefix" else "$currentText\n$prefix"
-        editText.setText(newText)
-        editText.setSelection(newText.length)
-    }
-
-    private fun getNextNumber(editText: EditText): Int {
-        val lines = editText.text.toString().split("\n")
-        val lastNumberedLine = lines.lastOrNull { it.matches(Regex("\\d+\\. .*")) }
-        return lastNumberedLine?.substringBefore('.')?.toIntOrNull()?.plus(1) ?: 1
     }
 
     private fun autoContinueList(editText: EditText) {
@@ -459,25 +439,34 @@ class AddNoteActivity : ComponentActivity() {
             editText.setSelection(newText.length)
         }
     }
+    private fun addListItem(editText: EditText, prefix: String) {
+        val currentText = editText.text.toString()
+        val newText = if (currentText.isEmpty()) "$prefix" else "$currentText\n$prefix"
+        editText.setText(newText)
+        editText.setSelection(newText.length)
+    }
 
-    private fun selectDate(callback: (String) -> Unit) {
+    private fun getNextNumber(editText: EditText): Int {
+        val lines = editText.text.toString().split("\n")
+        val lastNumberedLine = lines.lastOrNull { it.matches(Regex("\\d+\\. .*")) }
+        return lastNumberedLine?.substringBefore('.')?.toIntOrNull()?.plus(1) ?: 1
+    }
+
+    private fun selectDate() {
         val calendar = Calendar.getInstance()
         val datePickerDialog = DatePickerDialog(this, { _, year, month, dayOfMonth ->
-            val months = arrayOf("янв.", "фев.", "мар.", "апр.", "май", "июн.", "июл.", "авг.", "сен.", "окт.", "ноя.", "дек.")
-            val selectedDate = String.format("%02d %s %d", dayOfMonth, months[month], year)
-
+            selectedDate = "$year-${month + 1}-$dayOfMonth"
             Log.d("AddNoteActivity", "Selected date: $selectedDate")
-            callback(selectedDate) // Передаём дату в TextView
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
 
+        // Настраиваем кнопку отмены, чтобы дата оставалась необязательной
         datePickerDialog.setOnCancelListener {
-            callback("") // Если отменили выбор, оставляем стандартный текст
+            selectedDate = "" // Очищаем выбранную дату, если пользователь отменил выбор
             Log.d("AddNoteActivity", "Date selection canceled")
         }
 
         datePickerDialog.show()
     }
-
     private fun displaySelectedImageResource(resId: Int) {
         imageViewNote.visibility = View.VISIBLE
         imageViewNote.setImageResource(resId)
@@ -506,7 +495,6 @@ class AddNoteActivity : ComponentActivity() {
         }
         return file
     }
-
     private fun showImageSelectionDialog() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_select_image, null)
         val bottomSheetDialog = BottomSheetDialog(this, R.style.RoundedBottomSheetDialog)
@@ -567,7 +555,6 @@ class AddNoteActivity : ComponentActivity() {
             Log.e("handleLibraryImageSelection", "Error in handling library image: ${e.message}", e)
         }
     }
-
     private fun saveSelectedImagePath(context: Context, path: String?, source: String?) {
         if (path.isNullOrEmpty() || source.isNullOrEmpty()) {
             Log.e("saveSelectedImagePath", "Path or source is null or empty!")
@@ -581,7 +568,6 @@ class AddNoteActivity : ComponentActivity() {
             .apply()
         Log.d("saveSelectedImagePath", "Path and source saved: $path, $source")
     }
-
     private fun getRandomBackgroundResId(): Int {
         // Генерируем список идентификаторов ресурсов на основе последовательных названий
         val backgrounds = (1..24).map { i ->
@@ -590,7 +576,6 @@ class AddNoteActivity : ComponentActivity() {
         // Возвращаем случайный идентификатор ресурса из списка
         return backgrounds.random()
     }
-
     fun animateButtonClick(block: FrameLayout) {
         // Анимация уменьшения кнопки
         val scaleDown = ScaleAnimation(
@@ -633,16 +618,5 @@ class AddNoteActivity : ComponentActivity() {
             .alpha(alpha)
             .setDuration(duration)
             .start()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        val editTextTime = findViewById<EditText>(R.id.editTextTime)
-
-        if (!editTextTime.text.isNullOrEmpty()) {
-            editTextTime.visibility = View.VISIBLE
-        } else {
-            editTextTime.visibility = View.GONE
-        }
     }
 }
