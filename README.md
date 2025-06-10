@@ -1,5 +1,5 @@
 # Memo - Planner App
-![Memo - for Github](https://github.com/user-attachments/assets/4fd3a2b8-4cf2-4dea-9e2b-ea85e9a5045e)
+![Memo - for Github](https://github.com/user-attachments/assets/d9f1c225-10cf-45db-a2c5-06e95142bf7a)
 
 ![Kotlin](https://img.shields.io/badge/-Kotlin-ffffff?style=flat&logo=kotlin)
 ![XML](https://img.shields.io/badge/-XML-ffffff?style=flat)
@@ -16,4 +16,5 @@ ___
     + :art: Improved UI: A modern and user-friendly interface that ensures comfortable use.
 
 <p align="center">
-  <img src="![Memo - for Github](https://github.com/user-attachments/assets/4fd3a2b8-4cf2-4dea-9e2b-ea85e9a5045e)"></p>
+  <img src="![Memo - for Github](https://github.com/user-attachments/assets/d9f1c225-10cf-45db-a2c5-06e95142bf7a)
+"></p>
