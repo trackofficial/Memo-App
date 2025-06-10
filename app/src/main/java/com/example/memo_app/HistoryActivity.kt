@@ -25,14 +25,20 @@ import java.util.Calendar
 import java.util.Locale
 
 class HistoryActivity : ComponentActivity() {
-    private lateinit var buttonHome: ImageButton
     private lateinit var linearLayoutHistory: LinearLayout
     private lateinit var noteDao: NoteDao
     private lateinit var overlayTextView: TextView // TextView для анимации
     private lateinit var scrollView: ScrollView // ScrollView для отслеживания прокрутки
     private val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
     private val dateTimeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
-    private lateinit var exitblock: FrameLayout
+    private lateinit var mainButtonPlace: LinearLayout
+    private lateinit var calendarButtonPlace: LinearLayout
+    private lateinit var focusButtonPlace: LinearLayout
+    private lateinit var historyButtonPlace: LinearLayout
+    private lateinit var buttonAddNote: ImageButton
+    private lateinit var buttonViewHistory: ImageButton
+    private lateinit var buttonViewCalendar: ImageButton
+    private lateinit var focusButton: ImageButton
 
     private var isTextVisible = true // Флаг видимости текста
 
@@ -40,19 +46,43 @@ class HistoryActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.history_note)
 
-        buttonHome = findViewById(R.id.home_button)
         linearLayoutHistory = findViewById(R.id.linearLayoutNotes)
         scrollView = findViewById(R.id.scroll_for_block) // Связываем ScrollView
         noteDao = NoteDao(this)
-        exitblock = findViewById(R.id.block_back)
+        mainButtonPlace = findViewById(R.id.main_button_place)
+        calendarButtonPlace = findViewById(R.id.calendar_button_place)
+        focusButtonPlace = findViewById(R.id.focus_button_place)
+        historyButtonPlace = findViewById(R.id.history_button_place)
+        buttonAddNote = findViewById(R.id.main_button)
+        buttonViewCalendar = findViewById(R.id.statistic_button)
+        buttonViewHistory = findViewById(R.id.history_button)
+        focusButton = findViewById(R.id.focus_button)
 
+        mainButtonPlace.alpha = 0.5f
+        calendarButtonPlace.alpha = 0.5f
+        focusButtonPlace.alpha = 0.5f
+        historyButtonPlace.alpha = 1f
         loadAllNotes()
-
-        // Кнопка "Домой"
-        buttonHome.setOnClickListener {
-            animateButtonClick(buttonHome)
-            animateButtonClick(exitblock)
+        //снизу кнопка в главное меню
+        buttonAddNote.setOnClickListener {
+            animateButtonClick(buttonAddNote)
             startActivity(Intent(this, MainActivity::class.java))
+            overridePendingTransition(0,0)
+        }
+
+        buttonViewHistory.setOnClickListener {
+            animateButtonClick(buttonViewHistory)
+            startActivity(Intent(this, HistoryActivity::class.java))
+            overridePendingTransition(0,0)
+        }
+        focusButton.setOnClickListener {
+            animateButtonClick(focusButton)
+            overridePendingTransition(0,0)
+        }
+        buttonViewCalendar.setOnClickListener {
+            animateButtonClick(buttonViewCalendar)
+            startActivity(Intent(this, CalendarActivity::class.java))
+            overridePendingTransition(0,0)
         }
     }
 
@@ -260,38 +290,6 @@ class HistoryActivity : ComponentActivity() {
         button.startAnimation(scaleDown) // Запуск первой анимации
     }
 
-    fun animateButtonClick(block: FrameLayout) {
-        // Анимация уменьшения кнопки
-        val scaleDown = ScaleAnimation(
-            1.0f, 0.95f,  // Уменьшение ширины
-            1.0f, 0.95f,  // Уменьшение высоты
-            ScaleAnimation.RELATIVE_TO_SELF, 0.5f,  // Точка опоры по X
-            ScaleAnimation.RELATIVE_TO_SELF, 0.5f   // Точка опоры по Y
-        )
-        scaleDown.duration = 100 // Продолжительность анимации в миллисекундах
-        scaleDown.fillAfter = true // Кнопка остаётся в уменьшенном состоянии до завершения
-
-        // Возвращаем к исходному размеру
-        scaleDown.setAnimationListener(object : android.view.animation.Animation.AnimationListener {
-            override fun onAnimationStart(animation: android.view.animation.Animation?) {}
-            override fun onAnimationEnd(animation: android.view.animation.Animation?) {
-                val scaleUp = ScaleAnimation(
-                    0.95f, 1.0f,  // Увеличение ширины обратно
-                    0.95f, 1.0f,  // Увеличение высоты обратно
-                    ScaleAnimation.RELATIVE_TO_SELF, 0.5f,
-                    ScaleAnimation.RELATIVE_TO_SELF, 0.5f
-                )
-                scaleUp.duration = 100
-                scaleUp.fillAfter = true
-                block.startAnimation(scaleUp) // Запуск обратной анимации
-            }
-
-            override fun onAnimationRepeat(animation: android.view.animation.Animation?) {}
-        })
-
-        block.startAnimation(scaleDown) // Запуск первой анимации
-    }
-
     fun updateUI() {
         val container1 = findViewById<LinearLayout>(R.id.linearLayoutSimpleNotes) // Первый контейнер с маленькими блоками
         val container2 = findViewById<LinearLayout>(R.id.linearLayoutNotes) // Второй контейнер
@@ -304,6 +302,17 @@ class HistoryActivity : ComponentActivity() {
         } else {
             lineView.visibility = View.GONE // Скрываем линию, если нет маленьких блоков
             imageView.visibility = if (container2.childCount == 0) View.VISIBLE else View.GONE
+        }
+    }
+    private fun updateNavigationSelection(selectedPlace: LinearLayout) {
+        val containers =
+            listOf(mainButtonPlace, calendarButtonPlace, focusButtonPlace, historyButtonPlace)
+        containers.forEach { container ->
+            val targetAlpha = if (container == selectedPlace) 1f else 0.5f
+            container.animate()
+                .alpha(targetAlpha)
+                .setDuration(600)
+                .start()
         }
     }
 }

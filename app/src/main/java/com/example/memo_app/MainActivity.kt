@@ -1,6 +1,8 @@
 package com.example.memo_app
 
 import android.Manifest
+import android.animation.ObjectAnimator
+import android.app.ActivityOptions
 import android.content.Intent
 import java.io.File
 import android.content.pm.PackageManager
@@ -11,6 +13,7 @@ import android.text.SpannableString
 import android.text.style.RelativeSizeSpan
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.ScaleAnimation
@@ -38,15 +41,20 @@ import java.util.Locale
 class MainActivity : ComponentActivity() {
 
     private lateinit var linearLayoutNotes: LinearLayout
-    private lateinit var buttonAddNote: Button
+    private lateinit var buttonAddNote: ImageButton
     private lateinit var buttonViewHistory: ImageButton
     private lateinit var buttonViewCalendar: ImageButton
     private lateinit var buttonSettings: ImageButton
+    private lateinit var focusButton: ImageButton
     private lateinit var noteDao: NoteDao
     private lateinit var notificationHelper: NotificationHelper
     private val dateFormat = SimpleDateFormat("d MMM yyyy", Locale("ru"))
     private val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
     private val dateTimeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
+    private lateinit var mainButtonPlace: LinearLayout
+    private lateinit var calendarButtonPlace: LinearLayout
+    private lateinit var focusButtonPlace: LinearLayout
+    private lateinit var historyButtonPlace: LinearLayout
 
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
@@ -81,32 +89,44 @@ class MainActivity : ComponentActivity() {
         buttonAddNote = findViewById(R.id.main_button)
         buttonViewCalendar = findViewById(R.id.statistic_button)
         buttonViewHistory = findViewById(R.id.history_button)
-        val block_createbutton = findViewById<FrameLayout>(R.id.block_creteblock)
         noteDao = NoteDao(this)
         notificationHelper = NotificationHelper(this)
         buttonSettings = findViewById(R.id.settings_button)
-        val blockSettings = findViewById<FrameLayout>(R.id.settings_block)
+        focusButton = findViewById(R.id.focus_button)
+        mainButtonPlace = findViewById(R.id.main_button_place)
+        calendarButtonPlace = findViewById(R.id.calendar_button_place)
+        focusButtonPlace = findViewById(R.id.focus_button_place)
+        historyButtonPlace = findViewById(R.id.history_button_place)
+
+// Начальное состояние:
+        mainButtonPlace.alpha = 1f
+        calendarButtonPlace.alpha = 0.5f
+        focusButtonPlace.alpha = 0.5f
+        historyButtonPlace.alpha = 0.5f
 
         buttonAddNote.setOnClickListener {
-            animateButtonClick(block_createbutton)
+            animateButtonClick(buttonAddNote)
             startActivity(Intent(this, AddNoteActivity::class.java))
         }
 
         buttonViewHistory.setOnClickListener {
             animateButtonClick(buttonViewHistory)
             startActivity(Intent(this, HistoryActivity::class.java))
+            overridePendingTransition(0,0)
         }
-
+        focusButton.setOnClickListener {
+            animateButtonClick(focusButton)
+            overridePendingTransition(0,0)
+        }
         buttonViewCalendar.setOnClickListener {
             animateButtonClick(buttonViewCalendar)
             startActivity(Intent(this, CalendarActivity::class.java))
+            overridePendingTransition(0,0)
         }
         buttonSettings.setOnClickListener {
-            animateButtonClick(buttonSettings)
-            animateButtonClick(blockSettings)
             startActivity(Intent(this, SettingsActivity::class.java))
+            overridePendingTransition(0,0)
         }
-
 
 
 
@@ -133,8 +153,6 @@ class MainActivity : ComponentActivity() {
         // Очищаем основной контейнер
         linearLayoutNotes.removeAllViews()
         // Очищаем контейнер горизонтального ScrollView
-        val horizontalContainer = findViewById<LinearLayout>(R.id.linearLayoutSimpleNotes)
-        horizontalContainer.removeAllViews()
 
         val notes = noteDao.getAllNotes()
         var currentDate = ""
@@ -143,8 +161,6 @@ class MainActivity : ComponentActivity() {
 
         notes.forEach { note ->
             if (note.dateTime.isNullOrEmpty()) {
-                // Если дата отсутствует, добавляем простой блок в горизонтальный ScrollView
-                addSimpleNoteToLayout(note)
             } else {
                 try {
                     val dateTime = dateTimeFormat.parse(note.dateTime)
@@ -162,7 +178,6 @@ class MainActivity : ComponentActivity() {
                     addNoteToLayout(note)
                 } catch (e: ParseException) {
                     Log.e("MainActivity", "Error parsing date: ${note.dateTime}", e)
-                    addSimpleNoteToLayout(note) // Добавляем простой блок, если ошибка в дате
                 }
             }
         }
@@ -186,118 +201,79 @@ class MainActivity : ComponentActivity() {
 
     private fun addNoteToLayout(note: Note) {
         val inflater = LayoutInflater.from(this)
+        val noteView = inflater.inflate(R.layout.note_item, linearLayoutNotes, false) as ViewGroup
 
-        if (note.dateTime.isNullOrEmpty()) {
-            // Если дата и время отсутствуют, используем упрощённый блок
-            val simpleNoteView = inflater.inflate(R.layout.note_item_simple, linearLayoutNotes, false) as ViewGroup
-            val simpleNoteTextView = simpleNoteView.findViewById<TextView>(R.id.noteTitleTextView)
-            val simpleNoteImageView = simpleNoteView.findViewById<ImageButton>(R.id.noteImageView)
+        val noteTextView = noteView.findViewById<TextView>(R.id.noteTextView)
+        val descriptionTextView = noteView.findViewById<TextView>(R.id.desTextView)
+        val timeTextView = noteView.findViewById<TextView>(R.id.timeblock)
+        val noteImageView = noteView.findViewById<ImageView>(R.id.noteImageView)
+        val editButton = noteView.findViewById<ImageButton>(R.id.deleteButton)
 
-            // Устанавливаем название заметки с уменьшением текста (например, после 22 символов)
-            simpleNoteTextView.text = formatTextWithReducedSize(note.content)
+        // Устанавливаем основной текст заметки
+        noteTextView.text = formatTextWithReducedSize(note.content)
 
-            // Устанавливаем изображение
-            if (!note.imageUri.isNullOrEmpty()) {
-                val imageFile = File(note.imageUri)
-                if (imageFile.exists()) {
-                    Glide.with(this)
-                        .load(imageFile)
-                        .centerCrop()
-                        .into(simpleNoteImageView)
-                    simpleNoteImageView.visibility = View.VISIBLE
-                } else {
-                    val resourceId = resources.getIdentifier(note.imageUri, "drawable", packageName)
-                    if (resourceId != 0) {
-                        simpleNoteImageView.setImageResource(resourceId)
-                        simpleNoteImageView.visibility = View.VISIBLE
-                    } else {
-                        simpleNoteImageView.visibility = View.GONE
-                        Log.e("MainActivity", "Invalid imageUri: ${note.imageUri}")
-                    }
-                }
+        // Описание с заглавной буквы и усечением
+        descriptionTextView.text = if (!note.description.isNullOrEmpty()) {
+            val processedDescription = capitalizeFirstLetter(note.description)
+            if (processedDescription.length > 40) {
+                "${processedDescription.substring(0, 40)}..."
             } else {
-                simpleNoteImageView.visibility = View.GONE
+                processedDescription
             }
-
-            // Добавляем упрощённый блок в макет
-            linearLayoutNotes.addView(simpleNoteView)
-            Log.d("MainActivity", "Simple note added: ${note.content}")
-
         } else {
-            // Если дата и время указаны, используем обычный блок
-            val noteView = inflater.inflate(R.layout.note_item, linearLayoutNotes, false) as ViewGroup
-            val noteTextView = noteView.findViewById<TextView>(R.id.noteTextView)
-            val descriptionTextView = noteView.findViewById<TextView>(R.id.desTextView)
-            val timeTextView = noteView.findViewById<TextView>(R.id.timeblock)
-            val noteImageView = noteView.findViewById<ImageView>(R.id.noteImageView)
-            val editButton = noteView.findViewById<ImageButton>(R.id.deleteButton)
-
-            // Устанавливаем основной текст заметки (с сокращением, если длина превышает порог)
-            noteTextView.text = formatTextWithReducedSize(note.content)
-
-            // Преобразуем текст описания (первая буква заглавная и усечение, если длина > 40)
-            descriptionTextView.text = if (!note.description.isNullOrEmpty()) {
-                val processedDescription = capitalizeFirstLetter(note.description)
-                if (processedDescription.length > 40) {
-                    processedDescription.substring(0, 40) + "..."
-                } else {
-                    processedDescription
-                }
-            } else {
-                "Нет описания"
-            }
-
-            // Устанавливаем время заметки, используя наш формат "yyyy-MM-dd HH:mm"
-            try {
-                Log.d("MainActivity", "Parsing dateTime: ${note.dateTime}")
-                val parsedDate = dateTimeFormat.parse(note.dateTime)
-                val calendar = Calendar.getInstance().apply { time = parsedDate!! }
-                // Форматируем время, например, "9:05"
-                val formattedTime = "${calendar.get(Calendar.HOUR_OF_DAY)}:${String.format("%02d", calendar.get(Calendar.MINUTE))}"
-                timeTextView.text = formattedTime
-            } catch (e: ParseException) {
-                Log.e("MainActivity", "Error parsing dateTime: ${note.dateTime}", e)
-                timeTextView.text = "Время: не указано"
-            }
-
-            // Устанавливаем изображение заметки, если оно указано
-            if (!note.imageUri.isNullOrEmpty()) {
-                val imageFile = File(note.imageUri)
-                if (imageFile.exists()) {
-                    Glide.with(this)
-                        .load(imageFile)
-                        .apply(RequestOptions.bitmapTransform(RoundedCorners(16)))
-                        .into(noteImageView)
-                    noteImageView.visibility = View.VISIBLE
-                    noteTextView.clipToOutline = true
-                } else {
-                    val resourceId = resources.getIdentifier(note.imageUri, "drawable", packageName)
-                    if (resourceId != 0) {
-                        noteImageView.setImageResource(resourceId)
-                        noteImageView.visibility = View.VISIBLE
-                    } else {
-                        noteImageView.visibility = View.GONE
-                        Log.e("MainActivity", "Invalid imageUri: ${note.imageUri}")
-                    }
-                }
-            } else {
-                noteImageView.visibility = View.GONE
-            }
-
-            // Слушатель для кнопки редактирования – переход в EditNoteActivity
-            editButton.setOnClickListener {
-                val intent = Intent(this, EditNoteActivity::class.java)
-                intent.putExtra("noteId", note.id)
-                startActivity(intent)
-            }
-
-            // Добавляем обычный блок в макет
-            linearLayoutNotes.addView(noteView)
-            Log.d("MainActivity", "Note added with time and capitalized title/description: ${note.content}")
+            "Нет описания"
         }
+
+        // Устанавливаем время заметки
+        try {
+            Log.d("MainActivity", "Parsing dateTime: ${note.dateTime}")
+            val parsedDate = dateTimeFormat.parse(note.dateTime)
+            val calendar = Calendar.getInstance().apply { time = parsedDate!! }
+            val formattedTime = "${calendar.get(Calendar.HOUR_OF_DAY)}:${String.format("%02d", calendar.get(Calendar.MINUTE))}"
+            timeTextView.text = formattedTime
+        } catch (e: Exception) {
+            Log.e("MainActivity", "Error parsing dateTime: ${note.dateTime}", e)
+            timeTextView.text = "Время: не указано"
+        }
+
+        // Устанавливаем изображение
+        if (!note.imageUri.isNullOrEmpty()) {
+            val imageFile = File(note.imageUri)
+            if (imageFile.exists()) {
+                Glide.with(this)
+                    .load(imageFile)
+                    .apply(RequestOptions.bitmapTransform(RoundedCorners(16)))
+                    .into(noteImageView)
+                noteImageView.visibility = View.VISIBLE
+                noteTextView.clipToOutline = true
+            } else {
+                val resourceId = resources.getIdentifier(note.imageUri, "drawable", packageName)
+                if (resourceId != 0) {
+                    noteImageView.setImageResource(resourceId)
+                    noteImageView.visibility = View.VISIBLE
+                } else {
+                    noteImageView.visibility = View.GONE
+                    Log.e("MainActivity", "Invalid imageUri: ${note.imageUri}")
+                }
+            }
+        } else {
+            noteImageView.visibility = View.GONE
+        }
+
+        // Кнопка редактирования заметки
+        editButton.setOnClickListener {
+            val intent = Intent(this, EditNoteActivity::class.java)
+            intent.putExtra("noteId", note.id)
+            startActivity(intent)
+        }
+
+        // Добавляем блок в макет
+        linearLayoutNotes?.addView(noteView)
+        Log.d("MainActivity", "Note added with time and capitalized title/description: ${note.content}")
 
         updateUI()
     }
+
 
     // Функция для уменьшения текста после 22 символов
     private fun formatTextWithReducedSize(content: String): Spannable {
@@ -346,8 +322,8 @@ class MainActivity : ComponentActivity() {
     fun animateButtonClick(button: ImageButton) {
         // Анимация уменьшения кнопки
         val scaleDown = ScaleAnimation(
-            1.0f, 0.9f,  // Уменьшение ширины
-            1.0f, 0.9f,  // Уменьшение высоты
+            1.0f, 0.95f,  // Уменьшение ширины
+            1.0f, 0.95f,  // Уменьшение высоты
             ScaleAnimation.RELATIVE_TO_SELF, 0.5f,  // Точка опоры по X
             ScaleAnimation.RELATIVE_TO_SELF, 0.5f   // Точка опоры по Y
         )
@@ -359,8 +335,8 @@ class MainActivity : ComponentActivity() {
             override fun onAnimationStart(animation: android.view.animation.Animation?) {}
             override fun onAnimationEnd(animation: android.view.animation.Animation?) {
                 val scaleUp = ScaleAnimation(
-                    0.9f, 1.0f,  // Увеличение ширины обратно
-                    0.9f, 1.0f,  // Увеличение высоты обратно
+                    0.95f, 1.0f,  // Увеличение ширины обратно
+                    0.95f, 1.0f,  // Увеличение высоты обратно
                     ScaleAnimation.RELATIVE_TO_SELF, 0.5f,
                     ScaleAnimation.RELATIVE_TO_SELF, 0.5f
                 )
@@ -375,106 +351,29 @@ class MainActivity : ComponentActivity() {
         button.startAnimation(scaleDown) // Запуск первой анимации
     }
 
-    fun animateButtonClick(block: FrameLayout) {
-        // Анимация уменьшения кнопки
-        val scaleDown = ScaleAnimation(
-            1.0f, 0.95f,  // Уменьшение ширины
-            1.0f, 0.95f,  // Уменьшение высоты
-            ScaleAnimation.RELATIVE_TO_SELF, 0.5f,  // Точка опоры по X
-            ScaleAnimation.RELATIVE_TO_SELF, 0.5f   // Точка опоры по Y
-        )
-        scaleDown.duration = 100 // Продолжительность анимации в миллисекундах
-        scaleDown.fillAfter = true // Кнопка остаётся в уменьшенном состоянии до завершения
-
-        // Возвращаем к исходному размеру
-        scaleDown.setAnimationListener(object : android.view.animation.Animation.AnimationListener {
-            override fun onAnimationStart(animation: android.view.animation.Animation?) {}
-            override fun onAnimationEnd(animation: android.view.animation.Animation?) {
-                val scaleUp = ScaleAnimation(
-                    0.95f, 1.0f,  // Увеличение ширины обратно
-                    0.95f, 1.0f,  // Увеличение высоты обратно
-                    ScaleAnimation.RELATIVE_TO_SELF, 0.5f,
-                    ScaleAnimation.RELATIVE_TO_SELF, 0.5f
-                )
-                scaleUp.duration = 100
-                scaleUp.fillAfter = true
-                block.startAnimation(scaleUp) // Запуск обратной анимации
-            }
-
-            override fun onAnimationRepeat(animation: android.view.animation.Animation?) {}
-        })
-
-        block.startAnimation(scaleDown) // Запуск первой анимации
-    }
-
-    private fun addSimpleNoteToLayout(note: Note) {
-        val inflater = LayoutInflater.from(this)
-        val simpleNoteView = inflater.inflate(R.layout.note_item_simple, null) as ViewGroup
-        val simpleNoteTextView = simpleNoteView.findViewById<TextView>(R.id.noteTitleTextView)
-        val simpleNoteImageView = simpleNoteView.findViewById<ImageButton>(R.id.noteImageView)
-
-        val params = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.WRAP_CONTENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
-        )
-        params.marginEnd = 24
-        simpleNoteView.layoutParams = params
-
-        // Устанавливаем название заметки
-        simpleNoteTextView.text = note.content
-
-        // Устанавливаем изображение, если оно есть
-        if (!note.imageUri.isNullOrEmpty()) {
-            val imageFile = File(note.imageUri)
-            if (imageFile.exists()) {
-                Glide.with(this)
-                    .load(imageFile)
-                    .centerCrop()
-                    .into(simpleNoteImageView)
-                simpleNoteImageView.visibility = View.VISIBLE
-            } else {
-                val resourceId = resources.getIdentifier(note.imageUri, "drawable", packageName)
-                if (resourceId != 0) {
-                    simpleNoteImageView.setImageResource(resourceId)
-                    simpleNoteImageView.visibility = View.VISIBLE
-                } else {
-                    simpleNoteImageView.visibility = View.GONE
-                    Log.e("MainActivity", "Invalid imageUri: ${note.imageUri}")
-                }
-            }
-        } else {
-            simpleNoteImageView.visibility = View.GONE
-        }
-
-        // Настройка кнопки для редактирования заметки
-        simpleNoteImageView.setOnClickListener {
-            val intent = Intent(this, EditNoteActivity::class.java)
-            intent.putExtra("noteId", note.id)
-            startActivity(intent)
-        }
-
-        // Добавляем блок в горизонтальный ScrollView
-        val horizontalContainer = findViewById<LinearLayout>(R.id.linearLayoutSimpleNotes)
-        horizontalContainer.addView(simpleNoteView)
-
-        // Обновляем интерфейс после добавления блока
-        updateUI()
-
-        Log.d("MainActivity", "Simple note added: ${note.content}")
-    }
-
     fun updateUI() {
-        val container1 = findViewById<LinearLayout>(R.id.linearLayoutSimpleNotes) // Первый контейнер с маленькими блоками
-        val container2 = findViewById<LinearLayout>(R.id.linearLayoutNotes) // Второй контейнер
-        val imageView = findViewById<LinearLayout>(R.id.block_with_image) // Элемент с изображением
-        val lineView = findViewById<View>(R.id.lineView) // Линия, которую нужно скрыть или показать
+        if (::linearLayoutNotes.isInitialized) { // Проверяем, что переменная инициализирована
+            val imageView = findViewById<FrameLayout>(R.id.block_with_image)
 
-        if (container1.childCount > 0) { // Линия видима только если есть маленькие блоки
-            lineView.visibility = View.VISIBLE
-            imageView.visibility = View.GONE
+            if (linearLayoutNotes.childCount > 0) {
+                imageView.visibility = View.GONE
+            } else {
+                imageView.visibility = View.VISIBLE
+            }
         } else {
-              lineView.visibility = View.GONE // Скрываем линию, если нет маленьких блоков
-            imageView.visibility = if (container2.childCount == 0) View.VISIBLE else View.GONE
+            Log.e("MainActivity", "linearLayoutNotes is not initialized!")
+        }
+    }
+
+    private fun updateNavigationSelection(selectedPlace: LinearLayout) {
+        val containers =
+            listOf(mainButtonPlace, calendarButtonPlace, focusButtonPlace, historyButtonPlace)
+        containers.forEach { container ->
+            val targetAlpha = if (container == selectedPlace) 1f else 0.5f
+            container.animate()
+                .alpha(targetAlpha)
+                .setDuration(600)
+                .start()
         }
     }
 }
