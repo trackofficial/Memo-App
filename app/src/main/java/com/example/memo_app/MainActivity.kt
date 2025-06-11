@@ -6,12 +6,14 @@ import android.app.ActivityOptions
 import android.content.Intent
 import java.io.File
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.RelativeSizeSpan
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -19,6 +21,7 @@ import android.view.ViewGroup
 import android.view.animation.ScaleAnimation
 import android.widget.Button
 import android.widget.FrameLayout
+import android.widget.GridLayout
 import android.widget.HorizontalScrollView
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -28,6 +31,7 @@ import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
@@ -55,6 +59,12 @@ class MainActivity : ComponentActivity() {
     private lateinit var calendarButtonPlace: LinearLayout
     private lateinit var focusButtonPlace: LinearLayout
     private lateinit var historyButtonPlace: LinearLayout
+    private lateinit var weekCalendarGrid: GridLayout
+
+    private val activeDates = mutableSetOf<Long>() // Список дат активных блоков
+    private val displayedWeek = Calendar.getInstance().apply {
+        set(Calendar.DAY_OF_WEEK, Calendar.MONDAY) // Устанавливаем понедельник
+    }
 
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
@@ -97,6 +107,7 @@ class MainActivity : ComponentActivity() {
         calendarButtonPlace = findViewById(R.id.calendar_button_place)
         focusButtonPlace = findViewById(R.id.focus_button_place)
         historyButtonPlace = findViewById(R.id.history_button_place)
+        weekCalendarGrid = findViewById(R.id.weekCalendarGrid)
 
 // Начальное состояние:
         mainButtonPlace.alpha = 1f
@@ -183,6 +194,8 @@ class MainActivity : ComponentActivity() {
         }
         // Вызов функции для обновления UI после всех операций
         updateUI()
+        refreshActiveDates()
+        renderWeekCalendar()
     }
 
     private fun isSameDay(cal1: Calendar, cal2: Calendar): Boolean {
@@ -353,7 +366,7 @@ class MainActivity : ComponentActivity() {
 
     fun updateUI() {
         if (::linearLayoutNotes.isInitialized) { // Проверяем, что переменная инициализирована
-            val imageView = findViewById<FrameLayout>(R.id.block_with_image)
+            val imageView = findViewById<LinearLayout>(R.id.block_with_image)
 
             if (linearLayoutNotes.childCount > 0) {
                 imageView.visibility = View.GONE
@@ -374,6 +387,113 @@ class MainActivity : ComponentActivity() {
                 .alpha(targetAlpha)
                 .setDuration(600)
                 .start()
+        }
+    }
+
+    //функции для недельного календаря
+
+    private fun renderWeekCalendar() {
+        weekCalendarGrid.removeAllViews()
+
+        val calendar = displayedWeek.clone() as Calendar // Берем фиксированную неделю
+
+        for (i in 0 until 7) {
+            val isPreviousMonth = calendar.get(Calendar.MONTH) < displayedWeek.get(Calendar.MONTH)
+            val dateView = createDateView(calendar.get(Calendar.DAY_OF_MONTH), isPreviousMonth)
+            applyStyle(dateView, calendar.get(Calendar.DAY_OF_MONTH), isPreviousMonth)
+            weekCalendarGrid.addView(dateView)
+            calendar.add(Calendar.DAY_OF_MONTH, 1) // Переход к следующему дню
+        }
+    }
+
+    private fun createDateView(day: Int, isPreviousMonth: Boolean): TextView {
+        val textView = TextView(this)
+        val typeface = ResourcesCompat.getFont(this, R.font.tildasans_medium)
+        textView.text = day.toString()
+        textView.gravity = Gravity.CENTER
+        textView.layoutParams = GridLayout.LayoutParams().apply {
+            width = 110 // Размер кружка
+            height = 125
+            columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
+            setMargins(8, 4, 8, 4) // Отступы для визуального оформления
+        }
+        textView.textSize = 16f
+        textView.typeface = typeface
+
+        if (isPreviousMonth) {
+            textView.setTextColor(Color.GRAY) // Серый текст для дней прошлого месяца
+        }
+
+        return textView
+    }
+
+    private fun applyStyle(textView: TextView, day: Int, isPreviousMonth: Boolean) {
+        val today = Calendar.getInstance()
+        val isToday = !isPreviousMonth && today.get(Calendar.DAY_OF_MONTH) == day
+        val hasPlans = !isPreviousMonth && checkIfDayHasPlans(day)
+
+        val backgroundResource = when {
+            isToday -> R.drawable.current_day // Черный круг
+            hasPlans -> R.drawable.event_day // Белый круг с обводкой
+            isPreviousMonth -> R.drawable.simple_day // Серый круг
+            else -> R.drawable.simple_day
+        }
+
+        textView.setBackgroundResource(backgroundResource)
+
+        val textColor = when {
+            isPreviousMonth -> Color.GRAY
+            isToday -> Color.WHITE
+            hasPlans -> Color.BLACK
+            else -> Color.DKGRAY
+        }
+
+        textView.setTextColor(textColor)
+    }
+
+    private fun changeWeek(offset: Int) {
+        displayedWeek.add(Calendar.WEEK_OF_YEAR, offset) // Смещаем неделю
+        renderWeekCalendar() // Перерисовываем календарь
+    }
+
+    private fun refreshActiveDates() {
+        activeDates.clear()
+        val notes = noteDao.getAllNotes() // Получаем все записи из БД
+
+        notes.filter { !it.isDeleted }.forEach { note ->
+            val noteTime = note.dateTime?.let { parseDateTime(it) } ?: 0L
+            if (noteTime != 0L) {
+                activeDates.add(noteTime) // Добавляем активные даты
+            }
+        }
+    }
+    private fun checkIfDayHasPlans(day: Int): Boolean {
+        val startOfDay = Calendar.getInstance().apply {
+            set(Calendar.DAY_OF_MONTH, day)
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.timeInMillis
+
+        val endOfDay = Calendar.getInstance().apply {
+            set(Calendar.DAY_OF_MONTH, day)
+            set(Calendar.HOUR_OF_DAY, 23)
+            set(Calendar.MINUTE, 59)
+            set(Calendar.SECOND, 59)
+            set(Calendar.MILLISECOND, 999)
+        }.timeInMillis
+
+        return activeDates.any { it in startOfDay..endOfDay }
+    }
+
+    private fun parseDateTime(dateTime: String): Long {
+        val dateTimeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
+        return try {
+            dateTimeFormat.parse(dateTime)?.time ?: 0L
+        } catch (e: Exception) {
+            Log.e("CalendarActivity", "Ошибка парсинга даты: $dateTime", e)
+            0L
         }
     }
 }

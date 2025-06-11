@@ -34,13 +34,15 @@
     <color name="new_color_grey">#4A131314</color>
     <color name="new_grey_3">#0AF8F9FF</color>
     <color name="new_color_grey_2">#21222D</color>
-    <color name="new_color_grey_for_imageblock">#B30C0E13</color>
+
     <color name="orange_for_calendar">#FF7C48</color>
     <color name="green_for_calendar">#56B530</color>
     <color name="grey_for_darkmode">#19191A</color>
 
 <!--____________________________________________-->
 
+    <color name="new_color_grey_for_title">#A80C0E13</color>
+    <color name="new_color_grey_for_imageblock">#660C0E13</color>
     <color name="black">#0C0E13</color>
     <color name="for_simple_day">#050C0E13</color>
     <color name="background_color_light">#F8F9FF</color><!--Теперь черный фон-->
