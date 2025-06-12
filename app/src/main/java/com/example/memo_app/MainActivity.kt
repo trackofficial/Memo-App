@@ -89,6 +89,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_screen)
 
+        val animatedBlock = findViewById<LinearLayout>(R.id.block_with_image) // Найди нужный блок
+        animateBlockAppearance(animatedBlock) // Запускаем анимацию
+
+        val animatedBlockButton = findViewById<LinearLayout>(R.id.addblock_place) // Найди нужный блок
+        animateBlockAppearancebuttonblock(animatedBlockButton)
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_screen)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -495,5 +501,29 @@ class MainActivity : ComponentActivity() {
             Log.e("CalendarActivity", "Ошибка парсинга даты: $dateTime", e)
             0L
         }
+    }
+    //анимация появления блока
+
+    fun animateBlockAppearance(block: LinearLayout) {
+        block.translationY = -100f // Начальная позиция выше экрана
+        block.alpha = 0f // Скрываем блок
+
+        block.animate()
+            .translationY(0f) // Перемещаем вниз
+            .alpha(1f) // Плавное появление
+            .setDuration(300) // Длительность анимации (мс)
+            .setInterpolator(android.view.animation.DecelerateInterpolator()) // Плавное замедление
+            .start()
+    }
+    fun animateBlockAppearancebuttonblock(block: LinearLayout) {
+        block.translationY = 200f // Начальная позиция выше экрана
+        block.alpha = 0f // Скрываем блок
+
+        block.animate()
+            .translationY(0f) // Перемещаем вниз
+            .alpha(1f) // Плавное появление
+            .setDuration(500) // Длительность анимации (мс)
+            .setInterpolator(android.view.animation.DecelerateInterpolator()) // Плавное замедление
+            .start()
     }
 }
