@@ -53,7 +53,6 @@ class MainActivity : ComponentActivity() {
     private lateinit var noteDao: NoteDao
     private lateinit var notificationHelper: NotificationHelper
     private val dateFormat = SimpleDateFormat("d MMM yyyy", Locale("ru"))
-    private val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
     private val dateTimeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
     private lateinit var mainButtonPlace: LinearLayout
     private lateinit var calendarButtonPlace: LinearLayout
@@ -169,36 +168,47 @@ class MainActivity : ComponentActivity() {
     private fun loadNotes() {
         // Очищаем основной контейнер
         linearLayoutNotes.removeAllViews()
-        // Очищаем контейнер горизонтального ScrollView
 
         val notes = noteDao.getAllNotes()
-        var currentDate = ""
-        val today = Calendar.getInstance()
-        val tomorrow = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, 1) }
+        var currentHeader = ""
+        val now = Calendar.getInstance()
+        val today = now // сегодняшняя дата
+        val currentWeek = now.get(Calendar.WEEK_OF_YEAR)
+        val currentMonth = now.get(Calendar.MONTH)
+        val currentYear = now.get(Calendar.YEAR)
 
         notes.forEach { note ->
-            if (note.dateTime.isNullOrEmpty()) {
-            } else {
-                try {
-                    val dateTime = dateTimeFormat.parse(note.dateTime)
-                    val noteDate = dateFormat.format(dateTime)
-                    val calNoteDate = Calendar.getInstance().apply { time = dateTime }
-                    val dateLabel = when {
-                        isSameDay(calNoteDate, today) -> "Сегодня"
-                        isSameDay(calNoteDate, tomorrow) -> "Завтра"
-                        else -> "$noteDate"
+            if (note.dateTime.isNullOrEmpty()) return@forEach
+
+            try {
+                // Парсим дату заметки
+                val dateTime = dateTimeFormat.parse(note.dateTime)
+                val calNoteDate = Calendar.getInstance().apply { time = dateTime!! }
+
+                // Определяем заголовок для группы заметок
+                val header = when {
+                    isSameDay(calNoteDate, today) -> {
+                        // Заголовок для сегодняшних заметок: Today • 9 July
+                        "Today • ${calNoteDate.get(Calendar.DAY_OF_MONTH)} ${calNoteDate.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.ENGLISH)}"
                     }
-                    if (dateLabel != currentDate) {
-                        addDateHeaderToLayout(dateLabel)
-                        currentDate = dateLabel
-                    }
-                    addNoteToLayout(note)
-                } catch (e: ParseException) {
-                    Log.e("MainActivity", "Error parsing date: ${note.dateTime}", e)
+                    (calNoteDate.get(Calendar.YEAR) == currentYear && calNoteDate.get(Calendar.WEEK_OF_YEAR) == currentWeek) -> "This week"
+                    (calNoteDate.get(Calendar.YEAR) == currentYear && calNoteDate.get(Calendar.MONTH) == currentMonth) -> "This month"
+                    else -> "This year"
                 }
+
+                // Если заголовок изменился – добавляем новый header в макет
+                if (header != currentHeader) {
+                    addDateHeaderToLayout(header)
+                    currentHeader = header
+                }
+
+                addNoteToLayout(note)
+            } catch (e: ParseException) {
+                Log.e("MainActivity", "Error parsing date: ${note.dateTime}", e)
             }
         }
-        // Вызов функции для обновления UI после всех операций
+
+        // Обновляем UI после загрузки всех заметок
         updateUI()
         refreshActiveDates()
         renderWeekCalendar()
@@ -225,13 +235,13 @@ class MainActivity : ComponentActivity() {
         val noteTextView = noteView.findViewById<TextView>(R.id.noteTextView)
         val descriptionTextView = noteView.findViewById<TextView>(R.id.desTextView)
         val timeTextView = noteView.findViewById<TextView>(R.id.timeblock)
-        val noteImageView = noteView.findViewById<ImageView>(R.id.noteImageView)
+        val dateBlockView = noteView.findViewById<TextView>(R.id.dateblock)
         val editButton = noteView.findViewById<ImageButton>(R.id.deleteButton)
 
         // Устанавливаем основной текст заметки
         noteTextView.text = formatTextWithReducedSize(note.content)
 
-        // Описание с заглавной буквы и усечением
+        // Описание: первая буква заглавная, усечение если длина больше 40 символов
         descriptionTextView.text = if (!note.description.isNullOrEmpty()) {
             val processedDescription = capitalizeFirstLetter(note.description)
             if (processedDescription.length > 40) {
@@ -243,40 +253,39 @@ class MainActivity : ComponentActivity() {
             "Нет описания"
         }
 
-        // Устанавливаем время заметки
         try {
             Log.d("MainActivity", "Parsing dateTime: ${note.dateTime}")
+            // Парсим дату заметки
             val parsedDate = dateTimeFormat.parse(note.dateTime)
             val calendar = Calendar.getInstance().apply { time = parsedDate!! }
+
+            // Форматируем время для timeTextView
             val formattedTime = "${calendar.get(Calendar.HOUR_OF_DAY)}:${String.format("%02d", calendar.get(Calendar.MINUTE))}"
             timeTextView.text = formattedTime
+
+            // Получаем составляющие даты
+            val noteDay = calendar.get(Calendar.DAY_OF_MONTH)
+            val noteMonth = calendar.get(Calendar.MONTH) // январь = 0, поэтому для отображения прибавляем 1
+            val noteYear = calendar.get(Calendar.YEAR)
+            val currentCalendar = Calendar.getInstance()
+            val currentYear = currentCalendar.get(Calendar.YEAR)
+
+            // Если дата заметки равна сегодняшней, скрываем блок dateblock
+            if (isSameDay(calendar, currentCalendar)) {
+                dateBlockView.visibility = View.GONE
+            } else {
+                dateBlockView.visibility = View.VISIBLE
+                // Если год заметки отличается от текущего, отображаем только год,
+                // иначе – дату в формате "dd.MM" (например, "09.07")
+                dateBlockView.text = if (noteYear != currentYear) {
+                    noteYear.toString()
+                } else {
+                    String.format("%02d.%02d", noteDay, noteMonth + 1)
+                }
+            }
         } catch (e: Exception) {
             Log.e("MainActivity", "Error parsing dateTime: ${note.dateTime}", e)
             timeTextView.text = "Время: не указано"
-        }
-
-        // Устанавливаем изображение
-        if (!note.imageUri.isNullOrEmpty()) {
-            val imageFile = File(note.imageUri)
-            if (imageFile.exists()) {
-                Glide.with(this)
-                    .load(imageFile)
-                    .apply(RequestOptions.bitmapTransform(RoundedCorners(16)))
-                    .into(noteImageView)
-                noteImageView.visibility = View.VISIBLE
-                noteTextView.clipToOutline = true
-            } else {
-                val resourceId = resources.getIdentifier(note.imageUri, "drawable", packageName)
-                if (resourceId != 0) {
-                    noteImageView.setImageResource(resourceId)
-                    noteImageView.visibility = View.VISIBLE
-                } else {
-                    noteImageView.visibility = View.GONE
-                    Log.e("MainActivity", "Invalid imageUri: ${note.imageUri}")
-                }
-            }
-        } else {
-            noteImageView.visibility = View.GONE
         }
 
         // Кнопка редактирования заметки
@@ -286,9 +295,9 @@ class MainActivity : ComponentActivity() {
             startActivity(intent)
         }
 
-        // Добавляем блок в макет
-        linearLayoutNotes?.addView(noteView)
-        Log.d("MainActivity", "Note added with time and capitalized title/description: ${note.content}")
+        // Добавляем заметку в основной контейнер
+        linearLayoutNotes.addView(noteView)
+        Log.d("MainActivity", "Note added with time and date formatting: ${note.content}")
 
         updateUI()
     }

@@ -3,23 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:layout_marginTop="12dp"
-    android:gravity="center_horizontal"
-    android:layout_marginBottom="1dp"
+    android:layout_marginTop="2dp"
+    android:layout_marginLeft="16dp"
     android:layout_gravity="center_horizontal">
 
     <TextView
-        android:layout_gravity="center"
-        android:gravity="center"
         android:id="@+id/dateTextView"
         android:layout_width="wrap_content"
-        android:paddingRight="10dp"
-        android:paddingLeft="10dp"
         android:layout_height="wrap_content"
-        android:textSize="15dp"
-        android:paddingBottom="2dp"
-        android:paddingTop="2dp"
-        android:fontFamily="@font/tilda_medium"
-        android:background="@drawable/backnone_for_simpleblock"
-        android:textColor="@color/white"/>
+        android:textSize="18dp"
+        android:fontFamily="@font/tildasans_bold"
+        android:textColor="@color/black"/>
 </LinearLayout>

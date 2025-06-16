@@ -132,7 +132,7 @@
                     android:fontFamily="@font/tilda_semibold"
                     android:gravity="top|start"
                     android:hint="Введите заметку"
-                    android:textColor="@color/white"
+                    android:textColor="@color/black"
                     android:textColorHint="@color/background_color_for_hint"
                     android:textSize="26dp"/>
             </LinearLayout>
@@ -152,7 +152,7 @@
                     android:id="@+id/editAddText"
                     android:hint="Введите описание"
                     android:inputType="textMultiLine"
-                    android:textColor="@color/white"
+                    android:textColor="@color/black"
                     android:background="@drawable/form_for_new_edit_text"
                     android:textColorHint="@color/background_color_for_hint"
                     android:layout_width="wrap_content"
