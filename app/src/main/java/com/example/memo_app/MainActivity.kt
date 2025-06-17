@@ -7,6 +7,7 @@ import android.content.Intent
 import java.io.File
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.media.Image
 import android.os.Build
 import android.os.Bundle
 import android.text.Spannable
@@ -18,6 +19,8 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.DecelerateInterpolator
+import android.view.animation.OvershootInterpolator
 import android.view.animation.ScaleAnimation
 import android.widget.Button
 import android.widget.FrameLayout
@@ -237,46 +240,33 @@ class MainActivity : ComponentActivity() {
         val timeTextView = noteView.findViewById<TextView>(R.id.timeblock)
         val dateBlockView = noteView.findViewById<TextView>(R.id.dateblock)
         val editButton = noteView.findViewById<ImageButton>(R.id.deleteButton)
+        val completeButton = noteView.findViewById<ImageButton>(R.id.completeButton) // <-- fixed
 
-        // Устанавливаем основной текст заметки
         noteTextView.text = formatTextWithReducedSize(note.content)
 
-        // Описание: первая буква заглавная, усечение если длина больше 40 символов
         descriptionTextView.text = if (!note.description.isNullOrEmpty()) {
-            val processedDescription = capitalizeFirstLetter(note.description)
-            if (processedDescription.length > 40) {
-                "${processedDescription.substring(0, 40)}..."
-            } else {
-                processedDescription
-            }
+            val processed = capitalizeFirstLetter(note.description)
+            if (processed.length > 40) "${processed.take(40)}..." else processed
         } else {
             "Нет описания"
         }
 
         try {
-            Log.d("MainActivity", "Parsing dateTime: ${note.dateTime}")
-            // Парсим дату заметки
             val parsedDate = dateTimeFormat.parse(note.dateTime)
             val calendar = Calendar.getInstance().apply { time = parsedDate!! }
 
-            // Форматируем время для timeTextView
             val formattedTime = "${calendar.get(Calendar.HOUR_OF_DAY)}:${String.format("%02d", calendar.get(Calendar.MINUTE))}"
             timeTextView.text = formattedTime
 
-            // Получаем составляющие даты
             val noteDay = calendar.get(Calendar.DAY_OF_MONTH)
-            val noteMonth = calendar.get(Calendar.MONTH) // январь = 0, поэтому для отображения прибавляем 1
+            val noteMonth = calendar.get(Calendar.MONTH)
             val noteYear = calendar.get(Calendar.YEAR)
-            val currentCalendar = Calendar.getInstance()
-            val currentYear = currentCalendar.get(Calendar.YEAR)
+            val currentYear = Calendar.getInstance().get(Calendar.YEAR)
 
-            // Если дата заметки равна сегодняшней, скрываем блок dateblock
-            if (isSameDay(calendar, currentCalendar)) {
+            if (isSameDay(calendar, Calendar.getInstance())) {
                 dateBlockView.visibility = View.GONE
             } else {
                 dateBlockView.visibility = View.VISIBLE
-                // Если год заметки отличается от текущего, отображаем только год,
-                // иначе – дату в формате "dd.MM" (например, "09.07")
                 dateBlockView.text = if (noteYear != currentYear) {
                     noteYear.toString()
                 } else {
@@ -288,20 +278,26 @@ class MainActivity : ComponentActivity() {
             timeTextView.text = "Время: не указано"
         }
 
-        // Кнопка редактирования заметки
+        // Обработка completeButton
+        completeButton.setOnClickListener {
+            animateButtonClick(completeButton)
+            playCompleteAnimation(noteView) {
+                note.isDeleted = true
+                noteDao.update(note)
+                updateUI()
+                showNoteArchivedBanner()
+            }
+        }
+
         editButton.setOnClickListener {
             val intent = Intent(this, EditNoteActivity::class.java)
             intent.putExtra("noteId", note.id)
             startActivity(intent)
         }
 
-        // Добавляем заметку в основной контейнер
         linearLayoutNotes.addView(noteView)
-        Log.d("MainActivity", "Note added with time and date formatting: ${note.content}")
-
         updateUI()
     }
-
 
     // Функция для уменьшения текста после 22 символов
     private fun formatTextWithReducedSize(content: String): Spannable {
@@ -321,7 +317,6 @@ class MainActivity : ComponentActivity() {
     private fun capitalizeFirstLetter(text: String?): String {
         return text?.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } ?: ""
     }
-
 
     private fun addTimeToLayout(dateTime: String) {
         try {
@@ -482,6 +477,7 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
     private fun checkIfDayHasPlans(day: Int): Boolean {
         val startOfDay = Calendar.getInstance().apply {
             set(Calendar.DAY_OF_MONTH, day)
@@ -512,7 +508,6 @@ class MainActivity : ComponentActivity() {
         }
     }
     //анимация появления блока
-
     fun animateBlockAppearance(block: LinearLayout) {
         block.translationY = -100f // Начальная позиция выше экрана
         block.alpha = 0f // Скрываем блок
@@ -520,10 +515,11 @@ class MainActivity : ComponentActivity() {
         block.animate()
             .translationY(0f) // Перемещаем вниз
             .alpha(1f) // Плавное появление
-            .setDuration(300) // Длительность анимации (мс)
+            .setDuration(400) // Длительность анимации (мс)
             .setInterpolator(android.view.animation.DecelerateInterpolator()) // Плавное замедление
             .start()
     }
+
     fun animateBlockAppearancebuttonblock(block: LinearLayout) {
         block.translationY = 200f // Начальная позиция выше экрана
         block.alpha = 0f // Скрываем блок
@@ -533,6 +529,104 @@ class MainActivity : ComponentActivity() {
             .alpha(1f) // Плавное появление
             .setDuration(500) // Длительность анимации (мс)
             .setInterpolator(android.view.animation.DecelerateInterpolator()) // Плавное замедление
+            .start()
+    }
+
+    //-------------------//
+
+    private fun showNoteArchivedBanner() {
+        val banner = findViewById<FrameLayout>(R.id.archivedBanner)
+        banner.visibility = View.VISIBLE
+
+        // Стартовая позиция — сильно выше экрана
+        banner.translationY = -250f
+        banner.alpha = 0f
+        banner.scaleX = 0.97f
+        banner.scaleY = 0.97f
+
+        banner.animate()
+            .translationY(20f)
+            .alpha(1f)
+            .scaleX(1.03f)
+            .scaleY(1.03f)
+            .setDuration(300)
+            .setInterpolator(DecelerateInterpolator())
+            .withEndAction {
+                // Эффект "присаживания"
+                banner.animate()
+                    .scaleX(1f)
+                    .scaleY(1.03f)
+                    .setDuration(100)
+                    .setInterpolator(OvershootInterpolator())
+                    .withEndAction {
+                        banner.postDelayed({
+                            banner.animate()
+                                .translationY(-250f)
+                                .alpha(1f)
+                                .setDuration(600)
+                                .withEndAction {
+                                    banner.visibility = View.GONE
+                                }
+                                .start()
+                        }, 1600)
+                    }
+                    .start()
+            }
+            .start()
+    }
+
+    private fun playCompleteAnimation(noteView: View, onComplete: () -> Unit) {
+        val completeBlock = noteView.findViewById<View>(R.id.complete_block)
+        completeBlock.visibility = View.VISIBLE
+        completeBlock.alpha = 0f
+        completeBlock.scaleX = 0.6f
+        completeBlock.scaleY = 0.6f
+
+        completeBlock.animate()
+            .alpha(1f)
+            .scaleX(1.1f)
+            .scaleY(1.1f)
+            .translationYBy(20f)
+            .setDuration(220)
+            .setInterpolator(DecelerateInterpolator())
+            .withEndAction {
+                completeBlock.animate()
+                    .scaleX(1f)
+                    .scaleY(1f)
+                    .translationYBy(-20f)
+                    .setDuration(160)
+                    .setInterpolator(OvershootInterpolator())
+                    .withEndAction {
+                        // Анимация удаления noteView с сжатием
+                        noteView.animate()
+                            .scaleX(0.9f)
+                            .scaleY(0.9f)
+                            .alpha(0f)
+                            .setDuration(300)
+                            .setInterpolator(DecelerateInterpolator())
+                            .withEndAction {
+                                // Удаляем заметку и пробуем удалить заголовок
+                                val index = linearLayoutNotes.indexOfChild(noteView)
+                                linearLayoutNotes.removeView(noteView)
+
+                                val headerIndex = index - 1
+                                if (headerIndex >= 0) {
+                                    val maybeHeader = linearLayoutNotes.getChildAt(headerIndex)
+                                    val isHeader = maybeHeader?.findViewById<TextView>(R.id.dateTextView) != null
+                                    val isNextNoteHeader = (headerIndex + 1 >= linearLayoutNotes.childCount) ||
+                                            linearLayoutNotes.getChildAt(headerIndex + 1).findViewById<TextView>(R.id.dateTextView) != null
+
+                                    if (isHeader && isNextNoteHeader) {
+                                        linearLayoutNotes.removeView(maybeHeader)
+                                    }
+                                }
+
+                                onComplete()
+                            }
+                            .start()
+                    }
+                    .start()
+            }
             .start()
     }
 }
