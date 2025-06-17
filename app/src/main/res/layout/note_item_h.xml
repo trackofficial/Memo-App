@@ -4,98 +4,107 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:layout_marginTop="5dp"
     android:padding="2dp"
     android:background="@drawable/form_for_note_item"
-    android:layout_marginRight="18dp"
-    android:layout_marginBottom="10dp"
-    android:layout_marginLeft="18dp">
+    android:layout_marginRight="16dp"
+    android:layout_marginLeft="16dp">
 
-    <LinearLayout
-        android:orientation="vertical"
+    <ImageButton
+        android:id="@+id/viewNoteButton"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="20dp">
+        android:layout_height="match_parent"
+        android:background="@color/color_none"/>
+    <!-- Кнопка удаления (перекрывает весь блок, чтобы перехватывать нажатие) -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/for_image"
-            android:layout_height="wrap_content">
-
-            <!-- Оборачиваем только изображение в CardView для округления -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_marginRight="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_height="156dp"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="0dp"
-                app:cardPreventCornerOverlap="false"
-                app:cardUseCompatPadding="false"
-                app:cardBackgroundColor="@android:color/transparent"
-                android:clipToOutline="true">
-
-                <ImageView
-                    android:id="@+id/noteImageView"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="false"
-                    android:scaleType="centerCrop"
-                    android:clipToOutline="true"
-                    android:background="@android:color/transparent" />
-            </androidx.cardview.widget.CardView>
-
-            <FrameLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="6dp"
-                android:paddingLeft="6dp"
-                android:paddingRight="6dp"
-                android:background="@drawable/form_for_timeblock">
-
-                <TextView
-                    android:id="@+id/timeblock"
-                    android:layout_width="wrap_content"
-                    android:layout_height="21dp"
-                    android:layout_gravity="center"
-                    android:fontFamily="@font/liter"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"/>
-            </FrameLayout>
-        </FrameLayout>
-
+        <!-- Основной контент карточки -->
         <LinearLayout
+            android:id="@+id/noteContent"
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="12dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/noteTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/tilda_semibold"
-                android:textColor="@color/white"
-                android:textSize="20sp"
-                android:layout_marginTop="3dp"/>
+            android:paddingBottom="10dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="4dp"
+                android:orientation="vertical">
+
                 <TextView
-                    android:id="@+id/desTextView"
+                    android:id="@+id/noteTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/tilda_medium"
-                    android:textColor="@color/white_mid"
-                    android:textSize="14sp"/>
+                    android:fontFamily="@font/tildasans_extrabold"
+                    android:textColor="@color/black"
+                    android:textSize="21sp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/desTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/tilda_medium"
+                        android:textColor="@color/black_77"
+                        android:textSize="14sp"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginTop="3dp"
+                android:layout_marginLeft="12dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@color/color_none">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="2dp"
+                    android:paddingRight="4dp"
+                    android:background="@drawable/form_for_timeblock">
+                    <ImageView
+                        android:layout_gravity="center_vertical"
+                        android:layout_width="17.5dp"
+                        android:layout_height="17.5dp"
+                        android:background="@drawable/icon_time"/>
+                    <TextView
+                        android:id="@+id/timeblock"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:layout_gravity="center"
+                        android:fontFamily="@font/tildasans_semibold"
+                        android:textColor="@color/black"
+                        android:textSize="14.5sp"/>
+                </LinearLayout>
+
+                <FrameLayout
+                    android:layout_marginLeft="4dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="6dp"
+                    android:paddingRight="6dp"
+                    android:background="@drawable/form_for_timeblock">
+
+                    <TextView
+                        android:id="@+id/dateblock"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:fontFamily="@font/tildasans_semibold"
+                        android:textColor="@color/black"
+                        android:textSize="14.5sp"/>
+                </FrameLayout>
             </LinearLayout>
         </LinearLayout>
-
-    </LinearLayout>
+    </FrameLayout>
 </FrameLayout>

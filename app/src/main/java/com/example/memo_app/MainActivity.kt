@@ -169,49 +169,60 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun loadNotes() {
-        // Очищаем основной контейнер
         linearLayoutNotes.removeAllViews()
 
         val notes = noteDao.getAllNotes()
-        var currentHeader = ""
         val now = Calendar.getInstance()
-        val today = now // сегодняшняя дата
+        val today = now.clone() as Calendar
         val currentWeek = now.get(Calendar.WEEK_OF_YEAR)
         val currentMonth = now.get(Calendar.MONTH)
         val currentYear = now.get(Calendar.YEAR)
+
+        val todayNotes = mutableListOf<Note>()
+        val thisWeekNotes = mutableListOf<Note>()
+        val thisMonthNotes = mutableListOf<Note>()
+        val thisYearNotes = mutableListOf<Note>()
 
         notes.forEach { note ->
             if (note.dateTime.isNullOrEmpty()) return@forEach
 
             try {
-                // Парсим дату заметки
                 val dateTime = dateTimeFormat.parse(note.dateTime)
                 val calNoteDate = Calendar.getInstance().apply { time = dateTime!! }
 
-                // Определяем заголовок для группы заметок
-                val header = when {
-                    isSameDay(calNoteDate, today) -> {
-                        // Заголовок для сегодняшних заметок: Today • 9 July
-                        "Today • ${calNoteDate.get(Calendar.DAY_OF_MONTH)} ${calNoteDate.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.ENGLISH)}"
-                    }
-                    (calNoteDate.get(Calendar.YEAR) == currentYear && calNoteDate.get(Calendar.WEEK_OF_YEAR) == currentWeek) -> "This week"
-                    (calNoteDate.get(Calendar.YEAR) == currentYear && calNoteDate.get(Calendar.MONTH) == currentMonth) -> "This month"
-                    else -> "This year"
+                when {
+                    isSameDay(calNoteDate, today) -> todayNotes.add(note)
+                    calNoteDate.get(Calendar.YEAR) == currentYear &&
+                            calNoteDate.get(Calendar.WEEK_OF_YEAR) == currentWeek -> thisWeekNotes.add(note)
+                    calNoteDate.get(Calendar.YEAR) == currentYear &&
+                            calNoteDate.get(Calendar.MONTH) == currentMonth -> thisMonthNotes.add(note)
+                    else -> thisYearNotes.add(note)
                 }
-
-                // Если заголовок изменился – добавляем новый header в макет
-                if (header != currentHeader) {
-                    addDateHeaderToLayout(header)
-                    currentHeader = header
-                }
-
-                addNoteToLayout(note)
             } catch (e: ParseException) {
                 Log.e("MainActivity", "Error parsing date: ${note.dateTime}", e)
             }
         }
 
-        // Обновляем UI после загрузки всех заметок
+        // Добавление в правильном порядке
+        if (todayNotes.isNotEmpty()) {
+            val todayHeader = "Today • ${today.get(Calendar.DAY_OF_MONTH)} ${today.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.ENGLISH)}"
+            addDateHeaderToLayout(todayHeader)
+            todayNotes.forEach { addNoteToLayout(it) }
+        } else if (thisWeekNotes.isNotEmpty()) {
+            addDateHeaderToLayout("This week")
+            thisWeekNotes.forEach { addNoteToLayout(it) }
+        }
+
+        if (thisMonthNotes.isNotEmpty()) {
+            addDateHeaderToLayout("This month")
+            thisMonthNotes.forEach { addNoteToLayout(it) }
+        }
+
+        if (thisYearNotes.isNotEmpty()) {
+            addDateHeaderToLayout("This year")
+            thisYearNotes.forEach { addNoteToLayout(it) }
+        }
+
         updateUI()
         refreshActiveDates()
         renderWeekCalendar()
@@ -547,16 +558,16 @@ class MainActivity : ComponentActivity() {
         banner.animate()
             .translationY(20f)
             .alpha(1f)
-            .scaleX(1.03f)
-            .scaleY(1.03f)
-            .setDuration(300)
+            .scaleX(1.0f)
+            .scaleY(1.0f)
+            .setDuration(400)
             .setInterpolator(DecelerateInterpolator())
             .withEndAction {
                 // Эффект "присаживания"
                 banner.animate()
                     .scaleX(1f)
-                    .scaleY(1.03f)
-                    .setDuration(100)
+                    .scaleY(1.0f)
+                    .setDuration(200)
                     .setInterpolator(OvershootInterpolator())
                     .withEndAction {
                         banner.postDelayed({
@@ -586,14 +597,14 @@ class MainActivity : ComponentActivity() {
             .alpha(1f)
             .scaleX(1.1f)
             .scaleY(1.1f)
-            .translationYBy(20f)
+            .translationYBy(0f)
             .setDuration(220)
             .setInterpolator(DecelerateInterpolator())
             .withEndAction {
                 completeBlock.animate()
                     .scaleX(1f)
                     .scaleY(1f)
-                    .translationYBy(-20f)
+                    .translationYBy(0f)
                     .setDuration(160)
                     .setInterpolator(OvershootInterpolator())
                     .withEndAction {
@@ -602,7 +613,7 @@ class MainActivity : ComponentActivity() {
                             .scaleX(0.9f)
                             .scaleY(0.9f)
                             .alpha(0f)
-                            .setDuration(300)
+                            .setDuration(100)
                             .setInterpolator(DecelerateInterpolator())
                             .withEndAction {
                                 // Удаляем заметку и пробуем удалить заголовок
