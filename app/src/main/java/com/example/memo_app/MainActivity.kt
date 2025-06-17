@@ -171,19 +171,40 @@ class MainActivity : ComponentActivity() {
     private fun loadNotes() {
         linearLayoutNotes.removeAllViews()
 
-        val notes = noteDao.getAllNotes()
         val now = Calendar.getInstance()
         val today = now.clone() as Calendar
         val currentWeek = now.get(Calendar.WEEK_OF_YEAR)
         val currentMonth = now.get(Calendar.MONTH)
         val currentYear = now.get(Calendar.YEAR)
 
+        val notes = noteDao.getAllNotes()
         val todayNotes = mutableListOf<Note>()
         val thisWeekNotes = mutableListOf<Note>()
         val thisMonthNotes = mutableListOf<Note>()
         val thisYearNotes = mutableListOf<Note>()
 
+        // Архивация просроченных задач
         notes.forEach { note ->
+            if (!note.isDeleted && !note.dateTime.isNullOrBlank()) {
+                try {
+                    val parsedDate = dateTimeFormat.parse(note.dateTime)
+                    val noteTime = Calendar.getInstance().apply { time = parsedDate!! }
+
+                    if (noteTime.before(now)) {
+                        note.isDeleted = true
+                        noteDao.update(note)
+                        Log.d("MainActivity", "Автоматически удалено: ${note.content}")
+                    }
+                } catch (e: ParseException) {
+                    Log.e("MainActivity", "Ошибка парсинга даты: ${note.dateTime}", e)
+                }
+            }
+        }
+
+        // Получаем только активные задачи после фильтрации
+        val activeNotes = noteDao.getAllNotes()
+
+        activeNotes.forEach { note ->
             if (note.dateTime.isNullOrEmpty()) return@forEach
 
             try {
@@ -203,7 +224,6 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        // Добавление в правильном порядке
         if (todayNotes.isNotEmpty()) {
             val todayHeader = "Today • ${today.get(Calendar.DAY_OF_MONTH)} ${today.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.ENGLISH)}"
             addDateHeaderToLayout(todayHeader)
