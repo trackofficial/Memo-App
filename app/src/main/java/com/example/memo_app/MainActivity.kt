@@ -257,7 +257,7 @@ class MainActivity : ComponentActivity() {
 
         descriptionTextView.text = if (!note.description.isNullOrEmpty()) {
             val processed = capitalizeFirstLetter(note.description)
-            if (processed.length > 40) "${processed.take(40)}..." else processed
+            if (processed.length > 30) "${processed.take(30)}..." else processed
         } else {
             "Нет описания"
         }
@@ -313,7 +313,7 @@ class MainActivity : ComponentActivity() {
     // Функция для уменьшения текста после 22 символов
     private fun formatTextWithReducedSize(content: String): Spannable {
         val spannableString = SpannableString(content)
-        if (content.length > 23) {
+        if (content.length > 20) {
             spannableString.setSpan(
                 RelativeSizeSpan(0.8f), // Уменьшаем размер до 80% от оригинального
                 0,
@@ -566,7 +566,7 @@ class MainActivity : ComponentActivity() {
                 // Эффект "присаживания"
                 banner.animate()
                     .scaleX(1f)
-                    .scaleY(1.0f)
+                    .scaleY(1f)
                     .setDuration(200)
                     .setInterpolator(OvershootInterpolator())
                     .withEndAction {

@@ -1,215 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/history_root_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_color_light"
-    android:id="@+id/historynotescreen">
-
-<LinearLayout
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:background="@color/background_color_light">
 
     <LinearLayout
-        android:background="@color/background_color_light"
-        android:layout_marginTop="0dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingTop="5dp"
-        android:id="@+id/text_section">
-        <HorizontalScrollView
-            android:clipToPadding="false"
-            android:padding="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- Основной ScrollView с заметками -->
+        <ScrollView
+            android:id="@+id/scroll_for_block"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:fadeScrollbars="false"
-            android:scrollbars="none"
-            android:id="@+id/horizontalScrollView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clipChildren="false"
-            android:layout_marginTop="4dp">
+            android:scrollbars="none">
 
             <LinearLayout
-                android:id="@+id/linearLayoutSimpleNotes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal" />
-        </HorizontalScrollView>
-        <View
-            android:layout_marginTop="5dp"
-            android:id="@+id/lineView"
-            android:layout_width="match_parent"
-            android:layout_height="1.5dp"
-            android:layout_marginRight="0dp"
-            android:layout_marginLeft="0dp"
-            android:background="@drawable/line_form" />
-    </LinearLayout>
-
-    <!-- Контейнер ScrollView -->
-    <ScrollView
-        android:id="@+id/scroll_for_block"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fadeScrollbars="false"
-        android:scrollbars="none">
-
-        <LinearLayout
-            android:id="@+id/linearLayoutNotes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="5dp">
-        </LinearLayout>
-    </ScrollView>
-</LinearLayout>
-    <LinearLayout
-        android:visibility="gone"
-        android:orientation="vertical"
-        android:id="@+id/block_with_image"
-        android:layout_marginBottom="30dp"
-        android:layout_gravity="center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-        <ImageView
-            android:layout_gravity="center"
-            android:layout_width="110dp"
-            android:layout_height="110dp"
-            android:background="@drawable/havenoplans_image">
-        </ImageView>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="У вас пока что нет планов"
-            android:textSize="18dp"
-            android:textColor="@color/new_color_grey_for_imageblock"
-            android:fontFamily="@font/tilda_semibold">
-        </TextView>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/navigate_block"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="62dp"
-        android:layout_marginBottom="16dp"
-        android:layout_gravity="bottom">
-
-        <!-- Кнопка "Home" -->
-        <LinearLayout
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_width="match_parent"
-            android:layout_height="62dp"
-            android:gravity="center"
-            android:background="@drawable/form_for_navigation_bar">
-
-            <LinearLayout
-                android:layout_gravity="center_vertical"
+                android:id="@+id/linearLayoutNotes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="6dp"
-                android:layout_marginTop="6dp"
-                android:layout_marginLeft="6dp"
-                android:layout_marginRight="6dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.75"></Space>
+                android:orientation="vertical"
+                android:layout_marginTop="5dp" />
+        </ScrollView>
+
+        <!-- Заглушка "У вас пока нет планов" -->
+        <LinearLayout
+            android:id="@+id/block_with_image"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="30dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="110dp"
+                android:layout_height="110dp"
+                android:layout_gravity="center"
+                android:background="@drawable/havenoplans_image" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="У вас пока что нет планов"
+                android:textSize="18sp"
+                android:textColor="@color/new_color_grey_for_imageblock"
+                android:fontFamily="@font/tilda_semibold" />
+        </LinearLayout>
+
+        <!-- Нижняя панель навигации -->
+        <LinearLayout
+            android:id="@+id/navigate_block"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="62dp"
+            android:layout_marginBottom="16dp"
+            android:layout_gravity="bottom">
+
+            <LinearLayout
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="62dp"
+                android:gravity="center"
+                android:background="@drawable/form_for_navigation_bar">
+
                 <LinearLayout
-                    android:gravity="center_horizontal"
-                    android:id="@+id/main_button_place"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
-                    <ImageButton
-                        android:id="@+id/main_button"
-                        android:layout_width="26dp"
-                        android:layout_height="26dp"
-                        android:background="@drawable/main_button"></ImageButton>
-                    <TextView
+                    android:layout_margin="6dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <Space
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Main"
-                        android:textColor="@color/white"
-                        android:fontFamily="@font/tildasans_bold"
-                        android:textSize="9sp"></TextView>
-                </LinearLayout>
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"></Space>
-                <LinearLayout
-                    android:gravity="center_horizontal"
-                    android:id="@+id/calendar_button_place"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-                    <ImageButton
-                        android:id="@+id/statistic_button"
-                        android:layout_width="26dp"
-                        android:layout_height="26dp"
-                        android:background="@drawable/calendar_button"></ImageButton>
-                    <TextView
+                        android:layout_weight="0.75"></Space>
+
+                    <LinearLayout
+                        android:id="@+id/main_button_place"
+                        android:orientation="vertical"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Calendar"
-                        android:textColor="@color/white"
-                        android:fontFamily="@font/tildasans_bold"
-                        android:textSize="9sp"></TextView>
-                </LinearLayout>
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"></Space>
-                <LinearLayout
-                    android:gravity="center_horizontal"
-                    android:id="@+id/focus_button_place"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-                    <ImageButton
-                        android:id="@+id/focus_button"
-                        android:layout_width="26dp"
-                        android:layout_height="26dp"
-                        android:background="@drawable/focus_button"></ImageButton>
-                    <TextView
+                        android:gravity="center_horizontal">
+
+                        <ImageButton
+                            android:id="@+id/main_button"
+                            android:layout_width="26dp"
+                            android:layout_height="26dp"
+                            android:background="@drawable/main_button" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Main"
+                            android:textColor="@color/white"
+                            android:fontFamily="@font/tildasans_bold"
+                            android:textSize="9sp" />
+                    </LinearLayout>
+
+                    <Space
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Focus"
-                        android:textColor="@color/white"
-                        android:fontFamily="@font/tildasans_bold"
-                        android:textSize="9sp"></TextView>
-                </LinearLayout>
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"></Space>
-                <LinearLayout
-                    android:gravity="center"
-                    android:id="@+id/history_button_place"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-                    <ImageButton
-                        android:id="@+id/history_button"
-                        android:layout_width="26dp"
-                        android:layout_height="26dp"
-                        android:background="@drawable/history_button"></ImageButton>
-                    <TextView
+                        android:layout_weight="1"></Space>
+
+                    <LinearLayout
+                        android:id="@+id/calendar_button_place"
+                        android:orientation="vertical"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="History"
-                        android:textColor="@color/white"
-                        android:fontFamily="@font/tildasans_bold"
-                        android:textSize="9sp"></TextView>
+                        android:gravity="center_horizontal">
+
+                        <ImageButton
+                            android:id="@+id/statistic_button"
+                            android:layout_width="26dp"
+                            android:layout_height="26dp"
+                            android:background="@drawable/calendar_button" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Calendar"
+                            android:textColor="@color/white"
+                            android:fontFamily="@font/tildasans_bold"
+                            android:textSize="9sp" />
+                    </LinearLayout>
+
+                    <Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"></Space>
+
+                    <LinearLayout
+                        android:id="@+id/focus_button_place"
+                        android:orientation="vertical"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal">
+
+                        <ImageButton
+                            android:id="@+id/focus_button"
+                            android:layout_width="26dp"
+                            android:layout_height="26dp"
+                            android:background="@drawable/focus_button" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Focus"
+                            android:textColor="@color/white"
+                            android:fontFamily="@font/tildasans_bold"
+                            android:textSize="9sp" />
+                    </LinearLayout>
+
+                    <Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"></Space>
+
+                    <LinearLayout
+                        android:id="@+id/history_button_place"
+                        android:orientation="vertical"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center">
+
+                        <ImageButton
+                            android:id="@+id/history_button"
+                            android:layout_width="26dp"
+                            android:layout_height="26dp"
+                            android:background="@drawable/history_button" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="History"
+                            android:textColor="@color/white"
+                            android:fontFamily="@font/tildasans_bold"
+                            android:textSize="9sp" />
+                    </LinearLayout>
+
+                    <Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.75"></Space>
                 </LinearLayout>
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.75"></Space>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

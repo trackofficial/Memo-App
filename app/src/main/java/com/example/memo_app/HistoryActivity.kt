@@ -102,7 +102,7 @@ class HistoryActivity : ComponentActivity() {
 
         noteTextView.text = note.content
         descriptionTextView.text = if (!note.description.isNullOrBlank()) {
-            if (note.description.length > 40) "${note.description.take(40)}..." else note.description
+            if (note.description.length > 30) "${note.description.take(30)}..." else note.description
         } else "Нет описания"
         try {
             val parsedDate = dateTimeFormat.parse(note.dateTime)
