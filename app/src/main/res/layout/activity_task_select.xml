@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/background_color_light">
+
+    <LinearLayout
+        android:visibility="gone"
+        android:orientation="vertical"
+        android:id="@+id/emptyMessage"
+        android:layout_marginTop="60dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_gravity="center"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:background="@drawable/havenoplans_image">
+        </ImageView>
+        <TextView
+            android:layout_marginTop="5dp"
+            android:layout_gravity="bottom|center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="There's no tasks"
+            android:textSize="18dp"
+            android:textColor="@color/new_color_grey_for_title"
+            android:fontFamily="@font/tildasans_bold">
+        </TextView>
+        <TextView
+            android:layout_gravity="bottom|center"
+            android:layout_width="120sp"
+            android:textAlignment="center"
+            android:layout_height="wrap_content"
+            android:text="You can add task using this button"
+            android:textSize="11dp"
+            android:textColor="@color/new_color_grey_for_imageblock"
+            android:fontFamily="@font/tildasans_bold">
+        </TextView>
+        <ImageView
+            android:layout_marginTop="15dp"
+            android:layout_gravity="center"
+            android:layout_width="65dp"
+            android:layout_height="160dp"
+            android:background="@drawable/arrow_line">
+        </ImageView>
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/dialogRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"/>
+</LinearLayout>
+   

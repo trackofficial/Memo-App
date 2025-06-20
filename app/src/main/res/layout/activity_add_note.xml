@@ -27,7 +27,7 @@
                     <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/noteImageView"
                         android:layout_width="match_parent"
-                        android:layout_height="205dp"
+                        android:layout_height="205sp"
                         android:scaleType="centerCrop"
                         app:shapeAppearanceOverlay="@style/RoundedCornersOneSide" />
                     <LinearLayout

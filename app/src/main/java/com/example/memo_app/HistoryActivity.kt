@@ -49,7 +49,10 @@ class HistoryActivity : ComponentActivity() {
         focusButtonPlace = findViewById(R.id.focus_button_place)
         historyButtonPlace = findViewById(R.id.history_button_place)
 
-        updateNavigationSelection(historyButtonPlace)
+        mainButtonPlace.alpha = 0.5f
+        calendarButtonPlace.alpha = 0.5f
+        focusButtonPlace.alpha = 0.5f
+        historyButtonPlace.alpha = 1f
 
         buttonAddNote.setOnClickListener {
             animateButtonClick(buttonAddNote)
@@ -63,6 +66,8 @@ class HistoryActivity : ComponentActivity() {
 
         focusButton.setOnClickListener {
             animateButtonClick(focusButton)
+            startActivity(Intent(this, FocusActivity::class.java))
+            overridePendingTransition(0, 0)
         }
 
         buttonViewCalendar.setOnClickListener {

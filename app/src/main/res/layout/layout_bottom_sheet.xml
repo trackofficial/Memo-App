@@ -6,21 +6,12 @@
     android:gravity="center"
     android:background="@drawable/form_for_select_block"
     android:padding="16dp">
-
-    <View
-        android:id="@+id/pullHandle"
-        android:layout_width="80dp"
-        android:layout_height="4dp"
-        android:layout_gravity="center_horizontal"
-        android:background="@drawable/form_for_navigation_bar" />
-
-
     <LinearLayout
         android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="16dp"
         android:layout_marginBottom="20dp"
         android:orientation="vertical">
     <LinearLayout
@@ -40,8 +31,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Add time"
-                android:textColor="@color/white"
-                android:fontFamily="@font/songer"></TextView>
+                android:textColor="@color/black"
+                android:fontFamily="@font/tildasans_bold"></TextView>
             <View
                 android:layout_width="80dp"
                 android:layout_height="2dp"
@@ -164,8 +155,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Add lists"
-            android:textColor="@color/white"
-            android:fontFamily="@font/songer"></TextView>
+            android:textColor="@color/black"
+            android:fontFamily="@font/tildasans_bold"></TextView>
         <View
             android:layout_width="80dp"
             android:layout_height="2dp"

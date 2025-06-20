@@ -75,6 +75,7 @@ class CalendarActivity : AppCompatActivity() {
         }
         focusButton.setOnClickListener {
             animateButtonClick(focusButton)
+            startActivity(Intent(this, FocusActivity::class.java))
             overridePendingTransition(0,0)
         }
         buttonViewCalendar.setOnClickListener {
