@@ -10,10 +10,48 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
+        <FrameLayout
+            android:layout_marginTop="12dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+        <FrameLayout
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:paddingRight="8dp"
+            android:paddingLeft="8dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/form_for_main_button">
+            <ImageButton
+                android:background="@drawable/form_for_main_button"
+                android:id="@+id/change_block_button"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            </ImageButton>
+            <TextView
+                android:layout_width="wrap_content"
+                android:textSize="14dp"
+                android:layout_height="wrap_content"
+                android:text="Choose another task"
+                android:fontFamily="@font/tildasans_semibold"
+                android:textColor="@color/white">
+            </TextView>
+        </FrameLayout>
+            <ImageButton
+                android:id="@+id/timer_settings_button"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:layout_gravity="center_horizontal|end"
+                android:background="@drawable/settings_button"
+                android:contentDescription="Timer settings"/>
+        </FrameLayout>
         <!-- Верхняя область: блок note_item и кнопка смены блока -->
         <LinearLayout
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="2dp"
             android:id="@+id/top_note_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -26,33 +64,17 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"/>
 
-            <!-- Кнопка для смены блока -->
-            <FrameLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <ImageButton
-                    android:background="@drawable/form_for_main_button"
-                    android:id="@+id/change_block_button"
-                    android:layout_width="76dp"
-                    android:layout_height="32dp">
-                </ImageButton>
-                <ImageView
-                    android:layout_gravity="center"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:background="@drawable/add_icon">
-                </ImageView>
-            </FrameLayout>
+
         </LinearLayout>
 
         <!-- Центральная область: таймер Pomodoro с кольцом -->
         <FrameLayout
+            android:layout_marginBottom="70dp"
             android:id="@+id/timer_container"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:layout_gravity="center"
-            android:padding="16dp">
+            android:layout_gravity="center">
 
             <!-- Кастомное кольцо: CircularProgressView -->
             <com.example.memo_app.CircularProgressView
@@ -62,15 +84,32 @@
                 android:layout_height="200dp"/>
 
             <!-- Текст таймера по центру кольца -->
-            <TextView
-                android:id="@+id/timer_text"
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="25:00"
-                android:textSize="36sp"
-                android:textColor="@color/black"
-                android:fontFamily="@font/tildasans_bold"/>
+                android:orientation="vertical"
+                android:layout_gravity="center">
+                <TextView
+                    android:id="@+id/timer_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="25:00"
+                    android:textSize="36sp"
+                    android:textColor="@color/black"
+                    android:fontFamily="@font/tildasans_bold"/>
+                <TextView
+                    android:id="@+id/cycle_count_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:padding="8dp"
+                    android:text="0/4"
+                    android:textSize="16sp"
+                    android:textColor="@color/black_77"
+                    android:fontFamily="@font/tildasans_semibold"/>
+            </LinearLayout>
         </FrameLayout>
 
         <!-- Новый горизонтальный блок для управления таймером (Пауза/Проигрывание и Сброс) -->
@@ -109,31 +148,8 @@
                 android:contentDescription="Reset Timer"/>
 </FrameLayout>
         </LinearLayout>
-        <!-- Под таймером – счётчик циклов -->
-        <TextView
-            android:id="@+id/cycle_count_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:padding="8dp"
-            android:text="0/4"
-            android:textSize="16sp"
-            android:textColor="@color/black"
-            android:fontFamily="@font/tildasans_semibold"/>
 
-        <!-- Кнопка перехода к настройкам таймера -->
-        <ImageButton
-            android:id="@+id/timer_settings_button"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_gravity="center_horizontal"
-            android:background="@drawable/settings_button"
-            android:contentDescription="Timer settings"/>
 
-        <!-- Небольшой отступ -->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="16dp"/>
 
         <!-- Нижняя навигационная панель -->
         <LinearLayout
