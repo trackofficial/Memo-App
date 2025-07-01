@@ -10,6 +10,7 @@ import android.graphics.Color
 import android.media.Image
 import android.os.Build
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.RelativeSizeSpan
@@ -37,6 +38,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.marginLeft
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
@@ -44,6 +46,7 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import java.util.concurrent.TimeUnit
 
 class MainActivity : ComponentActivity() {
 
@@ -172,77 +175,82 @@ class MainActivity : ComponentActivity() {
     private fun loadNotes() {
         linearLayoutNotes.removeAllViews()
 
-        val now = Calendar.getInstance()
-        val today = now.clone() as Calendar
-        val currentWeek = now.get(Calendar.WEEK_OF_YEAR)
-        val currentMonth = now.get(Calendar.MONTH)
-        val currentYear = now.get(Calendar.YEAR)
+        val now = System.currentTimeMillis()
+        val oneHourMs = TimeUnit.HOURS.toMillis(1)
+        val all = noteDao.getAllNotes().toMutableList()
 
-        val notes = noteDao.getAllNotes()
-        val todayNotes = mutableListOf<Note>()
-        val thisWeekNotes = mutableListOf<Note>()
-        val thisMonthNotes = mutableListOf<Note>()
-        val thisYearNotes = mutableListOf<Note>()
+        // 1. Проходим по всем, удаляем те, что уже «отжили» свой час
+        all.forEach { note ->
+            val dt = note.dateTime
+            if (dt.isNullOrBlank()) return@forEach
 
-        // Архивация просроченных задач
-        notes.forEach { note ->
-            if (!note.isDeleted && !note.dateTime.isNullOrBlank()) {
-                try {
-                    val parsedDate = dateTimeFormat.parse(note.dateTime)
-                    val noteTime = Calendar.getInstance().apply { time = parsedDate!! }
+            val parsed = try {
+                dateTimeFormat.parse(dt)!!.time
+            } catch (e: Exception) {
+                return@forEach
+            }
 
-                    if (noteTime.before(now)) {
-                        note.isDeleted = true
-                        noteDao.update(note)
-                        Log.d("MainActivity", "Автоматически удалено: ${note.content}")
-                    }
-                } catch (e: ParseException) {
-                    Log.e("MainActivity", "Ошибка парсинга даты: ${note.dateTime}", e)
-                }
+            // если более часа прошло с момента dateTime — удаляем сразу
+            if (now > parsed + oneHourMs) {
+                note.isDeleted = true
+                noteDao.update(note)
             }
         }
 
-        // Получаем только активные задачи после фильтрации
-        val activeNotes = noteDao.getAllNotes()
+        // 2. Снова подбираем активные (после тех удалений)
+        val active = noteDao.getAllNotes().filter { !it.isDeleted }
 
-        activeNotes.forEach { note ->
-            if (note.dateTime.isNullOrEmpty()) return@forEach
+        // 3. Группируем по Today / This Week / etc
+        val today = Calendar.getInstance()
+        val currentWeek = today.get(Calendar.WEEK_OF_YEAR)
+        val currentMonth = today.get(Calendar.MONTH)
+        val currentYear = today.get(Calendar.YEAR)
 
-            try {
-                val dateTime = dateTimeFormat.parse(note.dateTime)
-                val calNoteDate = Calendar.getInstance().apply { time = dateTime!! }
-
-                when {
-                    isSameDay(calNoteDate, today) -> todayNotes.add(note)
-                    calNoteDate.get(Calendar.YEAR) == currentYear &&
-                            calNoteDate.get(Calendar.WEEK_OF_YEAR) == currentWeek -> thisWeekNotes.add(note)
-                    calNoteDate.get(Calendar.YEAR) == currentYear &&
-                            calNoteDate.get(Calendar.MONTH) == currentMonth -> thisMonthNotes.add(note)
-                    else -> thisYearNotes.add(note)
-                }
-            } catch (e: ParseException) {
-                Log.e("MainActivity", "Error parsing date: ${note.dateTime}", e)
+        fun List<Note>.forEachWithWasted(block: (Note, Boolean) -> Unit) {
+            forEach { note ->
+                val dt = note.dateTime ?: return@forEach
+                val parsed = try { dateTimeFormat.parse(dt)!!.time } catch (_: Exception) { return@forEach }
+                val isWasted = parsed < now && now <= parsed + oneHourMs
+                block(note, isWasted)
             }
+        }
+
+        val todayNotes = mutableListOf<Note>()
+        val weekNotes = mutableListOf<Note>()
+        val monthNotes = mutableListOf<Note>()
+        val yearNotes = mutableListOf<Note>()
+
+        active.forEach { note ->
+            val parsed = dateTimeFormat.parse(note.dateTime!!)!!.time
+            val cal = Calendar.getInstance().apply { timeInMillis = parsed }
+
+            when {
+                isSameDay(cal, today) ->
+                    todayNotes += note
+                cal.get(Calendar.YEAR) == currentYear && cal.get(Calendar.WEEK_OF_YEAR) == currentWeek ->
+                    weekNotes += note
+                cal.get(Calendar.YEAR) == currentYear && cal.get(Calendar.MONTH) == currentMonth ->
+                    monthNotes += note
+                else ->
+                    yearNotes += note
+            }
+        }
+
+        fun renderGroup(header: String, notes: List<Note>) {
+            addDateHeaderToLayout(header)
+            notes.forEachWithWasted { n, wasted -> addNoteToLayout(n, wasted) }
         }
 
         if (todayNotes.isNotEmpty()) {
-            val todayHeader = "Today • ${today.get(Calendar.DAY_OF_MONTH)} ${today.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.ENGLISH)}"
-            addDateHeaderToLayout(todayHeader)
-            todayNotes.forEach { addNoteToLayout(it) }
-        } else if (thisWeekNotes.isNotEmpty()) {
-            addDateHeaderToLayout("This week")
-            thisWeekNotes.forEach { addNoteToLayout(it) }
+            renderGroup("Today • ${today.get(Calendar.DAY_OF_MONTH)} " +
+                    "${today.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale("en"))}",
+                todayNotes)
+        } else if (weekNotes.isNotEmpty()) {
+            renderGroup("This week", weekNotes)
         }
 
-        if (thisMonthNotes.isNotEmpty()) {
-            addDateHeaderToLayout("This month")
-            thisMonthNotes.forEach { addNoteToLayout(it) }
-        }
-
-        if (thisYearNotes.isNotEmpty()) {
-            addDateHeaderToLayout("This year")
-            thisYearNotes.forEach { addNoteToLayout(it) }
-        }
+        if (monthNotes.isNotEmpty()) renderGroup("This month", monthNotes)
+        if (yearNotes.isNotEmpty())  renderGroup("This year",  yearNotes)
 
         updateUI()
         refreshActiveDates()
@@ -263,56 +271,48 @@ class MainActivity : ComponentActivity() {
         Log.d("MainActivity", "Date header added: $date")
     }
 
-    private fun addNoteToLayout(note: Note) {
+    private fun addNoteToLayout(note: Note, isWasted: Boolean) {
         val inflater = LayoutInflater.from(this)
         val noteView = inflater.inflate(R.layout.note_item, linearLayoutNotes, false) as ViewGroup
 
-        val noteTextView = noteView.findViewById<TextView>(R.id.noteTextView)
-        val descriptionTextView = noteView.findViewById<TextView>(R.id.desTextView)
-        val timeTextView = noteView.findViewById<TextView>(R.id.timeblock)
-        val dateBlockView = noteView.findViewById<TextView>(R.id.dateblock)
-        val editButton = noteView.findViewById<ImageButton>(R.id.deleteButton)
-        val completeButton = noteView.findViewById<ImageButton>(R.id.completeButton) // <-- fixed
-
-        noteTextView.text = formatTextWithReducedSize(note.content)
-
-        descriptionTextView.text = if (!note.description.isNullOrEmpty()) {
-            val processed = capitalizeFirstLetter(note.description)
-            if (processed.length > 30) "${processed.take(30)}..." else processed
-        } else {
-            "Нет описания"
-        }
+        val blockdate = noteView.findViewById<FrameLayout>(R.id.blockdate)
+        val tvTitle = noteView.findViewById<TextView>(R.id.noteTextView)
+        val tvDesc = noteView.findViewById<TextView>(R.id.desTextView)
+        val tvTime = noteView.findViewById<TextView>(R.id.timeblock)
+        val tvDate = noteView.findViewById<TextView>(R.id.dateblock)
+        val btnComplete = noteView.findViewById<ImageButton>(R.id.completeButton)
+        val btnEdit = noteView.findViewById<ImageButton>(R.id.deleteButton)
+        var wastedBlock = noteView.findViewById<View>(R.id.wastedblock)
+// заполнение полей
+        tvTitle.text = formatTextWithReducedSize(note.content)
+        tvDesc.text  = note.description?.let {
+            val c = capitalizeFirstLetter(it)
+            if (c.length > 30) "${c.take(30)}..." else c
+        } ?: "Нет описания"
 
         try {
-            val parsedDate = dateTimeFormat.parse(note.dateTime)
-            val calendar = Calendar.getInstance().apply { time = parsedDate!! }
+            val ts = dateTimeFormat.parse(note.dateTime!!).time
+            val cal = Calendar.getInstance().apply { timeInMillis = ts }
+            tvTime.text = "${cal.get(Calendar.HOUR_OF_DAY)}:" + "${String.format("%02d", cal.get(Calendar.MINUTE))}"
 
-            val formattedTime = "${calendar.get(Calendar.HOUR_OF_DAY)}:${String.format("%02d", calendar.get(Calendar.MINUTE))}"
-            timeTextView.text = formattedTime
-
-            val noteDay = calendar.get(Calendar.DAY_OF_MONTH)
-            val noteMonth = calendar.get(Calendar.MONTH)
-            val noteYear = calendar.get(Calendar.YEAR)
-            val currentYear = Calendar.getInstance().get(Calendar.YEAR)
-
-            if (isSameDay(calendar, Calendar.getInstance())) {
-                dateBlockView.visibility = View.GONE
+            if (isSameDay(cal, Calendar.getInstance())) {
+                tvDate.visibility = View.GONE
+                blockdate.visibility = View.GONE
             } else {
-                dateBlockView.visibility = View.VISIBLE
-                dateBlockView.text = if (noteYear != currentYear) {
-                    noteYear.toString()
-                } else {
-                    String.format("%02d.%02d", noteDay, noteMonth + 1)
-                }
+                tvDate.visibility = View.VISIBLE
+                val cy = Calendar.getInstance().get(Calendar.YEAR)
+                tvDate.text = if (cal.get(Calendar.YEAR) != cy)
+                    cal.get(Calendar.YEAR).toString()
+                else
+                    String.format("%02d.%02d", cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.MONTH) + 1)
             }
-        } catch (e: Exception) {
-            Log.e("MainActivity", "Error parsing dateTime: ${note.dateTime}", e)
-            timeTextView.text = "Время: не указано"
-        }
+        } catch (_: Exception) {}
 
-        // Обработка completeButton
-        completeButton.setOnClickListener {
-            animateButtonClick(completeButton)
+        wastedBlock.visibility = if (isWasted) {View.VISIBLE} else View.GONE
+
+
+        btnComplete.setOnClickListener {
+            animateButtonClick(btnComplete)
             playCompleteAnimation(noteView) {
                 note.isDeleted = true
                 noteDao.update(note)
@@ -320,18 +320,14 @@ class MainActivity : ComponentActivity() {
                 showNoteArchivedBanner()
             }
         }
-
-        editButton.setOnClickListener {
-            val intent = Intent(this, EditNoteActivity::class.java)
-            intent.putExtra("noteId", note.id)
-            startActivity(intent)
+        btnEdit.setOnClickListener {
+            startActivity(Intent(this, EditNoteActivity::class.java)
+                .putExtra("noteId", note.id))
         }
 
         linearLayoutNotes.addView(noteView)
-        updateUI()
     }
 
-    // Функция для уменьшения текста после 22 символов
     private fun formatTextWithReducedSize(content: String): Spannable {
         val spannableString = SpannableString(content)
         if (content.length > 20) {
@@ -345,7 +341,6 @@ class MainActivity : ComponentActivity() {
         return spannableString
     }
 
-    // Функция для преобразования первой буквы в заглавную
     private fun capitalizeFirstLetter(text: String?): String {
         return text?.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } ?: ""
     }

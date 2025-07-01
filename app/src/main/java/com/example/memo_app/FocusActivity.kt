@@ -7,6 +7,9 @@ import android.content.SharedPreferences
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.RelativeSizeSpan
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -485,7 +488,6 @@ class FocusActivity : ComponentActivity() {
 
     private fun loadTaskBlock(note: Note?) {
         noteBlockContainer.removeAllViews()
-
         if (note == null) {
             val emptyView = LayoutInflater.from(this).inflate(R.layout.note_item_none, noteBlockContainer, false)
             noteBlockContainer.addView(emptyView)
@@ -493,9 +495,15 @@ class FocusActivity : ComponentActivity() {
         }
 
         val view = LayoutInflater.from(this).inflate(R.layout.note_item, noteBlockContainer, false)
-
-        view.findViewById<TextView>(R.id.noteTextView).text = note.content
-        view.findViewById<TextView>(R.id.desTextView).text = note.description
+        val title = view.findViewById<TextView>(R.id.noteTextView)
+        val description = view.findViewById<TextView>(R.id.desTextView)
+        title.text = note.content
+        description.text = if (!note.description.isNullOrEmpty()) {
+            val processed = capitalizeFirstLetter(note.description)
+            if (processed.length > 30) "${processed.take(30)}..." else processed
+        } else {
+            "Нет описания"
+        }
 
         note.dateTime?.let {
             try {
@@ -538,6 +546,19 @@ class FocusActivity : ComponentActivity() {
             .start()
     }
 
+    private fun formatTextWithReducedSize(content: String): Spannable {
+        val spannableString = SpannableString(content)
+        if (content.length > 20) {
+            spannableString.setSpan(
+                RelativeSizeSpan(0.8f), // Уменьшаем размер до 80% от оригинального
+                0,
+                content.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+        return spannableString
+    }
+
     private fun fadeOutBlock(view: View, onEnd: () -> Unit) {
         view.animate()
             .scaleX(0.95f)
@@ -546,5 +567,8 @@ class FocusActivity : ComponentActivity() {
             .setDuration(180)
             .withEndAction { onEnd() }
             .start()
+    }
+    private fun capitalizeFirstLetter(text: String?): String {
+        return text?.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } ?: ""
     }
 }

@@ -54,143 +54,144 @@
                 android:fontFamily="@font/tilda_semibold" />
         </LinearLayout>
 
-        <!-- Нижняя панель навигации -->
+
+    </LinearLayout>
+    <!-- Нижняя панель навигации -->
+    <LinearLayout
+        android:id="@+id/navigate_block"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="62dp"
+        android:layout_marginBottom="16dp"
+        android:layout_gravity="bottom">
+
         <LinearLayout
-            android:id="@+id/navigate_block"
-            android:orientation="horizontal"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
             android:layout_width="match_parent"
             android:layout_height="62dp"
-            android:layout_marginBottom="16dp"
-            android:layout_gravity="bottom">
+            android:gravity="center"
+            android:background="@drawable/form_for_navigation_bar">
 
             <LinearLayout
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
                 android:layout_width="match_parent"
-                android:layout_height="62dp"
-                android:gravity="center"
-                android:background="@drawable/form_for_navigation_bar">
+                android:layout_height="wrap_content"
+                android:layout_margin="6dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.75"></Space>
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:id="@+id/main_button_place"
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="6dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:gravity="center_horizontal">
 
-                    <Space
+                    <ImageButton
+                        android:id="@+id/main_button"
+                        android:layout_width="26dp"
+                        android:layout_height="26dp"
+                        android:background="@drawable/main_button" />
+
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.75"></Space>
-
-                    <LinearLayout
-                        android:id="@+id/main_button_place"
-                        android:orientation="vertical"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_horizontal">
-
-                        <ImageButton
-                            android:id="@+id/main_button"
-                            android:layout_width="26dp"
-                            android:layout_height="26dp"
-                            android:background="@drawable/main_button" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Main"
-                            android:textColor="@color/white"
-                            android:fontFamily="@font/tildasans_bold"
-                            android:textSize="9sp" />
-                    </LinearLayout>
-
-                    <Space
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"></Space>
-
-                    <LinearLayout
-                        android:id="@+id/calendar_button_place"
-                        android:orientation="vertical"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_horizontal">
-
-                        <ImageButton
-                            android:id="@+id/statistic_button"
-                            android:layout_width="26dp"
-                            android:layout_height="26dp"
-                            android:background="@drawable/calendar_button" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Calendar"
-                            android:textColor="@color/white"
-                            android:fontFamily="@font/tildasans_bold"
-                            android:textSize="9sp" />
-                    </LinearLayout>
-
-                    <Space
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"></Space>
-
-                    <LinearLayout
-                        android:id="@+id/focus_button_place"
-                        android:orientation="vertical"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_horizontal">
-
-                        <ImageButton
-                            android:id="@+id/focus_button"
-                            android:layout_width="26dp"
-                            android:layout_height="26dp"
-                            android:background="@drawable/focus_button" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Focus"
-                            android:textColor="@color/white"
-                            android:fontFamily="@font/tildasans_bold"
-                            android:textSize="9sp" />
-                    </LinearLayout>
-
-                    <Space
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"></Space>
-
-                    <LinearLayout
-                        android:id="@+id/history_button_place"
-                        android:orientation="vertical"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center">
-
-                        <ImageButton
-                            android:id="@+id/history_button"
-                            android:layout_width="26dp"
-                            android:layout_height="26dp"
-                            android:background="@drawable/history_button" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="History"
-                            android:textColor="@color/white"
-                            android:fontFamily="@font/tildasans_bold"
-                            android:textSize="9sp" />
-                    </LinearLayout>
-
-                    <Space
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.75"></Space>
+                        android:text="Main"
+                        android:textColor="@color/white"
+                        android:fontFamily="@font/tildasans_bold"
+                        android:textSize="9sp" />
                 </LinearLayout>
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"></Space>
+
+                <LinearLayout
+                    android:id="@+id/calendar_button_place"
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal">
+
+                    <ImageButton
+                        android:id="@+id/statistic_button"
+                        android:layout_width="26dp"
+                        android:layout_height="26dp"
+                        android:background="@drawable/calendar_button" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Calendar"
+                        android:textColor="@color/white"
+                        android:fontFamily="@font/tildasans_bold"
+                        android:textSize="9sp" />
+                </LinearLayout>
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"></Space>
+
+                <LinearLayout
+                    android:id="@+id/focus_button_place"
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal">
+
+                    <ImageButton
+                        android:id="@+id/focus_button"
+                        android:layout_width="26dp"
+                        android:layout_height="26dp"
+                        android:background="@drawable/focus_button" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Focus"
+                        android:textColor="@color/white"
+                        android:fontFamily="@font/tildasans_bold"
+                        android:textSize="9sp" />
+                </LinearLayout>
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"></Space>
+
+                <LinearLayout
+                    android:id="@+id/history_button_place"
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center">
+
+                    <ImageButton
+                        android:id="@+id/history_button"
+                        android:layout_width="26dp"
+                        android:layout_height="26dp"
+                        android:background="@drawable/history_button" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="History"
+                        android:textColor="@color/white"
+                        android:fontFamily="@font/tildasans_bold"
+                        android:textSize="9sp" />
+                </LinearLayout>
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.75"></Space>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
