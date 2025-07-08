@@ -151,7 +151,12 @@ class MainActivity : ComponentActivity() {
             overridePendingTransition(0,0)
         }
 
-
+        val undatedButton = findViewById<ImageButton>(R.id.undatebutton)
+        undatedButton.setOnClickListener {
+            animateButtonClick(undatedButton)
+            startActivity(Intent(this, WithoutDateActivity::class.java))
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+        }
 
         val deletedNoteId = intent.getIntExtra("deletedNoteId", -1)
         if (deletedNoteId != -1) {
@@ -179,28 +184,20 @@ class MainActivity : ComponentActivity() {
         val oneHourMs = TimeUnit.HOURS.toMillis(1)
         val all = noteDao.getAllNotes().toMutableList()
 
-        // 1. Проходим по всем, удаляем те, что уже «отжили» свой час
+        // Удаляем просроченные задачи, чья дата + 1 час < now
         all.forEach { note ->
             val dt = note.dateTime
             if (dt.isNullOrBlank()) return@forEach
 
-            val parsed = try {
-                dateTimeFormat.parse(dt)!!.time
-            } catch (e: Exception) {
-                return@forEach
-            }
-
-            // если более часа прошло с момента dateTime — удаляем сразу
+            val parsed = parseFlexibleDate(dt) ?: return@forEach
             if (now > parsed + oneHourMs) {
                 note.isDeleted = true
                 noteDao.update(note)
             }
         }
 
-        // 2. Снова подбираем активные (после тех удалений)
         val active = noteDao.getAllNotes().filter { !it.isDeleted }
 
-        // 3. Группируем по Today / This Week / etc
         val today = Calendar.getInstance()
         val currentWeek = today.get(Calendar.WEEK_OF_YEAR)
         val currentMonth = today.get(Calendar.MONTH)
@@ -209,7 +206,7 @@ class MainActivity : ComponentActivity() {
         fun List<Note>.forEachWithWasted(block: (Note, Boolean) -> Unit) {
             forEach { note ->
                 val dt = note.dateTime ?: return@forEach
-                val parsed = try { dateTimeFormat.parse(dt)!!.time } catch (_: Exception) { return@forEach }
+                val parsed = parseFlexibleDate(dt) ?: return@forEach
                 val isWasted = parsed < now && now <= parsed + oneHourMs
                 block(note, isWasted)
             }
@@ -221,18 +218,16 @@ class MainActivity : ComponentActivity() {
         val yearNotes = mutableListOf<Note>()
 
         active.forEach { note ->
-            val parsed = dateTimeFormat.parse(note.dateTime!!)!!.time
+            val parsed = parseFlexibleDate(note.dateTime ?: "") ?: return@forEach
             val cal = Calendar.getInstance().apply { timeInMillis = parsed }
 
             when {
-                isSameDay(cal, today) ->
-                    todayNotes += note
+                isSameDay(cal, today) -> todayNotes += note
                 cal.get(Calendar.YEAR) == currentYear && cal.get(Calendar.WEEK_OF_YEAR) == currentWeek ->
                     weekNotes += note
                 cal.get(Calendar.YEAR) == currentYear && cal.get(Calendar.MONTH) == currentMonth ->
                     monthNotes += note
-                else ->
-                    yearNotes += note
+                else -> yearNotes += note
             }
         }
 
@@ -242,15 +237,13 @@ class MainActivity : ComponentActivity() {
         }
 
         if (todayNotes.isNotEmpty()) {
-            renderGroup("Today • ${today.get(Calendar.DAY_OF_MONTH)} " +
-                    "${today.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale("en"))}",
-                todayNotes)
+            renderGroup("Today • ${today.get(Calendar.DAY_OF_MONTH)} ${today.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale("en"))}", todayNotes)
         } else if (weekNotes.isNotEmpty()) {
             renderGroup("This week", weekNotes)
         }
 
         if (monthNotes.isNotEmpty()) renderGroup("This month", monthNotes)
-        if (yearNotes.isNotEmpty())  renderGroup("This year",  yearNotes)
+        if (yearNotes.isNotEmpty()) renderGroup("This year", yearNotes)
 
         updateUI()
         refreshActiveDates()
@@ -260,6 +253,24 @@ class MainActivity : ComponentActivity() {
     private fun isSameDay(cal1: Calendar, cal2: Calendar): Boolean {
         return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
                 cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)
+    }
+
+    private fun parseFlexibleDate(input: String): Long? {
+        val formats = listOf(
+            "yyyy-MM-dd HH:mm",
+            "yyyy-M-d HH:mm",
+            "yyyy-MM-dd",
+            "yyyy-M-d"
+        )
+
+        for (format in formats) {
+            try {
+                val df = SimpleDateFormat(format, Locale.getDefault())
+                return df.parse(input)?.time
+            } catch (_: Exception) {
+            }
+        }
+        return null
     }
 
     private fun addDateHeaderToLayout(date: String) {

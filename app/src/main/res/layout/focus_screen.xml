@@ -27,6 +27,11 @@
             android:layout_height="wrap_content"
             android:background="@drawable/form_for_main_button">
             <ImageButton
+                android:layout_gravity="center"
+                android:paddingBottom="4dp"
+                android:paddingTop="4dp"
+                android:paddingLeft="54dp"
+                android:paddingRight="54dp"
                 android:background="@drawable/form_for_main_button"
                 android:id="@+id/change_block_button"
                 android:layout_width="match_parent"
