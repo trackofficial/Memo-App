@@ -109,21 +109,29 @@ class HistoryActivity : ComponentActivity() {
         descriptionTextView.text = if (!note.description.isNullOrBlank()) {
             if (note.description.length > 30) "${note.description.take(30)}..." else note.description
         } else "Нет описания"
-        try {
-            val parsedDate = dateTimeFormat.parse(note.dateTime)
-            val cal = Calendar.getInstance().apply { time = parsedDate!! }
-
-            val timeStr = String.format("%02d:%02d", cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE))
-            val dateStr = String.format("%02d.%02d.%04d", cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.YEAR))
-
-            timeTextView.text = timeStr
-            dateTextView.text = dateStr
-        } catch (e: ParseException) {
-            Log.e("HistoryActivity", "Ошибка парсинга даты: ${note.dateTime}", e)
+        if (note.dateTime.isNullOrBlank()) {
             timeTextView.text = "-"
             dateTextView.text = "-"
-        }
+            timeTextView.setTextColor(getColor(R.color.black_77))
+            dateTextView.setTextColor(getColor(R.color.black_77))
+        } else {
+            try {
+                val parsedDate = dateTimeFormat.parse(note.dateTime)
+                val cal = Calendar.getInstance().apply { time = parsedDate!! }
 
+                val timeStr = String.format("%02d:%02d", cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE))
+                val dateStr = String.format("%02d.%02d.%04d", cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.YEAR))
+
+                timeTextView.text = timeStr
+                dateTextView.text = dateStr
+
+            } catch (e: ParseException) {
+                Log.e("HistoryActivity", "Ошибка парсинга даты: ${note.dateTime}", e)
+                timeTextView.text = "-"
+                dateTextView.text = "-"
+            }
+
+        }
         viewNoteButton.setOnClickListener {
             val intent = Intent(this, ViewNoteActivity::class.java)
             intent.putExtra("noteId", note.id)
