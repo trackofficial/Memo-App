@@ -14,7 +14,9 @@ ___
     + :calendar: Reminders: Receive notifications and reminders about upcoming tasks.
     + :sunrise_over_mountains: Categories: Organize tasks into categories for easy management.
     + :art: Improved UI: A modern and user-friendly interface that ensures comfortable use.
-
+___
+**License**
+This under the MIT License – see the LICENSE file for details.
 <p align="center">
   <img src="![Memo - for Github](https://github.com/user-attachments/assets/d9f1c225-10cf-45db-a2c5-06e95142bf7a)
 "></p>
