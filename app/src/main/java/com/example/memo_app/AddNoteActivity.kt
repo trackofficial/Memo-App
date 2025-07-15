@@ -99,14 +99,12 @@ class AddNoteActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_note)
-        exitbutton = findViewById(R.id.exit_button)
         editTextNoteContent = findViewById(R.id.editTextNoteContent)
         editTextDescription = findViewById(R.id.editAddText)
         editTextTime = findViewById(R.id.editTextTime)
         buttonSaveNote = findViewById(R.id.buttonSave)
         buttonSelectImage = findViewById(R.id.buttonSelectImage)
         imageViewNote = findViewById(R.id.noteImageView)
-        blockexitbutton = findViewById(R.id.block_createblock)
         blockmainbutton = findViewById(R.id.block_createblock_main)
         buttonelement = findViewById(R.id.buttonshowbaroptions)
         blockelement = findViewById(R.id.blockelement)
@@ -304,10 +302,6 @@ class AddNoteActivity : ComponentActivity() {
             datePickerDialog.show()
         }
 
-        exitbutton.setOnClickListener {
-            animateButtonClick(blockexitbutton)
-            startActivity(Intent(this, MainActivity::class.java))
-        }
         buttonelement.setOnClickListener {
             animateButtonClick(blockelement)
             showBottomSheet()

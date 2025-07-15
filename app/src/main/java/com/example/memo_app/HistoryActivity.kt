@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.ScaleAnimation
+import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.ScrollView
@@ -27,10 +28,7 @@ class HistoryActivity : ComponentActivity() {
     private lateinit var buttonViewCalendar: ImageButton
     private lateinit var focusButton: ImageButton
 
-    private lateinit var mainButtonPlace: LinearLayout
-    private lateinit var calendarButtonPlace: LinearLayout
-    private lateinit var focusButtonPlace: LinearLayout
-    private lateinit var historyButtonPlace: LinearLayout
+    private lateinit var mainButtonPlace: FrameLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,39 +38,14 @@ class HistoryActivity : ComponentActivity() {
         noteDao = NoteDao(this)
 
         buttonAddNote = findViewById(R.id.main_button)
-        buttonViewCalendar = findViewById(R.id.statistic_button)
-        buttonViewHistory = findViewById(R.id.history_button)
-        focusButton = findViewById(R.id.focus_button)
-
         mainButtonPlace = findViewById(R.id.main_button_place)
-        calendarButtonPlace = findViewById(R.id.calendar_button_place)
-        focusButtonPlace = findViewById(R.id.focus_button_place)
-        historyButtonPlace = findViewById(R.id.history_button_place)
 
-        mainButtonPlace.alpha = 0.5f
-        calendarButtonPlace.alpha = 0.5f
-        focusButtonPlace.alpha = 0.5f
-        historyButtonPlace.alpha = 1f
+        buttonAddNote.setBackgroundResource(R.drawable.main_button)
+        mainButtonPlace.alpha = 1f
 
         buttonAddNote.setOnClickListener {
             animateButtonClick(buttonAddNote)
             startActivity(Intent(this, MainActivity::class.java))
-            overridePendingTransition(0, 0)
-        }
-
-        buttonViewHistory.setOnClickListener {
-            animateButtonClick(buttonViewHistory)
-        }
-
-        focusButton.setOnClickListener {
-            animateButtonClick(focusButton)
-            startActivity(Intent(this, FocusActivity::class.java))
-            overridePendingTransition(0, 0)
-        }
-
-        buttonViewCalendar.setOnClickListener {
-            animateButtonClick(buttonViewCalendar)
-            startActivity(Intent(this, CalendarActivity::class.java))
             overridePendingTransition(0, 0)
         }
 
@@ -170,11 +143,4 @@ class HistoryActivity : ComponentActivity() {
         button.startAnimation(scaleDown)
     }
 
-    private fun updateNavigationSelection(selected: LinearLayout) {
-        val all = listOf(mainButtonPlace, calendarButtonPlace, focusButtonPlace, historyButtonPlace)
-        all.forEach { place ->
-            val alpha = if (place == selected) 1f else 0.5f
-            place.animate().alpha(alpha).setDuration(300).start()
-        }
-    }
 }

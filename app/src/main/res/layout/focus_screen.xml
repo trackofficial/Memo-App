@@ -101,7 +101,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="25:00"
-                    android:textSize="36sp"
+                    android:textSize="48sp"
                     android:textColor="@color/black"
                     android:fontFamily="@font/tildasans_bold"/>
                 <TextView
@@ -128,172 +128,160 @@
             <FrameLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="6dp"
+                android:paddingRight="12dp"
+                android:paddingLeft="12dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp"
                 android:background="@drawable/round_from_black">
             <ImageButton
                 android:id="@+id/pause_play_button"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:background="@drawable/ic_pause"
                 android:contentDescription="Pause/Play"/>
             </FrameLayout>
-            <Space
-                android:layout_width="16dp"
-                android:layout_height="wrap_content"/>
+
 <FrameLayout
+    android:layout_marginLeft="6dp"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:padding="6dp"
+    android:paddingRight="8dp"
+    android:paddingLeft="8dp"
+    android:paddingTop="6dp"
+    android:paddingBottom="6dp"
     android:background="@drawable/round_from_black">
             <ImageButton
                 android:id="@+id/reset_button"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:background="@drawable/ic_reset"
                 android:contentDescription="Reset Timer"/>
 </FrameLayout>
         </LinearLayout>
 
-
-
-        <!-- Нижняя навигационная панель -->
         <LinearLayout
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="16dp"
             android:id="@+id/navigate_block"
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="62dp"
-            android:layout_marginBottom="16dp"
             android:layout_gravity="bottom">
 
             <LinearLayout
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
+                android:layout_marginLeft="60dp"
+                android:layout_marginRight="60dp"
                 android:layout_width="match_parent"
                 android:layout_height="62dp"
                 android:gravity="center"
                 android:background="@drawable/form_for_navigation_bar">
 
                 <LinearLayout
+                    android:layout_gravity="center_vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="6dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="6dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginLeft="6dp"
+                    android:layout_marginRight="6dp"
+                    android:gravity="center_vertical">
 
                     <Space
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.75"></Space>
+                        android:layout_weight="0.5" />
 
-                    <LinearLayout
-                        android:id="@+id/main_button_place"
-                        android:orientation="vertical"
+                    <!-- MAIN BUTTON -->
+                    <FrameLayout
+                        android:id="@+id/main_button_container"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center_horizontal">
+                        android:padding="10dp"
+                        android:layout_gravity="center_vertical"
+                        android:background="@drawable/form_for_button_simpleblock">
 
-                        <ImageButton
-                            android:id="@+id/main_button"
-                            android:layout_width="26dp"
-                            android:layout_height="26dp"
-                            android:background="@drawable/main_button" />
-
-                        <TextView
+                        <FrameLayout
+                            android:id="@+id/main_button_place"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Main"
-                            android:textColor="@color/white"
-                            android:fontFamily="@font/tildasans_bold"
-                            android:textSize="9sp" />
-                    </LinearLayout>
+                            android:gravity="center_horizontal">
+
+                            <ImageButton
+                                android:id="@+id/main_button"
+                                android:layout_width="26dp"
+                                android:layout_height="26dp"
+                                android:background="@drawable/main_button_pl" />
+                        </FrameLayout>
+                    </FrameLayout>
 
                     <Space
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"></Space>
+                        android:layout_weight="1" />
 
-                    <LinearLayout
-                        android:id="@+id/calendar_button_place"
-                        android:orientation="vertical"
+                    <!-- CALENDAR BUTTON -->
+                    <FrameLayout
+                        android:id="@+id/calendar_button_container"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center_horizontal">
+                        android:padding="10dp"
+                        android:layout_gravity="center_vertical"
+                        android:background="@android:color/transparent">
 
-                        <ImageButton
-                            android:id="@+id/statistic_button"
-                            android:layout_width="26dp"
-                            android:layout_height="26dp"
-                            android:background="@drawable/calendar_button" />
-
-                        <TextView
+                        <FrameLayout
+                            android:id="@+id/calendar_button_place"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Calendar"
-                            android:textColor="@color/white"
-                            android:fontFamily="@font/tildasans_bold"
-                            android:textSize="9sp" />
-                    </LinearLayout>
+                            android:gravity="center_horizontal">
+
+                            <ImageButton
+                                android:id="@+id/statistic_button"
+                                android:layout_width="26dp"
+                                android:layout_height="26dp"
+                                android:background="@drawable/calendar_button"
+                                android:alpha="0.5" />
+                        </FrameLayout>
+                    </FrameLayout>
 
                     <Space
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"></Space>
+                        android:layout_weight="1" />
 
-                    <LinearLayout
-                        android:id="@+id/focus_button_place"
-                        android:orientation="vertical"
+                    <!-- FOCUS BUTTON -->
+                    <FrameLayout
+                        android:id="@+id/focus_button_container"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center_horizontal">
+                        android:padding="10dp"
+                        android:layout_gravity="center_vertical"
+                        android:background="@android:color/transparent">
 
-                        <ImageButton
-                            android:id="@+id/focus_button"
-                            android:layout_width="26dp"
-                            android:layout_height="26dp"
-                            android:background="@drawable/focus_button" />
-
-                        <TextView
+                        <FrameLayout
+                            android:id="@+id/focus_button_place"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Focus"
-                            android:textColor="@color/white"
-                            android:fontFamily="@font/tildasans_bold"
-                            android:textSize="9sp" />
-                    </LinearLayout>
+                            android:gravity="center_horizontal">
+
+                            <ImageButton
+                                android:id="@+id/focus_button"
+                                android:layout_width="26dp"
+                                android:layout_height="26dp"
+                                android:background="@drawable/focus_button"
+                                android:alpha="0.5" />
+                        </FrameLayout>
+                    </FrameLayout>
 
                     <Space
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"></Space>
+                        android:layout_weight="0.5" />
 
-                    <LinearLayout
-                        android:id="@+id/history_button_place"
-                        android:orientation="vertical"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center">
-
-                        <ImageButton
-                            android:id="@+id/history_button"
-                            android:layout_width="26dp"
-                            android:layout_height="26dp"
-                            android:background="@drawable/history_button" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="History"
-                            android:textColor="@color/white"
-                            android:fontFamily="@font/tildasans_bold"
-                            android:textSize="9sp" />
-                    </LinearLayout>
-
-                    <Space
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.75"></Space>
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
+
     </LinearLayout>
 </FrameLayout>

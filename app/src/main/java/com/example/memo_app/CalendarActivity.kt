@@ -26,13 +26,10 @@ class CalendarActivity : AppCompatActivity() {
     private lateinit var prevMonthButton: ImageButton
     private lateinit var nextMonthButton: ImageButton
     private lateinit var noteDao: NoteDao
-    private lateinit var mainButtonPlace: LinearLayout
-    private lateinit var calendarButtonPlace: LinearLayout
-    private lateinit var focusButtonPlace: LinearLayout
-    private lateinit var historyButtonPlace: LinearLayout
+    private lateinit var mainButtonPlace: FrameLayout
+    private lateinit var calendarButtonPlace: FrameLayout
+    private lateinit var focusButtonPlace: FrameLayout
     private lateinit var buttonAddNote: ImageButton
-    private lateinit var buttonViewHistory: ImageButton
-    private lateinit var buttonViewCalendar: ImageButton
     private lateinit var focusButton: ImageButton
 
     private var currentMonth = Calendar.getInstance().apply { set(Calendar.DAY_OF_MONTH, 1) }
@@ -41,6 +38,22 @@ class CalendarActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.calendar_layout)
+        NavigationHelper.updateNavigationSelection(
+            context = this,
+            containerFrames = listOf(
+                findViewById(R.id.main_button_container),
+                findViewById(R.id.calendar_button_container),
+                findViewById(R.id.focus_button_container)
+            ),
+            iconButtons = listOf(
+                findViewById(R.id.main_button),
+                findViewById(R.id.statistic_button),
+                findViewById(R.id.focus_button)
+            ),
+            selectedContainer = findViewById(R.id.calendar_button_container),
+            selectedIcon = findViewById(R.id.statistic_button),
+            baseIconName = "calendar_button"
+        )
         supportActionBar?.hide()
         calendarGrid = findViewById(R.id.calendarGrid)
         monthTitle = findViewById(R.id.monthTitle)
@@ -49,17 +62,15 @@ class CalendarActivity : AppCompatActivity() {
         mainButtonPlace = findViewById(R.id.main_button_place)
         calendarButtonPlace = findViewById(R.id.calendar_button_place)
         focusButtonPlace = findViewById(R.id.focus_button_place)
-        historyButtonPlace = findViewById(R.id.history_button_place)
         buttonAddNote = findViewById(R.id.main_button)
-        buttonViewCalendar = findViewById(R.id.statistic_button)
-        buttonViewHistory = findViewById(R.id.history_button)
+
         focusButton = findViewById(R.id.focus_button)
-// Начальное состояние:
+
         mainButtonPlace.alpha = 0.5f
         calendarButtonPlace.alpha = 1f
         focusButtonPlace.alpha = 0.5f
-        historyButtonPlace.alpha = 0.5f
-        // Инициализация NoteDao
+
+
         noteDao = NoteDao(this)
         //снизу кнопка в главное меню
         buttonAddNote.setOnClickListener {
@@ -68,19 +79,9 @@ class CalendarActivity : AppCompatActivity() {
             overridePendingTransition(0,0)
         }
 
-        buttonViewHistory.setOnClickListener {
-            animateButtonClick(buttonViewHistory)
-            startActivity(Intent(this, HistoryActivity::class.java))
-            overridePendingTransition(0,0)
-        }
         focusButton.setOnClickListener {
             animateButtonClick(focusButton)
             startActivity(Intent(this, FocusActivity::class.java))
-            overridePendingTransition(0,0)
-        }
-        buttonViewCalendar.setOnClickListener {
-            animateButtonClick(buttonViewCalendar)
-            startActivity(Intent(this, CalendarActivity::class.java))
             overridePendingTransition(0,0)
         }
 
@@ -287,15 +288,5 @@ class CalendarActivity : AppCompatActivity() {
         })
 
         button.startAnimation(scaleDown) // Запуск первой анимации
-    }
-    private fun updateNavigationSelection(selectedPlace: LinearLayout) {
-        val containers = listOf(mainButtonPlace, calendarButtonPlace, focusButtonPlace, historyButtonPlace)
-        containers.forEach { container ->
-            val targetAlpha = if (container == selectedPlace) 1f else 0.5f
-            container.animate()
-                .alpha(targetAlpha)
-                .setDuration(600)
-                .start()
-        }
     }
 }

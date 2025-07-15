@@ -60,15 +60,14 @@ class MainActivity : ComponentActivity() {
     private lateinit var notificationHelper: NotificationHelper
     private val dateFormat = SimpleDateFormat("d MMM yyyy", Locale("ru"))
     private val dateTimeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
-    private lateinit var mainButtonPlace: LinearLayout
-    private lateinit var calendarButtonPlace: LinearLayout
-    private lateinit var focusButtonPlace: LinearLayout
-    private lateinit var historyButtonPlace: LinearLayout
+    private lateinit var mainButtonPlace: FrameLayout
+    private lateinit var calendarButtonPlace: FrameLayout
+    private lateinit var focusButtonPlace: FrameLayout
     private lateinit var weekCalendarGrid: GridLayout
 
-    private val activeDates = mutableSetOf<Long>() // Список дат активных блоков
+    private val activeDates = mutableSetOf<Long>()
     private val displayedWeek = Calendar.getInstance().apply {
-        set(Calendar.DAY_OF_WEEK, Calendar.MONDAY) // Устанавливаем понедельник
+        set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
     }
 
     private val requestPermissionLauncher =
@@ -93,11 +92,25 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_screen)
-
-        val animatedBlock = findViewById<LinearLayout>(R.id.block_with_image) // Найди нужный блок
-        animateBlockAppearance(animatedBlock) // Запускаем анимацию
-
-        val animatedBlockButton = findViewById<LinearLayout>(R.id.addblock_place) // Найди нужный блок
+        NavigationHelper.updateNavigationSelection(
+            context = this,
+            containerFrames = listOf(
+                findViewById(R.id.main_button_container),
+                findViewById(R.id.calendar_button_container),
+                findViewById(R.id.focus_button_container)
+            ),
+            iconButtons = listOf(
+                findViewById(R.id.main_button),
+                findViewById(R.id.statistic_button),
+                findViewById(R.id.focus_button)
+            ),
+            selectedContainer = findViewById(R.id.main_button_container),
+            selectedIcon = findViewById(R.id.main_button),
+            baseIconName = "main_button"
+        )
+        val animatedBlock = findViewById<LinearLayout>(R.id.block_with_image)
+        animateBlockAppearance(animatedBlock)
+        val animatedBlockButton = findViewById<LinearLayout>(R.id.addblock_place)
         animateBlockAppearancebuttonblock(animatedBlockButton)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_screen)) { v, insets ->
@@ -107,7 +120,7 @@ class MainActivity : ComponentActivity() {
         }
 
         linearLayoutNotes = findViewById(R.id.linearLayoutNotes)
-        buttonAddNote = findViewById(R.id.main_button)
+        buttonAddNote = findViewById(R.id.button_create)
         buttonViewCalendar = findViewById(R.id.statistic_button)
         buttonViewHistory = findViewById(R.id.history_button)
         noteDao = NoteDao(this)
@@ -117,14 +130,13 @@ class MainActivity : ComponentActivity() {
         mainButtonPlace = findViewById(R.id.main_button_place)
         calendarButtonPlace = findViewById(R.id.calendar_button_place)
         focusButtonPlace = findViewById(R.id.focus_button_place)
-        historyButtonPlace = findViewById(R.id.history_button_place)
         weekCalendarGrid = findViewById(R.id.weekCalendarGrid)
 
-// Начальное состояние:
         mainButtonPlace.alpha = 1f
         calendarButtonPlace.alpha = 0.5f
         focusButtonPlace.alpha = 0.5f
-        historyButtonPlace.alpha = 0.5f
+
+
 
         buttonAddNote.setOnClickListener {
             animateButtonClick(buttonAddNote)
@@ -147,6 +159,7 @@ class MainActivity : ComponentActivity() {
             overridePendingTransition(0,0)
         }
         buttonSettings.setOnClickListener {
+            animateButtonClick(buttonSettings)
             startActivity(Intent(this, SettingsActivity::class.java))
             overridePendingTransition(0,0)
         }
@@ -155,7 +168,7 @@ class MainActivity : ComponentActivity() {
         undatedButton.setOnClickListener {
             animateButtonClick(undatedButton)
             startActivity(Intent(this, WithoutDateActivity::class.java))
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+            overridePendingTransition(0, android.R.anim.fade_out)
         }
 
         val deletedNoteId = intent.getIntExtra("deletedNoteId", -1)
@@ -184,7 +197,6 @@ class MainActivity : ComponentActivity() {
         val oneHourMs = TimeUnit.HOURS.toMillis(1)
         val all = noteDao.getAllNotes().toMutableList()
 
-        // Удаляем просроченные задачи, чья дата + 1 час < now
         all.forEach { note ->
             val dt = note.dateTime
             if (dt.isNullOrBlank()) return@forEach
@@ -294,7 +306,6 @@ class MainActivity : ComponentActivity() {
         val btnComplete = noteView.findViewById<ImageButton>(R.id.completeButton)
         val btnEdit = noteView.findViewById<ImageButton>(R.id.deleteButton)
         var wastedBlock = noteView.findViewById<View>(R.id.wastedblock)
-// заполнение полей
         tvTitle.text = formatTextWithReducedSize(note.content)
         tvDesc.text  = note.description?.let {
             val c = capitalizeFirstLetter(it)
@@ -343,7 +354,7 @@ class MainActivity : ComponentActivity() {
         val spannableString = SpannableString(content)
         if (content.length > 20) {
             spannableString.setSpan(
-                RelativeSizeSpan(0.8f), // Уменьшаем размер до 80% от оригинального
+                RelativeSizeSpan(0.8f),
                 0,
                 content.length,
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -358,7 +369,7 @@ class MainActivity : ComponentActivity() {
 
     private fun addTimeToLayout(dateTime: String) {
         try {
-            val parsedDate = dateTimeFormat.parse(dateTime) // Парсим строку времени из БД
+            val parsedDate = dateTimeFormat.parse(dateTime)
             val formattedTime = SimpleDateFormat("HH:mm", Locale.getDefault()).format(parsedDate!!)
             val timeTextView = TextView(this).apply {
                 text = "$formattedTime"
@@ -366,7 +377,7 @@ class MainActivity : ComponentActivity() {
                 setTextColor(ContextCompat.getColor(this@MainActivity, R.color.black))
                 setPadding(16, 16, 16, 16)
             }
-            linearLayoutNotes.addView(timeTextView) // Добавляем TextView в макет перед заметкой
+            linearLayoutNotes.addView(timeTextView)
         } catch (e: ParseException) {
             Log.e("MainActivity", "Error parsing dateTime: $dateTime", e)
         }
@@ -381,39 +392,37 @@ class MainActivity : ComponentActivity() {
     }
 
     fun animateButtonClick(button: ImageButton) {
-        // Анимация уменьшения кнопки
         val scaleDown = ScaleAnimation(
-            1.0f, 0.95f,  // Уменьшение ширины
-            1.0f, 0.95f,  // Уменьшение высоты
-            ScaleAnimation.RELATIVE_TO_SELF, 0.5f,  // Точка опоры по X
-            ScaleAnimation.RELATIVE_TO_SELF, 0.5f   // Точка опоры по Y
+            1.0f, 0.95f,
+            1.0f, 0.95f,
+            ScaleAnimation.RELATIVE_TO_SELF, 0.5f,
+            ScaleAnimation.RELATIVE_TO_SELF, 0.5f
         )
-        scaleDown.duration = 40 // Продолжительность анимации в миллисекундах
-        scaleDown.fillAfter = true // Кнопка остаётся в уменьшенном состоянии до завершения
+        scaleDown.duration = 40
+        scaleDown.fillAfter = true
 
-        // Возвращаем к исходному размеру
         scaleDown.setAnimationListener(object : android.view.animation.Animation.AnimationListener {
             override fun onAnimationStart(animation: android.view.animation.Animation?) {}
             override fun onAnimationEnd(animation: android.view.animation.Animation?) {
                 val scaleUp = ScaleAnimation(
-                    0.95f, 1.0f,  // Увеличение ширины обратно
-                    0.95f, 1.0f,  // Увеличение высоты обратно
+                    0.95f, 1.0f,
+                    0.95f, 1.0f,
                     ScaleAnimation.RELATIVE_TO_SELF, 0.5f,
                     ScaleAnimation.RELATIVE_TO_SELF, 0.5f
                 )
                 scaleUp.duration = 50
                 scaleUp.fillAfter = true
-                button.startAnimation(scaleUp) // Запуск обратной анимации
+                button.startAnimation(scaleUp)
             }
 
             override fun onAnimationRepeat(animation: android.view.animation.Animation?) {}
         })
 
-        button.startAnimation(scaleDown) // Запуск первой анимации
+        button.startAnimation(scaleDown)
     }
 
     fun updateUI() {
-        if (::linearLayoutNotes.isInitialized) { // Проверяем, что переменная инициализирована
+        if (::linearLayoutNotes.isInitialized) {
             val imageView = findViewById<LinearLayout>(R.id.block_with_image)
 
             if (linearLayoutNotes.childCount > 0) {
@@ -426,31 +435,18 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun updateNavigationSelection(selectedPlace: LinearLayout) {
-        val containers =
-            listOf(mainButtonPlace, calendarButtonPlace, focusButtonPlace, historyButtonPlace)
-        containers.forEach { container ->
-            val targetAlpha = if (container == selectedPlace) 1f else 0.5f
-            container.animate()
-                .alpha(targetAlpha)
-                .setDuration(600)
-                .start()
-        }
-    }
-
-    //функции для недельного календаря
 
     private fun renderWeekCalendar() {
         weekCalendarGrid.removeAllViews()
 
-        val calendar = displayedWeek.clone() as Calendar // Берем фиксированную неделю
+        val calendar = displayedWeek.clone() as Calendar
 
         for (i in 0 until 7) {
             val isPreviousMonth = calendar.get(Calendar.MONTH) < displayedWeek.get(Calendar.MONTH)
             val dateView = createDateView(calendar.get(Calendar.DAY_OF_MONTH), isPreviousMonth)
             applyStyle(dateView, calendar.get(Calendar.DAY_OF_MONTH), isPreviousMonth)
             weekCalendarGrid.addView(dateView)
-            calendar.add(Calendar.DAY_OF_MONTH, 1) // Переход к следующему дню
+            calendar.add(Calendar.DAY_OF_MONTH, 1)
         }
     }
 
@@ -460,16 +456,16 @@ class MainActivity : ComponentActivity() {
         textView.text = day.toString()
         textView.gravity = Gravity.CENTER
         textView.layoutParams = GridLayout.LayoutParams().apply {
-            width = 110 // Размер кружка
+            width = 110
             height = 125
             columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
-            setMargins(8, 4, 8, 4) // Отступы для визуального оформления
+            setMargins(8, 4, 8, 4)
         }
         textView.textSize = 16f
         textView.typeface = typeface
 
         if (isPreviousMonth) {
-            textView.setTextColor(Color.GRAY) // Серый текст для дней прошлого месяца
+            textView.setTextColor(Color.GRAY)
         }
 
         return textView
@@ -481,9 +477,9 @@ class MainActivity : ComponentActivity() {
         val hasPlans = !isPreviousMonth && checkIfDayHasPlans(day)
 
         val backgroundResource = when {
-            isToday -> R.drawable.current_day // Черный круг
-            hasPlans -> R.drawable.event_day // Белый круг с обводкой
-            isPreviousMonth -> R.drawable.simple_day // Серый круг
+            isToday -> R.drawable.current_day
+            hasPlans -> R.drawable.event_day
+            isPreviousMonth -> R.drawable.simple_day
             else -> R.drawable.simple_day
         }
 
@@ -500,18 +496,18 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun changeWeek(offset: Int) {
-        displayedWeek.add(Calendar.WEEK_OF_YEAR, offset) // Смещаем неделю
-        renderWeekCalendar() // Перерисовываем календарь
+        displayedWeek.add(Calendar.WEEK_OF_YEAR, offset)
+        renderWeekCalendar()
     }
 
     private fun refreshActiveDates() {
         activeDates.clear()
-        val notes = noteDao.getAllNotes() // Получаем все записи из БД
+        val notes = noteDao.getAllNotes()
 
         notes.filter { !it.isDeleted }.forEach { note ->
             val noteTime = note.dateTime?.let { parseDateTime(it) } ?: 0L
             if (noteTime != 0L) {
-                activeDates.add(noteTime) // Добавляем активные даты
+                activeDates.add(noteTime)
             }
         }
     }
@@ -547,26 +543,26 @@ class MainActivity : ComponentActivity() {
     }
     //анимация появления блока
     fun animateBlockAppearance(block: LinearLayout) {
-        block.translationY = -100f // Начальная позиция выше экрана
-        block.alpha = 0f // Скрываем блок
+        block.translationY = -100f
+        block.alpha = 0f
 
         block.animate()
-            .translationY(0f) // Перемещаем вниз
-            .alpha(1f) // Плавное появление
-            .setDuration(400) // Длительность анимации (мс)
-            .setInterpolator(android.view.animation.DecelerateInterpolator()) // Плавное замедление
+            .translationY(0f)
+            .alpha(1f)
+            .setDuration(400)
+            .setInterpolator(android.view.animation.DecelerateInterpolator())
             .start()
     }
 
     fun animateBlockAppearancebuttonblock(block: LinearLayout) {
-        block.translationY = 200f // Начальная позиция выше экрана
-        block.alpha = 0f // Скрываем блок
+        block.translationY = 200f
+        block.alpha = 0f
 
         block.animate()
-            .translationY(0f) // Перемещаем вниз
-            .alpha(1f) // Плавное появление
-            .setDuration(500) // Длительность анимации (мс)
-            .setInterpolator(android.view.animation.DecelerateInterpolator()) // Плавное замедление
+            .translationY(0f)
+            .alpha(1f)
+            .setDuration(500)
+            .setInterpolator(android.view.animation.DecelerateInterpolator())
             .start()
     }
 
@@ -575,8 +571,6 @@ class MainActivity : ComponentActivity() {
     private fun showNoteArchivedBanner() {
         val banner = findViewById<FrameLayout>(R.id.archivedBanner)
         banner.visibility = View.VISIBLE
-
-        // Стартовая позиция — сильно выше экрана
         banner.translationY = -250f
         banner.alpha = 0f
         banner.scaleX = 0.97f
@@ -635,7 +629,6 @@ class MainActivity : ComponentActivity() {
                     .setDuration(160)
                     .setInterpolator(OvershootInterpolator())
                     .withEndAction {
-                        // Анимация удаления noteView с сжатием
                         noteView.animate()
                             .scaleX(0.9f)
                             .scaleY(0.9f)
@@ -643,7 +636,6 @@ class MainActivity : ComponentActivity() {
                             .setDuration(100)
                             .setInterpolator(DecelerateInterpolator())
                             .withEndAction {
-                                // Удаляем заметку и пробуем удалить заголовок
                                 val index = linearLayoutNotes.indexOfChild(noteView)
                                 linearLayoutNotes.removeView(noteView)
 

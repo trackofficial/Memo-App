@@ -222,8 +222,8 @@
             <LinearLayout
                 android:layout_marginTop="6dp"
                 android:layout_width="wrap_content"
-                android:layout_height="55dp"
-                android:gravity="start"
+                android:layout_height="44dp"
+                android:gravity="center"
                 android:background="@drawable/form_for_navigation_bar">
 
                 <LinearLayout
@@ -240,8 +240,6 @@
                     <FrameLayout
                         android:id="@+id/block_createblock_main"
                         android:layout_width="match_parent"
-                        android:paddingLeft="12dp"
-                        android:paddingRight="12dp"
                         android:layout_height="wrap_content"
                         android:background="@drawable/form_for_main_button">
                         <Button
@@ -253,30 +251,11 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:fontFamily="@font/tilda_medium"
-                                android:text="Add"
-                                android:textAlignment="center"
-                                android:textColor="@color/new_color_black"
-                                android:textSize="16dp" />
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:background="@drawable/add_icon"/>
                         </LinearLayout>
-                    </FrameLayout>
-                    <FrameLayout
-                        android:layout_marginLeft="5dp"
-                        android:gravity="center"
-                        android:id="@+id/block_createblock"
-                        android:layout_width="43dp"
-                        android:layout_height="43dp"
-                        android:padding="6dp"
-                        android:background="@drawable/form_for_main_button">
-                        <ImageButton
-                            android:id="@+id/exit_button"
-                            android:layout_width="wrap_content"
-                            android:background="@drawable/exit_button"
-                            android:layout_height="wrap_content" />
                     </FrameLayout>
                 </LinearLayout>
             </LinearLayout>

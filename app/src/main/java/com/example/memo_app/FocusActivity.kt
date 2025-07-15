@@ -42,14 +42,11 @@ class FocusActivity : ComponentActivity() {
 
     // Навигационные элементы
     private lateinit var buttonAddNote: ImageButton
-    private lateinit var buttonViewHistory: ImageButton
     private lateinit var buttonViewCalendar: ImageButton
     private lateinit var focusButton: ImageButton
-
-    private lateinit var mainButtonPlace: LinearLayout
-    private lateinit var calendarButtonPlace: LinearLayout
-    private lateinit var focusButtonPlace: LinearLayout
-    private lateinit var historyButtonPlace: LinearLayout
+    private lateinit var mainButtonPlace: FrameLayout
+    private lateinit var calendarButtonPlace: FrameLayout
+    private lateinit var focusButtonPlace: FrameLayout
 
     // Контейнер для заметки (блок note_item)
     private lateinit var noteBlockContainer: FrameLayout
@@ -81,6 +78,28 @@ class FocusActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.focus_screen)
+        val containerFrames = listOf(
+            findViewById<FrameLayout>(R.id.main_button_container),
+            findViewById<FrameLayout>(R.id.calendar_button_container),
+            findViewById<FrameLayout>(R.id.focus_button_container)
+        )
+
+        val iconButtons = listOf(
+            findViewById<ImageButton>(R.id.main_button),
+            findViewById<ImageButton>(R.id.statistic_button),
+            findViewById<ImageButton>(R.id.focus_button)
+        )
+
+// Для текущей активности — например, CalendarActivity:
+        NavigationHelper.updateNavigationSelection(
+            context = this,
+            containerFrames = containerFrames,
+            iconButtons = iconButtons,
+            selectedContainer = findViewById(R.id.focus_button_container),
+            selectedIcon = findViewById(R.id.focus_button),
+            baseIconName = "focus_button"
+        )
+
 
         // Загружаем настройки таймера
         prefs = getSharedPreferences("timer_settings", MODE_PRIVATE)
@@ -91,13 +110,11 @@ class FocusActivity : ComponentActivity() {
         // Инициализация навигационных элементов
         buttonAddNote = findViewById(R.id.main_button)
         buttonViewCalendar = findViewById(R.id.statistic_button)
-        buttonViewHistory = findViewById(R.id.history_button)
         focusButton = findViewById(R.id.focus_button)
 
         mainButtonPlace = findViewById(R.id.main_button_place)
         calendarButtonPlace = findViewById(R.id.calendar_button_place)
         focusButtonPlace = findViewById(R.id.focus_button_place)
-        historyButtonPlace = findViewById(R.id.history_button_place)
 
         // Инициализация контейнеров для заметки и таймера
         noteBlockContainer = findViewById(R.id.note_block_container)
@@ -112,7 +129,6 @@ class FocusActivity : ComponentActivity() {
         mainButtonPlace.alpha = 0.5f
         calendarButtonPlace.alpha = 0.5f
         focusButtonPlace.alpha = 1f
-        historyButtonPlace.alpha = 0.5f
 
         // Навигация по экранам
         buttonAddNote.setOnClickListener {
@@ -123,11 +139,6 @@ class FocusActivity : ComponentActivity() {
         buttonViewCalendar.setOnClickListener {
             animateButtonClick(it as ImageButton)
             startActivity(Intent(this, CalendarActivity::class.java))
-            overridePendingTransition(0, 0)
-        }
-        buttonViewHistory.setOnClickListener {
-            animateButtonClick(it as ImageButton)
-            startActivity(Intent(this, HistoryActivity::class.java))
             overridePendingTransition(0, 0)
         }
 
@@ -167,6 +178,7 @@ class FocusActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
+
         mainDurationMillis = prefs.getLong("main_duration", 25 * 60 * 1000L)
         breakDurationMillis = prefs.getLong("break_duration", 5 * 60 * 1000L)
         cyclesTarget = prefs.getInt("cycles_target", 4)

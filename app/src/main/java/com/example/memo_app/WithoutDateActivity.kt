@@ -59,39 +59,55 @@ class WithoutDateActivity : ComponentActivity() {
     private lateinit var buttonViewCalendar: ImageButton
     private lateinit var buttonSettings: ImageButton
     private lateinit var focusButton: ImageButton
-    private lateinit var mainButtonPlace: LinearLayout
-    private lateinit var calendarButtonPlace: LinearLayout
-    private lateinit var focusButtonPlace: LinearLayout
-    private lateinit var historyButtonPlace: LinearLayout
+    private lateinit var mainButtonPlace: FrameLayout
+    private lateinit var calendarButtonPlace: FrameLayout
+    private lateinit var focusButtonPlace: FrameLayout
     private lateinit var weekCalendarGrid: GridLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.layout_withoutdate)
+        val containerFrames = listOf(
+            findViewById<FrameLayout>(R.id.main_button_container),
+            findViewById<FrameLayout>(R.id.calendar_button_container),
+            findViewById<FrameLayout>(R.id.focus_button_container)
+        )
+
+        val iconButtons = listOf(
+            findViewById<ImageButton>(R.id.main_button),
+            findViewById<ImageButton>(R.id.statistic_button),
+            findViewById<ImageButton>(R.id.focus_button)
+        )
+        NavigationHelper.updateNavigationSelection(
+            context = this,
+            containerFrames = containerFrames,
+            iconButtons = iconButtons,
+            selectedContainer = findViewById(R.id.main_button_container),
+            selectedIcon = findViewById(R.id.main_button),
+            baseIconName = "main_button"
+        )
 
         noteDao = NoteDao(this)
         container = findViewById(R.id.undatedContainer)
-        buttonAddNote = findViewById(R.id.main_button)
+        buttonAddNote = findViewById(R.id.create_button)
         buttonViewCalendar = findViewById(R.id.statistic_button)
-        buttonViewHistory = findViewById(R.id.history_button)
-        buttonSettings = findViewById(R.id.settings_button)
         focusButton = findViewById(R.id.focus_button)
         mainButtonPlace = findViewById(R.id.main_button_place)
         calendarButtonPlace = findViewById(R.id.calendar_button_place)
         focusButtonPlace = findViewById(R.id.focus_button_place)
-        historyButtonPlace = findViewById(R.id.history_button_place)
         weekCalendarGrid = findViewById(R.id.weekCalendarGrid)
+        buttonSettings = findViewById(R.id.settings_button)
+        buttonViewHistory = findViewById(R.id.history_button)
 
         val animatedBlock = findViewById<LinearLayout>(R.id.block_with_image) // Найди нужный блок
         animateBlockAppearance(animatedBlock) // Запускаем анимацию
 
         val animatedBlockButton = findViewById<LinearLayout>(R.id.addblock_place) // Найди нужный блок
         animateBlockAppearancebuttonblock(animatedBlockButton)
-// Начальное состояние:
+
         mainButtonPlace.alpha = 1f
         calendarButtonPlace.alpha = 0.5f
         focusButtonPlace.alpha = 0.5f
-        historyButtonPlace.alpha = 0.5f
 
         buttonAddNote.setOnClickListener {
             animateButtonClick(buttonAddNote)
@@ -102,12 +118,7 @@ class WithoutDateActivity : ComponentActivity() {
         undatedButton.setOnClickListener {
             animateButtonClick(undatedButton)
             startActivity(Intent(this, MainActivity::class.java))
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-        }
-        buttonViewHistory.setOnClickListener {
-            animateButtonClick(buttonViewHistory)
-            startActivity(Intent(this, HistoryActivity::class.java))
-            overridePendingTransition(0,0)
+            overridePendingTransition(0, android.R.anim.fade_out)
         }
         focusButton.setOnClickListener {
             animateButtonClick(focusButton)
@@ -120,9 +131,17 @@ class WithoutDateActivity : ComponentActivity() {
             overridePendingTransition(0,0)
         }
         buttonSettings.setOnClickListener {
+            animateButtonClick(buttonSettings)
             startActivity(Intent(this, SettingsActivity::class.java))
             overridePendingTransition(0,0)
         }
+        buttonViewHistory.setOnClickListener {
+            animateButtonClick(buttonViewHistory)
+            startActivity(Intent(this, HistoryActivity::class.java))
+            overridePendingTransition(0,0)
+        }
+
+
         val undatedNotes = noteDao.getAllNotes().filter { it.dateTime.isNullOrBlank() && !it.isDeleted }
 
         if (undatedNotes.isEmpty()) {
@@ -130,7 +149,7 @@ class WithoutDateActivity : ComponentActivity() {
         } else {
             undatedNotes.forEach { note ->
                 val view = LayoutInflater.from(this).inflate(R.layout.note_item, container, false)
-
+                val tvDesc = view.findViewById<TextView>(R.id.desTextView)
                 view.findViewById<TextView>(R.id.noteTextView).text = note.content
                 view.findViewById<TextView>(R.id.desTextView).text = note.description ?: "Нет описания"
 
@@ -144,7 +163,10 @@ class WithoutDateActivity : ComponentActivity() {
                         putExtra("noteId", note.id)
                     })
                 }
-
+                tvDesc.text  = note.description?.let {
+                    val c = capitalizeFirstLetter(it)
+                    if (c.length > 30) "${c.take(30)}..." else c
+                } ?: "Нет описания"
                 val completeButton = view.findViewById<ImageButton>(R.id.completeButton)
                 completeButton.setOnClickListener {
                     animateButtonClick(completeButton)
@@ -316,6 +338,9 @@ class WithoutDateActivity : ComponentActivity() {
             .setDuration(500) // Длительность анимации (мс)
             .setInterpolator(android.view.animation.DecelerateInterpolator()) // Плавное замедление
             .start()
+    }
+    private fun capitalizeFirstLetter(text: String?): String {
+        return text?.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } ?: ""
     }
 
 }
