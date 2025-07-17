@@ -11,155 +11,153 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-    <LinearLayout
-        android:background="@color/background_color_light"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="3dp"
-        android:paddingRight="3dp"
-        android:paddingBottom="12dp"
-        android:orientation="vertical">
-    <FrameLayout
-        android:background="@color/background_color_light"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="7dp"
-        android:paddingBottom="7dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
+        <LinearLayout
+            android:background="@color/background_color_light"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="3dp"
+            android:paddingRight="3dp"
+            android:paddingBottom="12dp"
+            android:orientation="vertical">
+            <FrameLayout
+                android:background="@color/background_color_light"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="7dp"
+                android:paddingBottom="7dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
 
-        <ImageButton
-            android:layout_marginTop="4dp"
-            android:layout_marginLeft="10dp"
-            android:layout_gravity="left|center_vertical"
-            android:id="@+id/prevMonthButton"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:background="@drawable/button_left"
-            android:contentDescription="Предыдущий месяц" />
+                <ImageButton
+                    android:layout_marginTop="4dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_gravity="left|center_vertical"
+                    android:id="@+id/prevMonthButton"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:background="@drawable/button_left"
+                    android:contentDescription="Предыдущий месяц" />
 
-        <TextView
-            android:id="@+id/monthTitle"
-            android:fontFamily="@font/tildasans_semibold"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:textSize="21sp"
-            android:layout_gravity="center"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:gravity="center" />
+                <TextView
+                    android:id="@+id/monthTitle"
+                    android:fontFamily="@font/tildasans_semibold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:textSize="21sp"
+                    android:layout_gravity="center"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:gravity="center" />
 
-        <ImageButton
-            android:layout_marginTop="4dp"
-            android:layout_marginRight="10dp"
-            android:layout_gravity="right|center_vertical"
-            android:id="@+id/nextMonthButton"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:background="@drawable/button_right"
-            android:contentDescription="Следующий месяц" />
-    </FrameLayout>
+                <ImageButton
+                    android:layout_marginTop="4dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_gravity="right|center_vertical"
+                    android:id="@+id/nextMonthButton"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:background="@drawable/button_right"
+                    android:contentDescription="Следующий месяц" />
+            </FrameLayout>
 
-    <!-- Заголовок дней недели -->
-    <LinearLayout
-        android:layout_marginTop="4dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center">
+            <!-- Заголовок дней недели -->
+            <LinearLayout
+                android:layout_marginTop="4dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
 
-        <!-- Понедельник -->
-        <TextView
-            android:fontFamily="@font/tildasans_semibold"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="SUN"
-            android:textColor="@color/new_color_grey_2"
-            android:textSize="12sp"
-            android:gravity="center" />
-        <TextView
-            android:fontFamily="@font/tildasans_semibold"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="MON"
-            android:textColor="@color/new_color_grey_2"
-            android:textSize="12sp"
-            android:gravity="center" />
-        <TextView
-            android:fontFamily="@font/tildasans_semibold"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="TUE"
-            android:textColor="@color/new_color_grey_2"
-            android:textSize="12sp"
-            android:gravity="center" />
-        <TextView
-            android:fontFamily="@font/tildasans_semibold"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="WEN"
-            android:textColor="@color/new_color_grey_2"
-            android:textSize="12sp"
-            android:gravity="center" />
-        <TextView
-            android:fontFamily="@font/tildasans_semibold"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="THU"
-            android:textColor="@color/new_color_grey_2"
-            android:textSize="12sp"
-            android:gravity="center" />
-        <TextView
-            android:fontFamily="@font/tildasans_semibold"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="FRI"
-            android:textColor="@color/new_color_grey_2"
-            android:textSize="12sp"
-            android:gravity="center" />
-        <TextView
-            android:fontFamily="@font/tildasans_semibold"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="SAT"
-            android:textColor="@color/new_color_grey_2"
-            android:textSize="12sp"
-            android:gravity="center" />
-    </LinearLayout>
+                <!-- Понедельник -->
+                <TextView
+                    android:fontFamily="@font/tildasans_semibold"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="SUN"
+                    android:textColor="@color/new_color_grey_2"
+                    android:textSize="12sp"
+                    android:gravity="center" />
+                <TextView
+                    android:fontFamily="@font/tildasans_semibold"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="MON"
+                    android:textColor="@color/new_color_grey_2"
+                    android:textSize="12sp"
+                    android:gravity="center" />
+                <TextView
+                    android:fontFamily="@font/tildasans_semibold"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="TUE"
+                    android:textColor="@color/new_color_grey_2"
+                    android:textSize="12sp"
+                    android:gravity="center" />
+                <TextView
+                    android:fontFamily="@font/tildasans_semibold"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="WEN"
+                    android:textColor="@color/new_color_grey_2"
+                    android:textSize="12sp"
+                    android:gravity="center" />
+                <TextView
+                    android:fontFamily="@font/tildasans_semibold"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="THU"
+                    android:textColor="@color/new_color_grey_2"
+                    android:textSize="12sp"
+                    android:gravity="center" />
+                <TextView
+                    android:fontFamily="@font/tildasans_semibold"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="FRI"
+                    android:textColor="@color/new_color_grey_2"
+                    android:textSize="12sp"
+                    android:gravity="center" />
+                <TextView
+                    android:fontFamily="@font/tildasans_semibold"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="SAT"
+                    android:textColor="@color/new_color_grey_2"
+                    android:textSize="12sp"
+                    android:gravity="center" />
+            </LinearLayout>
 
-    <!-- Сетка дат календаря -->
-    <GridLayout
-        android:layout_marginTop="6dp"
-        android:id="@+id/calendarGrid"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:rowCount="6"
-        android:columnCount="7"
-        android:clipToPadding="false">
-        <!-- Программно добавим числа -->
-    </GridLayout>
-    </LinearLayout>
+            <!-- Сетка дат календаря -->
+            <GridLayout
+                android:layout_marginTop="6dp"
+                android:id="@+id/calendarGrid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:rowCount="6"
+                android:columnCount="7"
+                android:clipToPadding="false">
+                <!-- Программно добавим числа -->
+            </GridLayout>
+        </LinearLayout>
     </LinearLayout>
     <LinearLayout
         android:layout_marginBottom="6dp"
         android:id="@+id/navigate_block"
         android:orientation="horizontal"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="62dp"
-        android:layout_gravity="bottom">
+        android:layout_gravity="bottom|center">
 
         <LinearLayout
-            android:layout_marginLeft="60dp"
-            android:layout_marginRight="60dp"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="62dp"
             android:gravity="center"
             android:background="@drawable/form_for_navigation_bar">
@@ -171,17 +169,11 @@
                 android:orientation="horizontal"
                 android:layout_marginBottom="6dp"
                 android:layout_marginTop="6dp"
-                android:layout_marginLeft="6dp"
-                android:layout_marginRight="6dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:gravity="center_vertical">
-
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.5" />
-
-                <!-- MAIN BUTTON -->
                 <FrameLayout
+                    android:layout_marginRight="10dp"
                     android:id="@+id/main_button_container"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -203,13 +195,8 @@
                     </FrameLayout>
                 </FrameLayout>
 
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-
-                <!-- CALENDAR BUTTON -->
                 <FrameLayout
+                    android:layout_marginRight="10dp"
                     android:id="@+id/calendar_button_container"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -231,13 +218,6 @@
                             android:alpha="0.5" />
                     </FrameLayout>
                 </FrameLayout>
-
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-
-                <!-- FOCUS BUTTON -->
                 <FrameLayout
                     android:id="@+id/focus_button_container"
                     android:layout_width="wrap_content"
@@ -260,11 +240,6 @@
                             android:alpha="0.5" />
                     </FrameLayout>
                 </FrameLayout>
-
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.5" />
 
             </LinearLayout>
         </LinearLayout>

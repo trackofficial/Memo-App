@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.app.AlertDialog
 import android.content.Context
+import android.os.Build
 import android.widget.Button
 import android.os.Bundle
 import android.text.Editable
@@ -23,8 +24,10 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ScrollView
+import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
@@ -45,7 +48,6 @@ class EditNoteActivity : ComponentActivity() {
     private lateinit var buttonDeleteNote: ImageButton
     private lateinit var buttonSaveNote: Button
     private lateinit var buttonSelectImage: ImageButton
-    private lateinit var exitbutton: ImageButton
     private lateinit var imageViewNote: ImageView
     private lateinit var noteDao: NoteDao
     private var noteId: Int = 0
@@ -56,6 +58,7 @@ class EditNoteActivity : ComponentActivity() {
     private lateinit var blockdeletebutton: FrameLayout
     private lateinit var buttonelement: Button
     private lateinit var blockelement: FrameLayout
+    private var note: Note? = null
 
     private val selectImageLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -89,8 +92,8 @@ class EditNoteActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_note)
-        exitbutton = findViewById(R.id.exit_button)
-        // Инициализация UI элементов
+        var noteDao = NoteDao(this)
+        val buttonSelectDate = findViewById<ImageButton>(R.id.buttonSelectDate)
         editTextNoteContent = findViewById(R.id.editTextNoteContent)
         editTextDescription = findViewById(R.id.editAddText)
         editTextTime = findViewById(R.id.editTextTime)
@@ -102,7 +105,57 @@ class EditNoteActivity : ComponentActivity() {
         blockmainbutton = findViewById(R.id.block_createblock_main)
         blockdeletebutton = findViewById(R.id.block_delete)
         buttonelement = findViewById(R.id.buttonshowbaroptions)
-        blockelement = findViewById(R.id.blockelement)
+        val blockdate = findViewById<FrameLayout>(R.id.buttonSelectDateblock)
+        val blockelement = findViewById<FrameLayout>(R.id.block_createblock)
+        val buttonGoalWork     = findViewById<Button>(R.id.buttonGoalWork)
+        val buttonGoalStudy    = findViewById<Button>(R.id.buttonGoalStudy)
+        val buttonGoalPersonal = findViewById<Button>(R.id.buttonGoalPersonal)
+        val buttonGoalOther    = findViewById<Button>(R.id.buttonGoalOther)
+        val allGoalButtons     = listOf(buttonGoalWork, buttonGoalStudy, buttonGoalPersonal, buttonGoalOther)
+        val blockWork     = findViewById<FrameLayout>(R.id.bl1)
+        val blockStudy    = findViewById<FrameLayout>(R.id.bl2)
+        val blockPersonal = findViewById<FrameLayout>(R.id.bl3)
+        val blockOther    = findViewById<FrameLayout>(R.id.bl4)
+        val textWork     = findViewById<TextView>(R.id.dateblock1)
+        val textStudy    = findViewById<TextView>(R.id.dateblock2)
+        val textPersonal = findViewById<TextView>(R.id.dateblock3)
+        val textOther    = findViewById<TextView>(R.id.dateblock4)
+        val goalTexts  = listOf(textWork, textStudy, textPersonal, textOther)
+
+        val allGoalBlocks = listOf(blockWork, blockStudy, blockPersonal, blockOther)
+        val goalButtons = listOf(buttonGoalWork, buttonGoalStudy, buttonGoalPersonal, buttonGoalOther)
+        val goalBlocks  = listOf(blockWork, blockStudy, blockPersonal, blockOther)
+        note = noteDao.getAllNotesIncludingDeleted().firstOrNull { it.id == noteId }
+        var selectedGoal = "other"
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            editTextNoteContent.setTextCursorDrawable(R.color.black)
+        }
+
+        note?.let {
+            selectedGoal = it.goal
+            allGoalButtons.forEach { btn ->
+                btn.isSelected = btn.text.toString().equals(selectedGoal, true)
+            }
+        }
+
+        goalButtons.forEachIndexed { index, btn ->
+            btn.setOnClickListener {
+                selectedGoal = goalTexts[index].text.toString().lowercase() // 🔧 используем TextView с названием цели
+
+                // Сброс стиля
+                goalBlocks.forEach {
+                    it.background = ContextCompat.getDrawable(this, R.drawable.form_for_timeblock)
+                }
+                goalTexts.forEach {
+                    it.setTextColor(ContextCompat.getColor(this, R.color.black))
+                }
+
+                // Выделение
+                goalBlocks[index].background = ContextCompat.getDrawable(this, R.drawable.form_for_timeblock_2)
+                goalTexts[index].setTextColor(ContextCompat.getColor(this, R.color.white))
+            }
+        }
 
         noteDao = NoteDao(this)
         noteId = intent.getIntExtra("noteId", 0)
@@ -156,10 +209,15 @@ class EditNoteActivity : ComponentActivity() {
         } else {
             Log.d("EditNoteActivity", "Note not found")
         }
-
+        buttonSelectDate.setOnClickListener {
+            animateButtonClick(buttonSelectDate)
+            animateButtonClick(blockdate)
+            selectDate()
+        }
         // Обработка кнопки "Удалить" (перенос в History)
         buttonDeleteNote.setOnClickListener {
             animateButtonClick(blockdeletebutton)
+            animateButtonClick(buttonDeleteNote)
             if (note != null) {
                 note.isDeleted = true // Помечаем заметку как удалённую
                 noteDao.update(note) // Обновляем статус заметки в базе данных
@@ -177,10 +235,12 @@ class EditNoteActivity : ComponentActivity() {
         }
 
         buttonSelectImage.setOnClickListener {
+            animateButtonClick(buttonSelectImage)
             showImageSelectionDialog()
         }
         buttonelement.setOnClickListener {
             animateButtonClick(blockelement)
+            animateButtonClick(buttonelement)
             showBottomSheet()
         }
         // Обработка времени
@@ -203,12 +263,6 @@ class EditNoteActivity : ComponentActivity() {
                     isUpdating = false
                     return
                 }
-
-                // Форматирование времени:
-                // Если введена 1 цифра — оставляем как есть.
-                // Если введено 2 цифры — форматируем как "X:Y"
-                // Если введено 3 цифры — форматируем как "X:YZ"
-                // Если введено 4 и более цифр — форматируем как "XX:YY" (берём первые 4 цифры)
                 val formattedString = when {
                     cleanString.length == 1 -> cleanString
                     cleanString.length == 2 ->
@@ -234,7 +288,7 @@ class EditNoteActivity : ComponentActivity() {
         // Обработка кнопки "Сохранить"
         buttonSaveNote.setOnClickListener {
             animateButtonClick(blockmainbutton)
-
+            animateButtonClick(buttonSaveNote)
             var noteContent = editTextNoteContent.text.toString().trim()
             var noteDescription = editTextDescription.text.toString().trim()
             val time = editTextTime.text.toString().trim()
@@ -255,11 +309,11 @@ class EditNoteActivity : ComponentActivity() {
                 // Убедимся, что объект заметки существует
                 note?.let {
                     it.content = noteContent
-                    it.description = noteDescription.ifEmpty { "Описание отсутствует" } // Описание по умолчанию
-                    it.dateTime = dateTime // Сохраняем дату/время
-                    it.imageUri = imagePath ?: it.imageUri // Если изображение не обновлено, оставляем старое
+                    it.description = noteDescription.ifEmpty { "Описание отсутствует" }
+                    it.dateTime = dateTime
+                    it.imageUri = imagePath ?: it.imageUri
                     it.isDeleted = false
-
+                    it.goal = selectedGoal
                     noteDao.update(it) // Сохраняем изменения в базе данных
                     Log.d("EditNoteActivity", "Note updated: $note")
 
@@ -285,10 +339,6 @@ class EditNoteActivity : ComponentActivity() {
             }
         }
 
-        exitbutton.setOnClickListener {
-            animateButtonClick(blockexitbutton)
-            startActivity(Intent(this, MainActivity::class.java))
-        }
 
         val scrollView = findViewById<ScrollView>(R.id.scrollView)
         val scrollIndicator = findViewById<View>(R.id.scrollIndicator)
@@ -468,7 +518,68 @@ class EditNoteActivity : ComponentActivity() {
 
         block.startAnimation(scaleDown) // Запуск первой анимации
     }
+    fun animateButtonClick(button: ImageButton) {
+        // Анимация уменьшения кнопки
+        val scaleDown = ScaleAnimation(
+            1.0f, 0.95f,  // Уменьшение ширины
+            1.0f, 0.95f,  // Уменьшение высоты
+            ScaleAnimation.RELATIVE_TO_SELF, 0.5f,  // Точка опоры по X
+            ScaleAnimation.RELATIVE_TO_SELF, 0.5f   // Точка опоры по Y
+        )
+        scaleDown.duration = 100 // Продолжительность анимации в миллисекундах
+        scaleDown.fillAfter = true // Кнопка остаётся в уменьшенном состоянии до завершения
 
+        // Возвращаем к исходному размеру
+        scaleDown.setAnimationListener(object : android.view.animation.Animation.AnimationListener {
+            override fun onAnimationStart(animation: android.view.animation.Animation?) {}
+            override fun onAnimationEnd(animation: android.view.animation.Animation?) {
+                val scaleUp = ScaleAnimation(
+                    0.95f, 1.0f,  // Увеличение ширины обратно
+                    0.95f, 1.0f,  // Увеличение высоты обратно
+                    ScaleAnimation.RELATIVE_TO_SELF, 0.5f,
+                    ScaleAnimation.RELATIVE_TO_SELF, 0.5f
+                )
+                scaleUp.duration = 100
+                scaleUp.fillAfter = true
+                button.startAnimation(scaleUp) // Запуск обратной анимации
+            }
+
+            override fun onAnimationRepeat(animation: android.view.animation.Animation?) {}
+        })
+
+        button.startAnimation(scaleDown) // Запуск первой анимации
+    }
+    fun animateButtonClick(button: Button) {
+        // Анимация уменьшения кнопки
+        val scaleDown = ScaleAnimation(
+            1.0f, 0.95f,  // Уменьшение ширины
+            1.0f, 0.95f,  // Уменьшение высоты
+            ScaleAnimation.RELATIVE_TO_SELF, 0.5f,  // Точка опоры по X
+            ScaleAnimation.RELATIVE_TO_SELF, 0.5f   // Точка опоры по Y
+        )
+        scaleDown.duration = 100 // Продолжительность анимации в миллисекундах
+        scaleDown.fillAfter = true // Кнопка остаётся в уменьшенном состоянии до завершения
+
+        // Возвращаем к исходному размеру
+        scaleDown.setAnimationListener(object : android.view.animation.Animation.AnimationListener {
+            override fun onAnimationStart(animation: android.view.animation.Animation?) {}
+            override fun onAnimationEnd(animation: android.view.animation.Animation?) {
+                val scaleUp = ScaleAnimation(
+                    0.95f, 1.0f,  // Увеличение ширины обратно
+                    0.95f, 1.0f,  // Увеличение высоты обратно
+                    ScaleAnimation.RELATIVE_TO_SELF, 0.5f,
+                    ScaleAnimation.RELATIVE_TO_SELF, 0.5f
+                )
+                scaleUp.duration = 100
+                scaleUp.fillAfter = true
+                button.startAnimation(scaleUp) // Запуск обратной анимации
+            }
+
+            override fun onAnimationRepeat(animation: android.view.animation.Animation?) {}
+        })
+
+        button.startAnimation(scaleDown) // Запуск первой анимации
+    }
     private fun showBottomSheet() {
         val bottomSheetDialog = BottomSheetDialog(this, R.style.RoundedBottomSheetDialog) // Используем стиль для закруглений
         val bottomSheetView = layoutInflater.inflate(R.layout.layout_bottom_sheet, null)
@@ -486,19 +597,10 @@ class EditNoteActivity : ComponentActivity() {
         bottomSheetView.background = shapeDrawable
 
         // Обработка кнопок
-        val buttonSelectDate = bottomSheetView.findViewById<Button>(R.id.buttonSelectDate)
-        val buttonSelectTime = bottomSheetView.findViewById<Button>(R.id.buttonSelectTime)
+
         val editTextTime = findViewById<EditText>(R.id.editTextTime)
 
-        buttonSelectDate.setOnClickListener {
-            selectDate()
-            bottomSheetDialog.dismiss()
-        }
 
-        buttonSelectTime.setOnClickListener {
-            editTextTime.visibility = View.VISIBLE
-            bottomSheetDialog.dismiss()
-        }
 
         // Устанавливаем контент и показываем диалог
         bottomSheetDialog.setContentView(bottomSheetView)

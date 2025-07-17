@@ -73,6 +73,7 @@
                     android:layout_height="wrap_content"
                     android:paddingLeft="2dp"
                     android:paddingRight="4dp"
+                    android:id="@+id/blocktime"
                     android:background="@drawable/form_for_timeblock">
                     <ImageView
                         android:layout_gravity="center_vertical"
@@ -92,6 +93,7 @@
                 <FrameLayout
                     android:id="@+id/blockdate"
                     android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="6dp"
@@ -108,7 +110,6 @@
                         android:textSize="14.5sp"/>
                 </FrameLayout>
                 <FrameLayout
-                    android:layout_marginLeft="4dp"
                     android:visibility="gone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -119,6 +120,23 @@
 
                     <TextView
                         android:text="Wasted !"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:fontFamily="@font/tildasans_semibold"
+                        android:textColor="@color/black"
+                        android:textSize="14.5sp"/>
+                </FrameLayout>
+                <FrameLayout
+                    android:id="@+id/blockgoal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="6dp"
+                    android:paddingRight="6dp"
+                    android:background="@drawable/form_for_timeblock">
+
+                    <TextView
+                        android:id="@+id/goalTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"

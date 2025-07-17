@@ -22,6 +22,8 @@
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         android:text="There's no tasks"
+        android:textSize="16dp"
+        android:fontFamily="@font/tildasans_medium"
         android:textColor="@color/black"
         android:layout_gravity="center"></TextView>
     </FrameLayout>

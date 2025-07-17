@@ -297,7 +297,7 @@ class MainActivity : ComponentActivity() {
     private fun addNoteToLayout(note: Note, isWasted: Boolean) {
         val inflater = LayoutInflater.from(this)
         val noteView = inflater.inflate(R.layout.note_item, linearLayoutNotes, false) as ViewGroup
-
+        val goalView = noteView.findViewById<TextView>(R.id.goalTextView)
         val blockdate = noteView.findViewById<FrameLayout>(R.id.blockdate)
         val tvTitle = noteView.findViewById<TextView>(R.id.noteTextView)
         val tvDesc = noteView.findViewById<TextView>(R.id.desTextView)
@@ -311,7 +311,7 @@ class MainActivity : ComponentActivity() {
             val c = capitalizeFirstLetter(it)
             if (c.length > 30) "${c.take(30)}..." else c
         } ?: "Нет описания"
-
+        goalView.text = note.goal.replaceFirstChar { it.uppercaseChar() }
         try {
             val ts = dateTimeFormat.parse(note.dateTime!!).time
             val cal = Calendar.getInstance().apply { timeInMillis = ts }

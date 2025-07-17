@@ -6,5 +6,6 @@ data class Note(
     var description: String,
     var dateTime: String? = null ,
     var isDeleted: Boolean = false,
-    var imageUri: String? = null
+    var imageUri: String? = null,
+    var goal:String = "Other"
 )

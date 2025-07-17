@@ -58,6 +58,7 @@ class AddNoteActivity : ComponentActivity() {
     private lateinit var buttonSelectImage: ImageButton
     private lateinit var exitbutton: ImageButton
     private lateinit var imageViewNote: ImageView
+    private var noteId: Int = 0
     private lateinit var noteDao: NoteDao
     private var selectedDate: String? = null
     private var imagePath: String? = null
@@ -65,6 +66,7 @@ class AddNoteActivity : ComponentActivity() {
     private lateinit var blockexitbutton: FrameLayout
     private lateinit var buttonelement: Button
     private lateinit var blockelement: FrameLayout
+    private var note: Note? = null
 
     private val selectImageLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -99,6 +101,7 @@ class AddNoteActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_note)
+        var noteDao = NoteDao(this)
         editTextNoteContent = findViewById(R.id.editTextNoteContent)
         editTextDescription = findViewById(R.id.editAddText)
         editTextTime = findViewById(R.id.editTextTime)
@@ -107,15 +110,69 @@ class AddNoteActivity : ComponentActivity() {
         imageViewNote = findViewById(R.id.noteImageView)
         blockmainbutton = findViewById(R.id.block_createblock_main)
         buttonelement = findViewById(R.id.buttonshowbaroptions)
-        blockelement = findViewById(R.id.blockelement)
+        val buttonGoalWork     = findViewById<Button>(R.id.buttonGoalWork)
+        val buttonGoalStudy    = findViewById<Button>(R.id.buttonGoalStudy)
+        val buttonGoalPersonal = findViewById<Button>(R.id.buttonGoalPersonal)
+        val buttonGoalOther    = findViewById<Button>(R.id.buttonGoalOther)
+        val allGoalButtons     = listOf(buttonGoalWork, buttonGoalStudy, buttonGoalPersonal, buttonGoalOther)
+        val blockWork     = findViewById<FrameLayout>(R.id.bl1)
+        val blockStudy    = findViewById<FrameLayout>(R.id.bl2)
+        val blockPersonal = findViewById<FrameLayout>(R.id.bl3)
+        val blockOther    = findViewById<FrameLayout>(R.id.bl4)
+        val buttonSelectDate = findViewById<ImageButton>(R.id.buttonSelectDate)
+        val textWork     = findViewById<TextView>(R.id.dateblock1)
+        val textStudy    = findViewById<TextView>(R.id.dateblock2)
+        val textPersonal = findViewById<TextView>(R.id.dateblock3)
+        val textOther    = findViewById<TextView>(R.id.dateblock4)
+        val blockdate = findViewById<FrameLayout>(R.id.buttonSelectDateblock)
+        val goalTexts  = listOf(textWork, textStudy, textPersonal, textOther)
+        val blockelement = findViewById<FrameLayout>(R.id.block_createblock)
+        val allGoalBlocks = listOf(blockWork, blockStudy, blockPersonal, blockOther)
+        val goalButtons = listOf(buttonGoalWork, buttonGoalStudy, buttonGoalPersonal, buttonGoalOther)
+        val goalBlocks  = listOf(blockWork, blockStudy, blockPersonal, blockOther)
+
+        var selectedGoal = "other"
+        note = noteDao.getAllNotesIncludingDeleted().firstOrNull { it.id == noteId }
+
+        note?.let {
+            selectedGoal = it.goal
+            allGoalButtons.forEach { btn ->
+                btn.isSelected = btn.text.toString().equals(selectedGoal, true)
+            }
+        }
+
+        goalButtons.forEachIndexed { index, btn ->
+            btn.setOnClickListener {
+                selectedGoal = goalTexts[index].text.toString().lowercase() // 🔧 используем TextView с названием цели
+
+                // Сброс стиля
+                goalBlocks.forEach {
+                    it.background = ContextCompat.getDrawable(this, R.drawable.form_for_timeblock)
+                }
+                goalTexts.forEach {
+                    it.setTextColor(ContextCompat.getColor(this, R.color.black))
+                }
+
+                // Выделение
+                goalBlocks[index].background = ContextCompat.getDrawable(this, R.drawable.form_for_timeblock_2)
+                goalTexts[index].setTextColor(ContextCompat.getColor(this, R.color.white))
+            }
+        }
+
+
 
         noteDao = NoteDao(this)
         // Устанавливаем случайное изображение
         val randomResId = getRandomBackgroundResId()
         Log.d("AddNoteActivity", "Random image selected: $randomResId")
         displaySelectedImageResource(randomResId)
-
+        buttonSelectDate.setOnClickListener {
+            animateButtonClick(buttonSelectDate)
+            animateButtonClick(blockdate)
+            selectDate()
+        }
         buttonSelectImage.setOnClickListener {
+            animateButtonClick(buttonSelectImage)
             showImageSelectionDialog()
         }
 // Слушатель для форматирования времени при потере фокуса
@@ -189,7 +246,7 @@ class AddNoteActivity : ComponentActivity() {
 
         buttonSaveNote.setOnClickListener {
             animateButtonClick(blockmainbutton)
-
+            animateButtonClick(buttonSaveNote)
             var noteContent = editTextNoteContent.text.toString().trim()
             var noteDescription = editTextDescription.text.toString().trim()
             val time = editTextTime.text.toString().trim()
@@ -256,7 +313,8 @@ class AddNoteActivity : ComponentActivity() {
                     content = noteContent,
                     description = noteDescription.ifEmpty { "Описание отсутствует" },
                     dateTime = selectedDateTime,
-                    imageUri = finalImageUri
+                    imageUri = finalImageUri,
+                    goal = selectedGoal
                 )
 
                 // Сохраняем заметку в базе данных
@@ -303,6 +361,7 @@ class AddNoteActivity : ComponentActivity() {
         }
 
         buttonelement.setOnClickListener {
+            animateButtonClick(buttonelement)
             animateButtonClick(blockelement)
             showBottomSheet()
         }
@@ -357,8 +416,7 @@ class AddNoteActivity : ComponentActivity() {
         }
         bottomSheetView.background = shapeDrawable
 
-        val buttonSelectDate = bottomSheetView.findViewById<Button>(R.id.buttonSelectDate)
-        val buttonSelectTime = bottomSheetView.findViewById<Button>(R.id.buttonSelectTime)
+
         val bulletButton = bottomSheetView.findViewById<Button>(R.id.buttonBullet)
         val numberButton = bottomSheetView.findViewById<Button>(R.id.buttonNumber)
         val editAddText = findViewById<EditText>(R.id.editAddText)
@@ -367,12 +425,7 @@ class AddNoteActivity : ComponentActivity() {
         val savedDate = sharedPref.getString("selected_date", "Выберите дату")
         textViewSelectedDate.text = savedDate
 
-        buttonSelectDate.setOnClickListener {
-            textViewSelectedDate.text = selectedDate
-            textViewSelectedDate.visibility = View.VISIBLE
-            selectDate()
-            bottomSheetDialog.dismiss()
-        }
+
 
         bulletButton.setOnClickListener {
             addListItem(editAddText, "• ")
@@ -384,20 +437,7 @@ class AddNoteActivity : ComponentActivity() {
             bottomSheetDialog.dismiss()
         }
 
-        buttonSelectTime.setOnClickListener {
-            val editTextTime = findViewById<EditText>(R.id.editTextTime)
-            editTextTime.visibility = View.VISIBLE
 
-            // Ожидаем 200 мс, затем устанавливаем фокус и открываем клавиатуру
-            Handler(Looper.getMainLooper()).postDelayed({
-                editTextTime.requestFocus()
-
-                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                imm.showSoftInput(editTextTime, InputMethodManager.SHOW_IMPLICIT)
-            }, 200)
-
-            bottomSheetDialog.dismiss()
-        }
         editAddText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {}
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -604,6 +644,68 @@ class AddNoteActivity : ComponentActivity() {
         })
 
         block.startAnimation(scaleDown) // Запуск первой анимации
+    }
+    fun animateButtonClick(button: ImageButton) {
+        // Анимация уменьшения кнопки
+        val scaleDown = ScaleAnimation(
+            1.0f, 0.95f,  // Уменьшение ширины
+            1.0f, 0.95f,  // Уменьшение высоты
+            ScaleAnimation.RELATIVE_TO_SELF, 0.5f,  // Точка опоры по X
+            ScaleAnimation.RELATIVE_TO_SELF, 0.5f   // Точка опоры по Y
+        )
+        scaleDown.duration = 100 // Продолжительность анимации в миллисекундах
+        scaleDown.fillAfter = true // Кнопка остаётся в уменьшенном состоянии до завершения
+
+        // Возвращаем к исходному размеру
+        scaleDown.setAnimationListener(object : android.view.animation.Animation.AnimationListener {
+            override fun onAnimationStart(animation: android.view.animation.Animation?) {}
+            override fun onAnimationEnd(animation: android.view.animation.Animation?) {
+                val scaleUp = ScaleAnimation(
+                    0.95f, 1.0f,  // Увеличение ширины обратно
+                    0.95f, 1.0f,  // Увеличение высоты обратно
+                    ScaleAnimation.RELATIVE_TO_SELF, 0.5f,
+                    ScaleAnimation.RELATIVE_TO_SELF, 0.5f
+                )
+                scaleUp.duration = 100
+                scaleUp.fillAfter = true
+                button.startAnimation(scaleUp) // Запуск обратной анимации
+            }
+
+            override fun onAnimationRepeat(animation: android.view.animation.Animation?) {}
+        })
+
+        button.startAnimation(scaleDown) // Запуск первой анимации
+    }
+    fun animateButtonClick(button: Button) {
+        // Анимация уменьшения кнопки
+        val scaleDown = ScaleAnimation(
+            1.0f, 0.95f,  // Уменьшение ширины
+            1.0f, 0.95f,  // Уменьшение высоты
+            ScaleAnimation.RELATIVE_TO_SELF, 0.5f,  // Точка опоры по X
+            ScaleAnimation.RELATIVE_TO_SELF, 0.5f   // Точка опоры по Y
+        )
+        scaleDown.duration = 100 // Продолжительность анимации в миллисекундах
+        scaleDown.fillAfter = true // Кнопка остаётся в уменьшенном состоянии до завершения
+
+        // Возвращаем к исходному размеру
+        scaleDown.setAnimationListener(object : android.view.animation.Animation.AnimationListener {
+            override fun onAnimationStart(animation: android.view.animation.Animation?) {}
+            override fun onAnimationEnd(animation: android.view.animation.Animation?) {
+                val scaleUp = ScaleAnimation(
+                    0.95f, 1.0f,  // Увеличение ширины обратно
+                    0.95f, 1.0f,  // Увеличение высоты обратно
+                    ScaleAnimation.RELATIVE_TO_SELF, 0.5f,
+                    ScaleAnimation.RELATIVE_TO_SELF, 0.5f
+                )
+                scaleUp.duration = 100
+                scaleUp.fillAfter = true
+                button.startAnimation(scaleUp) // Запуск обратной анимации
+            }
+
+            override fun onAnimationRepeat(animation: android.view.animation.Animation?) {}
+        })
+
+        button.startAnimation(scaleDown) // Запуск первой анимации
     }
 
     private fun animateTranslation(view: View, isVisible: Boolean) {

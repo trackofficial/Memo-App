@@ -152,11 +152,13 @@ class WithoutDateActivity : ComponentActivity() {
                 val tvDesc = view.findViewById<TextView>(R.id.desTextView)
                 view.findViewById<TextView>(R.id.noteTextView).text = note.content
                 view.findViewById<TextView>(R.id.desTextView).text = note.description ?: "Нет описания"
-
+                val goalTextView = view.findViewById<TextView>(R.id.goalTextView)
+                goalTextView.text = note.goal.replaceFirstChar { it.uppercaseChar() }
                 view.findViewById<TextView>(R.id.timeblock).visibility = View.GONE
                 view.findViewById<TextView>(R.id.dateblock).visibility = View.GONE
                 view.findViewById<FrameLayout>(R.id.blockdate).visibility = View.GONE
-
+                view.findViewById<FrameLayout>(R.id.blockdate).visibility = View.GONE
+                view.findViewById<LinearLayout>(R.id.blocktime).visibility = View.GONE
                 val editBtn = view.findViewById<ImageButton>(R.id.deleteButton)
                 editBtn.setOnClickListener {
                     startActivity(Intent(this, EditNoteActivity::class.java).apply {
@@ -169,12 +171,15 @@ class WithoutDateActivity : ComponentActivity() {
                 } ?: "Нет описания"
                 val completeButton = view.findViewById<ImageButton>(R.id.completeButton)
                 completeButton.setOnClickListener {
+                    updateUI()
                     animateButtonClick(completeButton)
                     playCompleteAnimation(view, container) {
                         note.isDeleted = true
                         noteDao.update(note)
                         showNoteArchivedBanner()
+                        updateUI()
                     }
+
                 }
 
                 container.addView(view)

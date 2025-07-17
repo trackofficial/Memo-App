@@ -25,8 +25,8 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         const val COLUMN_DESCRIPTION = "description"
         const val COLUMN_DATETIME = "dateTime"
         const val COLUMN_IS_DELETED = "isDeleted"
-        const val COLUMN_IMAGE_URI = "imageUri" // Новый столбец для URI изображения
-
+        const val COLUMN_IMAGE_URI = "imageUri"
+        const val COLUMN_GOAL = "goal"
         private const val SQL_CREATE_ENTRIES =
             "CREATE TABLE $TABLE_NAME (" +
                     "$COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -34,7 +34,8 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                     "$COLUMN_DESCRIPTION TEXT," +
                     "$COLUMN_DATETIME TEXT," +
                     "$COLUMN_IS_DELETED INTEGER," +
-                    "$COLUMN_IMAGE_URI TEXT)" // Создание нового столбца
+                    "$COLUMN_IMAGE_URI TEXT," +
+                    "$COLUMN_GOAL TEXT)"
 
         private const val SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS $TABLE_NAME"
     }

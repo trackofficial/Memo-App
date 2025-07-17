@@ -507,6 +507,8 @@ class FocusActivity : ComponentActivity() {
         }
 
         val view = LayoutInflater.from(this).inflate(R.layout.note_item, noteBlockContainer, false)
+        val goalView = view.findViewById<TextView>(R.id.goalTextView)
+        goalView.text = note.goal.replaceFirstChar { it.uppercaseChar() }
         val title = view.findViewById<TextView>(R.id.noteTextView)
         val description = view.findViewById<TextView>(R.id.desTextView)
         title.text = note.content

@@ -15,6 +15,7 @@ class NoteDao(context: Context) {
             put(DatabaseHelper.COLUMN_DATETIME, note.dateTime)
             put(DatabaseHelper.COLUMN_IS_DELETED, note.isDeleted)
             put(DatabaseHelper.COLUMN_IMAGE_URI, note.imageUri)
+            put(DatabaseHelper.COLUMN_GOAL, note.goal)
         }
         note.id = db.insert(DatabaseHelper.TABLE_NAME, null, values).toInt()
         db.close()
@@ -28,6 +29,7 @@ class NoteDao(context: Context) {
             put(DatabaseHelper.COLUMN_DATETIME, note.dateTime)
             put(DatabaseHelper.COLUMN_IS_DELETED, note.isDeleted)
             put(DatabaseHelper.COLUMN_IMAGE_URI, note.imageUri)
+            put(DatabaseHelper.COLUMN_GOAL, note.goal)
         }
         val selection = "${DatabaseHelper.COLUMN_ID} = ?"
         val selectionArgs = arrayOf(note.id.toString())
@@ -55,13 +57,15 @@ class NoteDao(context: Context) {
             val dateTime = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_DATETIME))
             val isDeleted = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_IS_DELETED)) == 1
             val imageUri = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_IMAGE_URI))
+            val goal = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_GOAL))
             val note = Note(
                 id = id,
                 content = content,
                 description = description,
                 dateTime = dateTime,
                 isDeleted = isDeleted,
-                imageUri = imageUri
+                imageUri = imageUri,
+                goal = goal
             )
             notes.add(note)
         }
@@ -90,13 +94,15 @@ class NoteDao(context: Context) {
             val dateTime = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_DATETIME))
             val isDeleted = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_IS_DELETED)) == 1
             val imageUri = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_IMAGE_URI))
+            val goal = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_GOAL))
             val note = Note(
                 id = id,
                 content = content,
                 description = description,
                 dateTime = dateTime,
                 isDeleted = isDeleted,
-                imageUri = imageUri
+                imageUri = imageUri,
+                goal = goal
             )
             notes.add(note)
         }

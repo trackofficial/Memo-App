@@ -117,6 +117,7 @@
                     </ImageButton>
                 </LinearLayout>
                 <ImageButton
+                    android:visibility="gone"
                     android:layout_marginLeft="7dp"
                     android:id="@+id/settings_button"
                     android:background="@drawable/settings_button"
@@ -255,9 +256,7 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_marginLeft="60dp"
-                    android:layout_marginRight="60dp"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="62dp"
                     android:gravity="center"
                     android:background="@drawable/form_for_navigation_bar">
@@ -269,17 +268,11 @@
                         android:orientation="horizontal"
                         android:layout_marginBottom="6dp"
                         android:layout_marginTop="6dp"
-                        android:layout_marginLeft="6dp"
-                        android:layout_marginRight="6dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
                         android:gravity="center_vertical">
-
-                        <Space
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.5" />
-
-                        <!-- MAIN BUTTON -->
                         <FrameLayout
+                            android:layout_marginRight="10dp"
                             android:id="@+id/main_button_container"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -301,13 +294,8 @@
                             </FrameLayout>
                         </FrameLayout>
 
-                        <Space
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1" />
-
-                        <!-- CALENDAR BUTTON -->
                         <FrameLayout
+                            android:layout_marginRight="10dp"
                             android:id="@+id/calendar_button_container"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -329,13 +317,6 @@
                                     android:alpha="0.5" />
                             </FrameLayout>
                         </FrameLayout>
-
-                        <Space
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1" />
-
-                        <!-- FOCUS BUTTON -->
                         <FrameLayout
                             android:id="@+id/focus_button_container"
                             android:layout_width="wrap_content"
@@ -358,11 +339,6 @@
                                     android:alpha="0.5" />
                             </FrameLayout>
                         </FrameLayout>
-
-                        <Space
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.5" />
 
                     </LinearLayout>
                 </LinearLayout>
